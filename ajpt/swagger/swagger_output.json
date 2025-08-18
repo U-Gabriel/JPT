@@ -1,0 +1,126 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "JackPote API",
+      "description": "Documentation for JackPote API."
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "securityDefinitions": {
+      "Bearer": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Rentrez un token valide dans le format **Bearer &lt;token>**"
+      }
+    },
+    "produces": [
+      "application/json"
+    ],
+    "paths": {
+      "/register": {
+        "post": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Créer un compte basé sur le pseudo.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "person",
+              "in": "body",
+              "description": "La nouvelle personne",
+              "schema": {
+                "$ref": "#/definitions/Person"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
+      "/login_app": {
+        "post": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Connexion et retourne le Bearer token (pour application).",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "connection",
+              "in": "body",
+              "description": "Informations de connexion",
+              "schema": {
+                "$ref": "#/definitions/Connection"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      }
+    },
+    "definitions": {
+      "Connection": {
+        "type": "object",
+        "properties": {
+          "pseudo": {
+            "type": "string",
+            "example": "userAccess"
+          },
+          "password": {
+            "type": "string",
+            "example": "userPassword"
+          }
+        }
+      },
+      "Person": {
+        "type": "object",
+        "properties": {
+          "pseudo": {
+            "type": "string",
+            "example": "test"
+          },
+          "mail": {
+            "type": "string",
+            "example": "test"
+          },
+          "password": {
+            "type": "string",
+            "example": "password_exemple"
+          },
+          "firstname": {
+            "type": "string",
+            "example": "test"
+          },
+          "surname": {
+            "type": "string",
+            "example": "test"
+          },
+          "number_phone": {
+            "type": "string",
+            "example": "test"
+          },
+          "last_connexion": {
+            "type": "date",
+            "example": "2023/01/01"
+          }
+        }
+      }
+      
+    }
+  }
