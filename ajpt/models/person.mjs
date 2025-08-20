@@ -21,19 +21,20 @@ class Person {
  */
 const Add = (person) => {
     return new Promise((resolve, reject) => {
-        GetById(person.pseudo).then((result) => {
+        GetByPseudoOrMail(person).then((result) => {
             if (!result) {
                 person.id_role = person.id_role ?? 1
                 
                 const request = {
-                    text: 'INSERT INTO person(pseudo, password, mail, firstname, surname, number_phone, id_role, last_connexion) VALUES ($1, sha256($2), $3, $4, $5, $6, $7, $8)',
+                    text: 'INSERT INTO person(pseudo, password, mail, firstname, surname, number_phone, id_role, last_connexion) VALUES ($1, sha256($2), $3, $4, $5, $6, $7, $8) RETURNING *',
                     values: [person.pseudo, person.password, person.mail, person.firstname, person.surname, person.number_phone, person.id_role, person.last_connexion],
                 }
-                pool.query(request, (error, _) => {
+                pool.query(request, (error, result) => {
                     if (error) {
                         reject(error)
                     } else {
-                        resolve(true)
+                        let res = (result.rows.length > 0) ? result.rows[0] : null
+                        resolve(res)
                         
                     }
                 });
@@ -52,11 +53,11 @@ const Add = (person) => {
  * @returns {Promise<unknown>}
  * @constructor
  */
-const GetById = (person_pseudo) => {
+const GetByPseudoOrMail = (person) => {
     return new Promise((resolve, reject) => {
         const request = {
-            text: 'SELECT * FROM person WHERE pseudo = $1',
-            values: [person_pseudo],
+            text: 'SELECT * FROM person WHERE pseudo = $1 OR mail = $2',
+            values: [person.pseudo, person.mail],
         }
         pool.query(request, (error, result) => {
             if (error) {
@@ -81,7 +82,7 @@ const GetById = (person_pseudo) => {
 const GetByIdAndPassword = (person) => {
     return new Promise((resolve, reject) => {
         const request = {
-            text: 'SELECT * FROM person WHERE pseudo = $1 AND password::bytea = sha256($2)',
+            text: 'SELECT * FROM person WHERE (pseudo = $1 OR mail = $1) AND password::bytea = sha256($2)',
             values: [person.pseudo, person.password],
         }
         pool.query(request, (error, result) => {

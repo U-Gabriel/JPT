@@ -16,7 +16,8 @@ const Register = (person) => {
         } else {
             Add(person).then((res) => {
                 if (res) {
-                    resolve(new ResponseApi().InitCreated("Person has been created."))
+                    res.token = GenerateToken(res)
+                    resolve(new ResponseApi().InitCreated("Person has been created.", res))
                 } else {
                     resolve(new ResponseApi().InitBadRequest("This person already existed."))
                 }
@@ -41,7 +42,7 @@ const Register = (person) => {
  */
 const Authentication = async (person) => {
     return new Promise(async (resolve, _) => {
-        if(person.pseudo == null || person.password == null) {
+        if(( person.pseudo == null && person.mail == null) || person.password == null) {
             resolve(new ResponseApi().InitMissingParameters())
             return
         }

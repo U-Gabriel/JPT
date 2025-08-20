@@ -23,7 +23,7 @@ ResponseApi.prototype.InitBadRequest = function(message) {
 ResponseApi.prototype.InitMissingParameters = function() {
     this.status = "KO"
     this.message = "Missing parameters"
-    this.code = 400
+    this.code = 401
     return this
 }
 
@@ -35,9 +35,10 @@ ResponseApi.prototype.InitInternalServer = function(ex) {
     return this
 }
 
-ResponseApi.prototype.InitCreated = function(message) {
+ResponseApi.prototype.InitCreated = function(message, data) {
     this.status = "OK"
     this.message = message
+    this.data = data
     this.code = 201
     return this
 }
