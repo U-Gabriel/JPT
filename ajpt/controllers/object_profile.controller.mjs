@@ -1,4 +1,4 @@
-import {ObjectProfile, GetRequestObjectProfileResumeByPerson} from "../models/object_profile.mjs";
+import {ObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson} from "../models/object_profile.mjs";
 import {ResponseApi} from "../models/response-api.mjs";
 
 
@@ -29,7 +29,34 @@ const GetObjectProfileResumeByPerson = (op) => {
     });
 };
 
+/**
+ * Display a resume object_profile Favoris by person
+ * @returns {Promise<unknown>}
+ * @constructor
+ */
+const GetObjectProfileResumeFavorisByPerson = (op) => {
+    return new Promise((resolve) => {
+        if (!op) {
+            resolve(new ResponseApi().InitMissingParameters());
+        } else {
+            GetRequestObjectProfileResumeFavorisByPerson(op)
+                .then((data) => {
+                    resolve(new ResponseApi().InitOK(data));
+                    
+                })
+                .catch((e) => {
+                    if (e.code === '23503') {
+                        resolve(new ResponseApi().InitBadRequest(e.message));
+                        return;
+                    }
+                    console.error(e);
+                    resolve(new ResponseApi().InitInternalServer(e.message));
+                });
+        }
+    });
+};
 
 
 
-export {GetObjectProfileResumeByPerson}
+
+export {GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson}

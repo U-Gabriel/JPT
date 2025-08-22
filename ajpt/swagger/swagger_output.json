@@ -72,6 +72,66 @@
           ],
           "responses": {}
         }
+      },
+      "/object_profile/resume/byperson": {
+        "post": {
+          "tags": [
+            "ObjectProfile"
+          ],
+          "description": "lister le résumé des object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "File",
+              "in": "body",
+              "description": "Listes object_profiles summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileSummary"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/object_profile/resume/favoris/byperson": {
+        "post": {
+          "tags": [
+            "ObjectProfile"
+          ],
+          "description": "lister le résumé des favoris des object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "File",
+              "in": "body",
+              "description": "Listes object_profiles summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileSummary"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
       }
     },
     "definitions": {
@@ -120,7 +180,16 @@
             "example": "2023/01/01"
           }
         }
+      },
+      "ObjectProfileSummary": {
+      "type": "object",
+      "properties": {
+        "id_person": {
+          "type": "int",
+          "example": "1"
+        }
       }
+    }
       
     }
   }

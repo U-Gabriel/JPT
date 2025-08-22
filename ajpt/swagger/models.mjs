@@ -13,6 +13,6 @@ export default  {
         surname: "test",
         last_connexion: "2023/01/01",
         notification_alert_time: "12:00:00"
-      },
-   
+    }
+    
 };
