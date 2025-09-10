@@ -31,6 +31,7 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
             op.title AS op_title,
             op.is_automatic,
             op.is_water,
+            pt.id_plant_type AS id_plant_type,
             pt.title AS plant_title,
             a.title AS avatar_title,
             a.picture_path AS path_picture
@@ -56,7 +57,9 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
         is_automatic: row.is_automatic,
         is_water: row.is_water,
         plant_type: {
+            id_plant_type: row.id_plant_type,
             title: row.plant_title,
+            path_picture: row.path_picture,
             avatar: row.avatar_title ? {
                 title: row.avatar_title,
                 path_picture: row.path_picture
@@ -75,6 +78,7 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
             op.title AS op_title,
             op.is_automatic,
             op.is_water,
+            pt.id_plant_type AS id_plant_type,
             pt.title AS plant_title,
             a.title AS avatar_title,
             a.picture_path AS path_picture
@@ -100,7 +104,9 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
         is_automatic: row.is_automatic,
         is_water: row.is_water,
         plant_type: {
+            id_plant_type: row.id_plant_type,
             title: row.plant_title,
+            path_picture: row.path_picture,
             avatar: row.avatar_title ? {
                 title: row.avatar_title,
                 path_picture: row.path_picture
