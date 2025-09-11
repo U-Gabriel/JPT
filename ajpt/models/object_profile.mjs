@@ -14,6 +14,7 @@ class ObjectProfile {
     ph_ground_sensor;
     conductivity_elec_sensor;
     uv_sensor;
+    state;
     is_light;
     is_favorite;
     temperature_ground_sensor;
@@ -31,6 +32,7 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
             op.title AS op_title,
             op.is_automatic,
             op.is_water,
+            op.state_plant,
             pt.id_plant_type AS id_plant_type,
             pt.title AS plant_title,
             a.title AS avatar_title,
@@ -56,6 +58,7 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
         title: row.op_title,
         is_automatic: row.is_automatic,
         is_water: row.is_water,
+        state: row.state_plant,
         plant_type: {
             id_plant_type: row.id_plant_type,
             title: row.plant_title,
@@ -78,6 +81,7 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
             op.title AS op_title,
             op.is_automatic,
             op.is_water,
+            op.state_plant,
             pt.id_plant_type AS id_plant_type,
             pt.title AS plant_title,
             a.title AS avatar_title,
@@ -103,6 +107,7 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
         title: row.op_title,
         is_automatic: row.is_automatic,
         is_water: row.is_water,
+        state: row.state_plant,
         plant_type: {
             id_plant_type: row.id_plant_type,
             title: row.plant_title,
