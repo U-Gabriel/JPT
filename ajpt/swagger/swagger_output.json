@@ -117,11 +117,71 @@
           ],
           "parameters": [
             {
-              "name": "File",
+              "name": "op",
               "in": "body",
               "description": "Listes object_profiles summary",
               "schema": {
                 "$ref": "#/definitions/ObjectProfileSummary"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/object_profile/update/byobjectprofile": {
+        "patch": {
+          "tags": [
+            "ObjectProfile"
+          ],
+          "description": "modifier les object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes object_profiles summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileDetails"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/object_profile/detail/byop": {
+        "post": {
+          "tags": [
+            "ObjectProfile"
+          ],
+          "description": "lister le résumé des favoris des object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes object_profiles summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileDetails"
               }
             }
           ],
@@ -188,8 +248,17 @@
           "type": "int",
           "example": "1"
         }
-      }
-    }
+        }
+        },
+        "ObjectProfileDetails": {
+      "type": "object",
+      "properties": {
+        "id_object_profile": {
+          "type": "int",
+          "example": "1"
+        }
+        }
+        }
       
     }
   }
