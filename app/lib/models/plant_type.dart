@@ -39,7 +39,7 @@ class PlantType {
   });
 
   factory PlantType.fromJson(Map<String, dynamic> json) => PlantType(
-    idPlantType: json['idPlantType'],
+    idPlantType: json['id_plant_type'],
     title: json['title'],
     description: json['description'],
     scientistName: json['scientistName'],
@@ -56,6 +56,6 @@ class PlantType {
     humidityAirSensor: double.tryParse(json['humidityAirSensor'] ?? ''),
     humidityGroundSensor: double.tryParse(json['humidityGroundSensor'] ?? ''),
     expositionTimeSun: double.tryParse(json['expositionTimeSun'] ?? ''),
-    pathPicture: json['pathPicture'],
+    pathPicture: json['path_picture'],
   );
 }

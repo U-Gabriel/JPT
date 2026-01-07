@@ -56,7 +56,7 @@ class PlantDetailPage extends StatelessWidget {
 
                 final plant = snapshot.data!;
                 final imageUrl = plant.plantType.pathPicture != null
-                    ? Uri.parse(AppConfig.baseUrlS)
+                    ? Uri.parse(AppConfig.baseUrlDataset)
                     .resolve(plant.plantType.pathPicture!)
                     .toString()
                     : null;

@@ -32,9 +32,9 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('access_token');
-    final userId = prefs.getString('userId');
-    final userDataJson = prefs.getString('userData');
+    final token = prefs.getString('token');
+    final userId = prefs.getString('id_person');
+    final userDataJson = prefs.getString('data');
 
 
     if (token != null && userId != null && userDataJson != null) {
@@ -55,41 +55,49 @@ class AuthProvider extends ChangeNotifier {
   String? _firstName;
   String? get firstName => _firstName;
 
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(String pseudo, String password) async {
     final url = Uri.parse(AppConfig.loginEndpoint);
+    print("➡️ Tentative login vers $url avec pseudo=$pseudo");
 
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({'pseudo': pseudo, 'password': password}),
       );
 
-      if (response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        final prefs = await SharedPreferences.getInstance();
+      print("📩 Status: ${response.statusCode}");
+      print("📩 Body: ${response.body}");
 
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final json = jsonDecode(response.body);
+        final data = json['data'];
 
-        _accessToken = data['access_token'];
-        _userId = data['user']['idPerson'].toString();
-        _firstName = data['user']['firstname'].toString();
-        _userData = data['user'];
+        _accessToken = data['token'];
+        _userId = data['id_person'].toString();
+        _firstName = data['firstname'];
+        _userData = data;
         _isAuthenticated = true;
 
-        await prefs.setString('access_token', _accessToken!);
-        await prefs.setString('userId', _userId!);
-        await prefs.setString('userData', jsonEncode(_userData));
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', _accessToken!);
+        await prefs.setString('id_person', _userId!);
+        await prefs.setString('data', jsonEncode(_userData));
 
         notifyListeners();
+        print("✅ Login réussi pour $_firstName ($_userId)");
         return true;
       } else {
+        print("❌ Login échoué: ${response.statusCode}");
         return false;
       }
-    } catch (e) {
-      debugPrint("Erreur lors de la connexion: $e");
+    } catch (e, stack) {
+      debugPrint("💥 Exception login: $e");
+      debugPrint("$stack");
       return false;
     }
   }
+
 
   Future<void> logout() async {
     _isAuthenticated = false;
@@ -104,6 +112,7 @@ class AuthProvider extends ChangeNotifier {
   }
   Future<bool> signup({
     required String email,
+    required String pseudo,
     required String password,
     required String firstname,
     String? surname,
@@ -115,11 +124,12 @@ class AuthProvider extends ChangeNotifier {
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'email': email,
+        'mail': email,
+        'pseudo': pseudo,
         'password': password,
         'firstname': firstname,
         'surname': surname ?? '',
-        'numberPhone': numberPhone ?? '',
+        'number_phone': numberPhone ?? '',
       }),
     );
 
@@ -127,17 +137,20 @@ class AuthProvider extends ChangeNotifier {
     print("Response: ${response.body}");
 
     if (response.statusCode == 201 || response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final json = jsonDecode(response.body);
+      final data = json['data'];
 
       _isAuthenticated = true;
-      _userId = data['user']['idPerson'].toString();
-      _firstName = data['user']['firstname'];
+      _userId = data['id_person'].toString();
+      _firstName = data['firstname'];
+      _accessToken = data['token'];
+      _userData = data;
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userId', _userId!);
+      await prefs.setString('id_person', _userId!);
       await prefs.setString('firstName', _firstName!);
-      await prefs.setString('accessToken', data['access_token']);
-      await prefs.setString('refreshToken', data['refresh_token']);
+      await prefs.setString('token', _accessToken!);
+      await prefs.setString('data', jsonEncode(_userData));
 
       notifyListeners();
       return true;

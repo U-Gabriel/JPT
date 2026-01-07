@@ -1,7 +1,7 @@
 import 'object_model.dart';
 import 'plant_type.dart';
 
-class ObjectProfile {
+class GroupObjectProfile {
   final int idObjectProfile;
   final String title;
   final String description;
@@ -16,12 +16,12 @@ class ObjectProfile {
   final double? humidityGroundSensor;
   final double? phGroundSensor;
   final double? conductivityElectriqueFertilitySensor;
-  final bool? lightSensor;
+  final double? lightSensor;
   final double? temperatureSensorGround;
   final double? temperatureSensorExtern;
   final double? expositionTimeSun;
 
-  ObjectProfile({
+  GroupObjectProfile({
     required this.idObjectProfile,
     required this.title,
     required this.description,
@@ -42,36 +42,36 @@ class ObjectProfile {
     this.expositionTimeSun,
   });
 
-  factory ObjectProfile.fromJson(Map<String, dynamic> json) {
+  factory GroupObjectProfile.fromJson(Map<String, dynamic> json) {
     try {
-      return ObjectProfile(
+      return GroupObjectProfile(
         idObjectProfile: parseInt(json['id_object_profile']) ?? 0,
         title: json['title'] ?? '',
         description: json['description'] ?? '',
         advise: json['advise'],
-        recipe: json['recipe'], //A voir
+        recipe: json['recipe'],
         state: parseInt(json['state']),
         isAutomatic: json['is_automatic'],
         isWillWatering: json['is_water'],
         object: json['object'] != null ? ObjectModel.fromJson(json['object']) : null,
         plantType: PlantType.fromJson(json['plant_type']),
-        humidityAirSensor: parseDouble(json['humidity_air_sensor']),
-        humidityGroundSensor: parseDouble(json['humidity_ground_sensor']),
-        phGroundSensor: parseDouble(json['ph_ground_sensor']),
-        conductivityElectriqueFertilitySensor: parseDouble(json['conductivity_elec_sensor']),
-        lightSensor: json['is_light'],
-        temperatureSensorGround: parseDouble(json['temperature_ground_sensor']),
-        temperatureSensorExtern: parseDouble(json['temperature_air_sensor']),
-        expositionTimeSun: parseDouble(json['exposition_time_sun']),
+        humidityAirSensor: parseDouble(json['humidityAirSensor']),
+        humidityGroundSensor: parseDouble(json['humidityGroundSensor']),
+        phGroundSensor: parseDouble(json['phGroundSensor']),
+        conductivityElectriqueFertilitySensor: parseDouble(json['conductivityElectriqueFertilitySensor']),
+        lightSensor: parseDouble(json['lightSensor']),
+        temperatureSensorGround: parseDouble(json['temperatureSensorGround']),
+        temperatureSensorExtern: parseDouble(json['temperatureSensorExtern']),
+        expositionTimeSun: parseDouble(json['expositionTimeSun']),
       );
     } catch (e, stack) {
-      print("Erreur de parsing ObjectProfile: $e");
+      print("Erreur de parsing GroupObjectProfile: $e");
       print(stack);
       rethrow;
     }
   }
 
-  ObjectProfile copyWith({
+  GroupObjectProfile copyWith({
     int? idObjectProfile,
     String? title,
     String? description,
@@ -86,12 +86,12 @@ class ObjectProfile {
     double? humidityGroundSensor,
     double? phGroundSensor,
     double? conductivityElectriqueFertilitySensor,
-    bool? lightSensor,
+    double? lightSensor,
     double? temperatureSensorGround,
     double? temperatureSensorExtern,
     double? expositionTimeSun,
   }) {
-    return ObjectProfile(
+    return GroupObjectProfile(
       idObjectProfile: idObjectProfile ?? this.idObjectProfile,
       title: title ?? this.title,
       description: description ?? this.description,

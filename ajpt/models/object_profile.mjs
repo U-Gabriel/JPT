@@ -258,11 +258,11 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         temperature_air_sensor : row.temperature_air_sensor,
         humidity_air_sensor : row.humidity_air_sensor,
         exposition_time_sun : row.exposition_time_sun,
-        state_plant : row.state_plant,
+        state : row.state_plant,
         is_water : row.is_water,
         plant_type: {
             id_plant_type: row.id_plant_type,
-            title_pt: row.plant_title,
+            title: row.plant_title,
             path_picture: row.path_picture,
             avatar: row.avatar_title ? {
                 title: row.avatar_title,

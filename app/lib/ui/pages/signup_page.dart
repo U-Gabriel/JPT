@@ -15,6 +15,7 @@ class _SignupPageState extends State<SignupPage> {
   bool _obscurePassword = true;
 
   final _emailController = TextEditingController();
+  final _pseudoController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _firstnameController = TextEditingController();
@@ -35,6 +36,7 @@ class _SignupPageState extends State<SignupPage> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final success = await authProvider.signup(
       email: _emailController.text.trim(),
+      pseudo: _pseudoController.text.trim(),
       password: _passwordController.text.trim(),
       firstname: _firstnameController.text.trim(),
       surname: _surnameController.text.trim(),
@@ -66,6 +68,13 @@ class _SignupPageState extends State<SignupPage> {
           key: _formKey,
           child: ListView(
             children: [
+              const Text("Pseudo *"),
+              TextFormField(
+                controller: _pseudoController,
+                decoration: const InputDecoration(hintText: "Pseudo"),
+                validator: (v) => v == null || v.isEmpty ? "Requis" : null,
+              ),
+              const SizedBox(height: 12),
               const Text("Email *"),
               TextFormField(
                 controller: _emailController,
@@ -125,6 +134,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   final success = await authProvider.signup(
                     email: _emailController.text.trim(),
+                    pseudo: _pseudoController.text.trim(),
                     password: _passwordController.text.trim(),
                     firstname: _firstnameController.text.trim(),
                     surname: _surnameController.text.trim(),

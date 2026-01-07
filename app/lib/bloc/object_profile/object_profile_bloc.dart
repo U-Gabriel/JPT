@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart'; // pour listEquals
 import '../../models/object_profile.dart';
 import '../../providers/plant_provider.dart';
+import '../../services/object_profile_service.dart';
 import 'object_profile_event.dart';
 import 'object_profile_state.dart';
 
 class ObjectProfileBloc extends Bloc<ObjectProfileEvent, ObjectProfileState> {
-  final PlantProvider provider;
+  final ObjectProfileService service;
+  final String token;
   final int personId;
 
   final _profilesController = StreamController<List<ObjectProfile>>.broadcast();
@@ -17,7 +19,8 @@ class ObjectProfileBloc extends Bloc<ObjectProfileEvent, ObjectProfileState> {
   Timer? _pollingTimer;
 
   ObjectProfileBloc({
-    required this.provider,
+    required this.service,
+    required this.token,
     required this.personId,
   }) : super(ProfileLoading()) {
     on<LoadProfiles>(_onLoad);
@@ -35,7 +38,10 @@ class ObjectProfileBloc extends Bloc<ObjectProfileEvent, ObjectProfileState> {
 
   Future<void> _onLoad(LoadProfiles event, Emitter<ObjectProfileState> emit) async {
     try {
-      final profiles = await provider.fetchProfiles(personId);
+      final profiles = await service.fetchObjectProfilesListFavoris(
+        personId.toString(),
+        token,
+      );
       if (!listEquals(profiles, _currentProfiles)) {
         _currentProfiles = profiles;
         _profilesController.add(_currentProfiles);

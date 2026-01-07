@@ -41,7 +41,7 @@ class _PlantControlSwitchesState extends State<PlantControlSwitches> {
 
   Future<void> _updateField(String field, bool value) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('access_token');
+    final token = prefs.getString('token');
 
     if (token == null) {
       print('Token introuvable');

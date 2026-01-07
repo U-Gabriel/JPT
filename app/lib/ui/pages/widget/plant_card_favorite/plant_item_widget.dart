@@ -25,6 +25,8 @@ class PlantItemWidget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    print(plant);
+
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -76,7 +78,7 @@ class PlantItemWidget extends StatelessWidget {
                             width: 180,
                             color: Colors.grey[200],
                             child: Image.network(
-                              Uri.parse(AppConfig.baseUrlS).resolve(pathPicture).toString(),
+                              Uri.parse(AppConfig.baseUrlDataset).resolve(pathPicture).toString(),
                               fit: BoxFit.cover,
                               alignment: Alignment.center,
                               errorBuilder: (context, error, stackTrace) =>

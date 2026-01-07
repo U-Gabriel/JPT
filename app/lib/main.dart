@@ -1,5 +1,6 @@
 import 'package:app/app_config.dart';
 import 'package:app/providers/plant_provider_my_List.dart';
+import 'package:app/services/object_profile_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -50,13 +51,15 @@ class RootApp extends StatelessWidget {
       providers: [
         BlocProvider<ObjectProfileBloc>(
           create: (_) => ObjectProfileBloc(
-            provider: PlantProvider(baseUrl: AppConfig.baseUrl, token: token),
+            service: ObjectProfileService(),
+            token: token,
             personId: personId,
           )..add(LoadProfiles()),
         ),
         BlocProvider<ObjectProfileMyListBloc>(
           create: (_) => ObjectProfileMyListBloc(
-            provider: PlantProviderMyList(baseUrl: AppConfig.baseUrl, token: token),
+            service: ObjectProfileService(),
+            token: token,
             personId: personId,
           )..add(LoadProfilesMyList()),
         ),

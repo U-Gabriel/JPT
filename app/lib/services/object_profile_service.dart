@@ -7,15 +7,53 @@ import 'package:app/app_config.dart';
 class ObjectProfileService {
   final String baseUrl =  AppConfig.baseUrl;
 
-  Future<List<ObjectProfile>> fetchProfiles(String personId, String token) async {
-    final url = Uri.parse(AppConfig.objectProfilesEndpoint(personId));
-    final response = await http.get(url, headers: {
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'application/json',
-    });
+
+  Future<List<ObjectProfile>> fetchObjectProfilesList(String personId, String token) async {
+    final url = Uri.parse(AppConfig.objectProfilesEndpointList());
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "id_person": int.tryParse(personId) ?? 0,
+      }),
+    );
 
     if (response.statusCode == 200) {
-      List data = json.decode(response.body);
+
+      final decoded = json.decode(response.body);
+
+      List<dynamic> data = decoded["data"] ?? [];
+
+      return data.map((json) => ObjectProfile.fromJson(json)).toList();
+    } else {
+      throw Exception('Erreur de chargement: ${response.statusCode}');
+    }
+  }
+
+  Future<List<ObjectProfile>> fetchObjectProfilesListFavoris(String personId, String token) async {
+    final url = Uri.parse(AppConfig.objectProfilesEndpointListFavoris());
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "id_person": int.tryParse(personId) ?? 0,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+
+      final decoded = json.decode(response.body);
+
+      List<dynamic> data = decoded["data"] ?? [];
+
       return data.map((json) => ObjectProfile.fromJson(json)).toList();
     } else {
       throw Exception('Erreur de chargement: ${response.statusCode}');
@@ -44,19 +82,36 @@ class ObjectProfileService {
   }
 
   Future<ObjectProfile> fetchObjectProfileDetails(int plantId, String token) async {
-    final url = Uri.parse("${AppConfig.baseUrl}/api/object-profile/$plantId");
+    final url = Uri.parse(AppConfig.objectProfilesEndpointDetails());
 
-    final response = await http.get(url, headers: {
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'application/json',
-    });
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "id_object_profile": plantId,
+      }),
+    );
 
     if (response.statusCode == 200) {
-      return ObjectProfile.fromJson(jsonDecode(response.body));
+      final decoded = json.decode(response.body);
+
+      List<dynamic> data = decoded["data"] ?? [];
+
+      print(data);
+
+      if (data.isEmpty) {
+        throw Exception("Aucun détail trouvé pour l'objet $plantId");
+      }
+
+      return ObjectProfile.fromJson(data.first);
     } else {
-      throw Exception('Échec du chargement du profil de la plante');
+      throw Exception('Erreur de chargement: ${response.statusCode}');
     }
   }
+
 
 
 }

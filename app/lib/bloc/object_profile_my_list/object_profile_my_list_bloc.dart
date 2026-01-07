@@ -4,11 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart'; // pour listEquals
 import '../../models/object_profile.dart';
 import '../../providers/plant_provider_my_List.dart';
+import '../../services/object_profile_service.dart';
 import 'object_profile_my_list_event.dart';
 import 'object_profile_my_list_state.dart';
 
 class ObjectProfileMyListBloc extends Bloc<ObjectProfileMyListEvent, ObjectProfileMyListState> {
-  final PlantProviderMyList provider;
+  final ObjectProfileService service;
+  final String token;
   final int personId;
 
   final _profilesController = StreamController<List<ObjectProfile>>.broadcast();
@@ -18,7 +20,8 @@ class ObjectProfileMyListBloc extends Bloc<ObjectProfileMyListEvent, ObjectProfi
   Timer? _pollingTimer;
 
   ObjectProfileMyListBloc({
-    required this.provider,
+    required this.service,
+    required this.token,
     required this.personId,
   }) : super(ProfileLoading() as ObjectProfileMyListState) {
     on<LoadProfilesMyList>(_onLoad);
@@ -36,7 +39,10 @@ class ObjectProfileMyListBloc extends Bloc<ObjectProfileMyListEvent, ObjectProfi
 
   Future<void> _onLoad(LoadProfilesMyList event, Emitter<ObjectProfileMyListState> emit) async {
     try {
-      final profiles = await provider.fetchProfilesMyList(personId);
+      final profiles = await service.fetchObjectProfilesList(
+        personId.toString(),
+        token,
+      );
       if (!listEquals(profiles, _currentProfiles)) {
         _currentProfiles = profiles;
         _profilesController.add(_currentProfiles);

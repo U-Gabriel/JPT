@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../app_config.dart';
 import '../models/object_profile.dart';
 
+// Obsolete
 class PlantProviderMyList {
   final String baseUrl;
   final String token;
