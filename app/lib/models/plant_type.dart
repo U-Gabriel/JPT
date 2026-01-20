@@ -1,5 +1,5 @@
 class PlantType {
-  final int idPlantType;
+  final int? idPlantType;
   final String title;
   final String? description;
   final String? scientistName;
@@ -39,7 +39,7 @@ class PlantType {
   });
 
   factory PlantType.fromJson(Map<String, dynamic> json) => PlantType(
-    idPlantType: json['id_plant_type'],
+    idPlantType: json['id_plant_type'] ?? 0,
     title: json['title'],
     description: json['description'],
     scientistName: json['scientistName'],
@@ -56,6 +56,6 @@ class PlantType {
     humidityAirSensor: double.tryParse(json['humidityAirSensor'] ?? ''),
     humidityGroundSensor: double.tryParse(json['humidityGroundSensor'] ?? ''),
     expositionTimeSun: double.tryParse(json['expositionTimeSun'] ?? ''),
-    pathPicture: json['path_picture'],
+    pathPicture: json['picture_path'] ?? json['path_picture'],
   );
 }

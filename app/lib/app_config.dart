@@ -1,3 +1,5 @@
+import 'package:app/models/plant_type.dart';
+
 class AppConfig {
   static const String url = "http://10.0.2.2";
   static const String url_s = "http://localhost";
@@ -16,6 +18,8 @@ class AppConfig {
   static String objectProfilesEndpointList() => "$baseUrl/object_profile/resume/byperson";
   static String objectProfilesEndpointListFavoris() => "$baseUrl/object_profile/resume/favoris/byperson";
   static String objectProfilesEndpointDetails() => "$baseUrl/object_profile/detail/byop";
+
+  static String PlantTypeEndpointSearch() => "$baseUrl/plant_type/search/bytitle";
 
 
   // old function

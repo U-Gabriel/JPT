@@ -18,7 +18,7 @@ class AddNameMyObjectPage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const StepProgressBar(percent: 0.5),
+            const StepProgressBar(percent: 0.25),
             const SizedBox(height: 40),
             Text(
               "Super ! Votre $plantType a besoin d'un petit nom.",
