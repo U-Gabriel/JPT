@@ -1,6 +1,7 @@
 import {pool} from "../middlewares/postgres.mjs"
 
 class PlantType {
+    id_plant_type
     title
     description
     height
@@ -41,7 +42,7 @@ const GetRequestPlantTypeSearchByTitle = async ({ title }) => {
     if (!title) throw new Error("title is required");
 
     const query = `
-        SELECT pt.title, pt.description, av.picture_path
+        SELECT pt.id_plant_type, pt.title, pt.description, av.picture_path
             FROM plant_type pt
             LEFT JOIN LATERAL (
                 SELECT a.picture_path
@@ -58,6 +59,7 @@ const GetRequestPlantTypeSearchByTitle = async ({ title }) => {
     const { rows } = await pool.query(query, [title]);
 
     return rows.map(row => ({
+        id_plant_type: row.id_plant_type,
         title: row.title,
         description: row.description,
         picture_path: row.picture_path
