@@ -76,7 +76,7 @@
       "/object_profile/resume/byperson": {
         "post": {
           "tags": [
-            "ObjectProfile"
+            "Object Profile"
           ],
           "description": "lister le résumé des object_profiles.",
           "consumes": [
@@ -106,7 +106,7 @@
       "/object_profile/resume/favoris/byperson": {
         "post": {
           "tags": [
-            "ObjectProfile"
+            "Object Profile"
           ],
           "description": "lister le résumé des favoris des object_profiles.",
           "consumes": [
@@ -136,7 +136,7 @@
       "/object_profile/update/byobjectprofile": {
         "patch": {
           "tags": [
-            "ObjectProfile"
+            "Object Profile"
           ],
           "description": "modifier les object_profiles.",
           "consumes": [
@@ -166,7 +166,7 @@
       "/object_profile/detail/byop": {
         "post": {
           "tags": [
-            "ObjectProfile"
+            "Object Profile"
           ],
           "description": "lister le résumé des favoris des object_profiles.",
           "consumes": [
@@ -192,6 +192,36 @@
             }
           ]
         }
+      },
+      "/plant_type/search/bytitle": {
+        "post": {
+          "tags": [
+            "Plant Type"
+          ],
+          "description": "lister la liste de plant type en fonction des recherches.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes plant_type summary",
+              "schema": {
+                "$ref": "#/definitions/PlantTypesSearch"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
       }
     },
     "definitions": {
@@ -200,11 +230,11 @@
         "properties": {
           "pseudo": {
             "type": "string",
-            "example": "userAccess"
+            "example": "test05@test.com"
           },
           "password": {
             "type": "string",
-            "example": "userPassword"
+            "example": "aaaaaa"
           }
         }
       },
@@ -257,6 +287,15 @@
           "type": "int",
           "example": "1"
         }
+        }
+        },
+         "PlantTypesSearch": {
+          "type": "object",
+          "properties": {
+          "title": {
+            "type": "string",
+            "example": "Lavande"
+          }
         }
         }
       

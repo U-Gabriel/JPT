@@ -8,6 +8,7 @@ import file from 'fs'
 import swaggerUi from 'swagger-ui-express'
 import {routerAuth} from './routes/auth.router.mjs'
 import {routerObjectProfile} from './routes/object_profile.router.mjs'
+import {routerPlantType} from './routes/plant_type.router.mjs'
 
 const app = express()
 
@@ -36,6 +37,7 @@ app.use(authToken)
 // Routers
 app.use(routerAuth)
 app.use(routerObjectProfile)
+app.use(routerPlantType)
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)

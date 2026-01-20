@@ -37,4 +37,32 @@ class PlantType {
 
 
 
-export {PlantType}
+const GetRequestPlantTypeSearchByTitle = async ({ title }) => {
+    if (!title) throw new Error("title is required");
+
+    const query = `
+        SELECT pt.title, pt.description, av.picture_path
+            FROM plant_type pt
+            LEFT JOIN LATERAL (
+                SELECT a.picture_path
+                FROM avatar a
+                WHERE a.id_plant_type = pt.id_plant_type AND a.state = 1
+                ORDER BY a.id_avatar
+                LIMIT 1
+            ) av ON TRUE
+            WHERE pt.title ILIKE '%' || $1 || '%'
+            ORDER BY pt.title
+            LIMIT 20;
+    `;
+
+    const { rows } = await pool.query(query, [title]);
+
+    return rows.map(row => ({
+        title: row.title,
+        description: row.description,
+        picture_path: row.picture_path
+    }));
+};
+
+
+export {PlantType, GetRequestPlantTypeSearchByTitle}
