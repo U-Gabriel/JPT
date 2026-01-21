@@ -6,6 +6,7 @@ class Avatar {
     description
     picture_path
     evolution_number
+    state
     id_plant_type
 }
 

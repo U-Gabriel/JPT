@@ -222,6 +222,36 @@
             }
           ]
         }
+      },
+      "/plant_type/description/byid": {
+        "post": {
+          "tags": [
+            "Plant Type"
+          ],
+          "description": "Afficher la description de plant type.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes plant_type summary",
+              "schema": {
+                "$ref": "#/definitions/IdInformation"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
       }
     },
     "definitions": {
@@ -295,6 +325,15 @@
           "title": {
             "type": "string",
             "example": "Lavande"
+          }
+        }
+        },
+         "IdInformation": {
+          "type": "object",
+          "properties": {
+          "id": {
+            "type": "int",
+            "example": "1"
           }
         }
         }
