@@ -1,6 +1,7 @@
 import 'package:app/ui/pages/add_my_object_page.dart';
 import 'package:flutter/material.dart';
 import '../ui/pages/add_name_my_object_page.dart';
+import '../ui/pages/add_wifi_information_page.dart';
 import '../ui/pages/advise_page.dart';
 import '../ui/pages/auth_wrapper_redirection.dart';
 import '../ui/pages/buy_my_object_page.dart';
@@ -29,6 +30,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/reset_password': (_) => const ResetPasswordPage(),
   '/add_my_object': (_) => const AddMyObjectPage(),
   '/add_name_my_object': (_) => const AddNameMyObjectPage(),
+  '/add_wifi_information': (_) => const AddWifiInformationPage(),
   '/buy_my_object': (_) => const BuyMyObjectPage(),
 
 

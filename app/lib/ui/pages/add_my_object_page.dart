@@ -16,7 +16,6 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
   final PlantService _plantService = PlantService();
   final TextEditingController _plantController = TextEditingController();
 
-
   // On stocke l'objet plante sélectionné
   PlantType? _selectedPlant;
 
@@ -76,7 +75,10 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
                 Navigator.pushNamed(
                     context,
                     '/add_name_my_object',
-                    arguments: selection
+                    arguments: {
+                    'id': selection.idPlantType,
+                    'title': selection.title,
+                },
                 );
               },
               fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {

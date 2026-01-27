@@ -1,3 +1,5 @@
+import 'avatar.dart';
+
 class PlantType {
   final int? idPlantType;
   final String title;
@@ -16,6 +18,7 @@ class PlantType {
   final double? humidityGroundSensor;
   final double? expositionTimeSun;
   final String? pathPicture;
+  final List<Avatar>? avatars;
 
 
   PlantType({
@@ -36,7 +39,9 @@ class PlantType {
     this.humidityGroundSensor,
     this.expositionTimeSun,
     this.pathPicture,
+    this.avatars,
   });
+
 
   factory PlantType.fromJson(Map<String, dynamic> json) => PlantType(
     idPlantType: json['id_plant_type'] ?? 0,
@@ -57,5 +62,8 @@ class PlantType {
     humidityGroundSensor: double.tryParse(json['humidityGroundSensor'] ?? ''),
     expositionTimeSun: double.tryParse(json['expositionTimeSun'] ?? ''),
     pathPicture: json['picture_path'] ?? json['path_picture'],
+    avatars: (json['avatars'] as List? ?? [])
+        .map((item) => Avatar.fromJson(item))
+        .toList(),
   );
 }
