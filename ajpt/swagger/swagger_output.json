@@ -73,6 +73,36 @@
           "responses": {}
         }
       },
+      "/object_profile/create/init": {
+        "post": {
+          "tags": [
+            "Object Profile"
+          ],
+          "description": "Création d'object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "File",
+              "in": "body",
+              "description": "Champs object_profiles",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileCreate"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
       "/object_profile/resume/byperson": {
         "post": {
           "tags": [
@@ -298,6 +328,31 @@
           "last_connexion": {
             "type": "date",
             "example": "2023/01/01"
+          }
+        }
+      },
+      "ObjectProfileCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "NamePlant"
+          },
+          "id_object": {
+            "type": "int",
+            "example": 1
+          },
+          "id_plant_type": {
+            "type": "int",
+            "example": 1
+          },
+          "id_person": {
+            "type": "int",
+            "example": 19
+          },
+          "activate": {
+            "type": "int",
+            "example": 0
           }
         }
       },

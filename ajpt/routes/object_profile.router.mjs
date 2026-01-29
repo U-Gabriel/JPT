@@ -1,8 +1,13 @@
-import {GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson, UpdateObjectProfileController, GetRequestObjectProfiledetailsByOPController } from "../controllers/object_profile.controller.mjs";
+import {CreateRequestObjectProfile, GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson, UpdateObjectProfileController, GetRequestObjectProfiledetailsByOPController } from "../controllers/object_profile.controller.mjs";
 import express from "express"
 
 
 const routerObjectProfile = express.Router()
+
+routerObjectProfile.post("/object_profile/create/init", async (req, res) => {
+    const response = await CreateRequestObjectProfile(req.body)
+    res.status(response.code).send(response)
+});
 
 routerObjectProfile.post("/object_profile/resume/byperson", async (req, res) => {
     const response = await GetObjectProfileResumeByPerson(req.body)

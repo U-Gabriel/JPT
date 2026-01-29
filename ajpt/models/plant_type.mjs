@@ -167,7 +167,7 @@ const GetRequestPlantTypeDescription = async ({ id }) => {
         exposition_time_sun: row.exposition_time_sun,
         height_min: row.height_min,
         height_max: row.height_max,
-        avatars: row.avatars // ← ici on renvoie le tableau complet d'Avatar
+        avatars: row.avatars 
     };
 };
 

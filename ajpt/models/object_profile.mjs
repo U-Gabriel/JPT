@@ -25,6 +25,69 @@ class ObjectProfile {
     is_water;
 }
 
+/**
+ * Crée un nouveau ObjectProfile
+ * @param {Object} body - Champs nécessaires à la création
+ * @returns {Promise<number>} - ID du profil créé
+ */
+const createObjectProfile = async (body) => {
+  const {
+    title,
+    id_object,
+    id_plant_type,
+    id_person,
+    activate = 0,
+    is_water = false,
+    is_favorite = false,
+    is_light = false,
+    is_working = true,
+    is_automatic = true
+  } = body;
+
+  if (!title || !id_object || !id_plant_type || !id_person) {
+    throw new Error("title, id_object, id_plant_type et id_person sont requis");
+  }
+
+  const query = {
+    text: `
+      INSERT INTO object_profile (
+        title,
+        id_object,
+        id_plant_type,
+        id_person,
+        activate,
+        is_water,
+        is_favorite,
+        is_light,
+        is_working,
+        is_automatic
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING id_object_profile;
+    `,
+    values: [
+        title,
+        id_object,
+        id_plant_type,
+        id_person,
+        activate,
+        is_water,
+        is_favorite,
+        is_light,
+        is_working,
+        is_automatic
+    ]
+  };
+
+  const { rows } = await pool.query(query);
+
+  return {
+    success: true,
+    id_object_profile: rows[0].id_object_profile
+  };
+};
+
+
 const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
     if (!id_person) throw new Error("id_person is required");
 
@@ -310,4 +373,4 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
     }));
 };
 
-export { ObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP };
+export { ObjectProfile, createObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP };

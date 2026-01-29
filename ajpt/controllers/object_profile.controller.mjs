@@ -1,5 +1,37 @@
-import {ObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP } from "../models/object_profile.mjs";
+import {ObjectProfile, createObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP } from "../models/object_profile.mjs";
 import {ResponseApi} from "../models/response-api.mjs";
+
+/**
+ * Create a new object_profile
+ * @returns {Promise<unknown>}
+ * @constructor
+ */
+const CreateRequestObjectProfile = (body) => {
+  return new Promise((resolve) => {
+    if (!body) {
+      resolve(new ResponseApi().InitMissingParameters());
+    } else {
+      createObjectProfile(body)
+        .then((data) => {
+          resolve(new ResponseApi().InitOK(data));
+        })
+        .catch((e) => {
+          if (e.code === "23503") {
+            // Foreign key violation
+            resolve(new ResponseApi().InitBadRequest(e.message));
+            return;
+          }
+          if (e.code === "23505") {
+            // Unique violation (au cas où tu ajoutes une contrainte unique plus tard)
+            resolve(new ResponseApi().InitBadRequest(e.message));
+            return;
+          }
+          console.error(e);
+          resolve(new ResponseApi().InitInternalServer(e.message));
+        });
+    }
+  });
+};
 
 
 /**
@@ -110,4 +142,4 @@ const GetRequestObjectProfiledetailsByOPController = (op) => {
 };
 
 
-export {GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson, UpdateObjectProfileController, GetRequestObjectProfiledetailsByOPController }
+export {CreateRequestObjectProfile, GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson, UpdateObjectProfileController, GetRequestObjectProfiledetailsByOPController }
