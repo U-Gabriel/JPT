@@ -5,7 +5,7 @@
       "title": "JackPote API",
       "description": "Documentation for JackPote API."
     },
-    "host": "localhost:3000",
+    "host": "51.77.141.175:3000",
     "basePath": "/",
     "schemes": [
       "http",
