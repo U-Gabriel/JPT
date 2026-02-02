@@ -14,7 +14,8 @@ jobs:
           username: debian
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /var/www/ajpt
+            cd /var/www/ajpt/ajpt
             git pull origin main
-            npm install --production
-            pm2 restart all || pm2 start index.js --name "api-jpt"
+            npm install --omit=dev
+            pm2 restart api-jpt || pm2 start index.mjs --name "api-jpt"
+            pm2 save
