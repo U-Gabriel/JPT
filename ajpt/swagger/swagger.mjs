@@ -5,7 +5,7 @@ const doc = {
     info: {
         version: "1.0.0", title: "JPT", description: "Documentation for JackPote API."
     },
-    host: "localhost",
+    host: "51.77.141.175",
     basePath: "/",
     schemes: ['https', 'http'],
     produces: ['application/json'],
