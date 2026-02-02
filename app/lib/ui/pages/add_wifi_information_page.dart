@@ -112,10 +112,9 @@ class _AddWifiInformationPageState extends State<AddWifiInformationPage> {
                       const SnackBar(content: Text("Veuillez remplir tous les champs wifi")),
                     );
                   } else {
-                    // On transmet TOUT à la page suivante (ID, Nom plante, SSID, Password)
                     Navigator.pushNamed(
                       context,
-                      '/next_step_route', // Remplace par ta prochaine route
+                      '/add_connect_my_object',
                       arguments: {
                         'id': plantId,
                         'name': plantName,
