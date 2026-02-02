@@ -1,0 +1,397 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "JackPote API",
+      "description": "Documentation for JackPote API."
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "securityDefinitions": {
+      "Bearer": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Rentrez un token valide dans le format **Bearer &lt;token>**"
+      }
+    },
+    "produces": [
+      "application/json"
+    ],
+    "paths": {
+      "/register": {
+        "post": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Créer un compte basé sur le pseudo.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "person",
+              "in": "body",
+              "description": "La nouvelle personne",
+              "schema": {
+                "$ref": "#/definitions/Person"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
+      "/login_app": {
+        "post": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Connexion et retourne le Bearer token (pour application).",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "connection",
+              "in": "body",
+              "description": "Informations de connexion",
+              "schema": {
+                "$ref": "#/definitions/Connection"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
+      "/object_profile/create/init": {
+        "post": {
+          "tags": [
+            "Object Profile"
+          ],
+          "description": "Création d'object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "File",
+              "in": "body",
+              "description": "Champs object_profiles",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileCreate"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/object_profile/resume/byperson": {
+        "post": {
+          "tags": [
+            "Object Profile"
+          ],
+          "description": "lister le résumé des object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "File",
+              "in": "body",
+              "description": "Listes object_profiles summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileSummary"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/object_profile/resume/favoris/byperson": {
+        "post": {
+          "tags": [
+            "Object Profile"
+          ],
+          "description": "lister le résumé des favoris des object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes object_profiles summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileSummary"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/object_profile/update/byobjectprofile": {
+        "patch": {
+          "tags": [
+            "Object Profile"
+          ],
+          "description": "modifier les object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes object_profiles summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileDetails"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/object_profile/detail/byop": {
+        "post": {
+          "tags": [
+            "Object Profile"
+          ],
+          "description": "lister le résumé des favoris des object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes object_profiles summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileDetails"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/plant_type/search/bytitle": {
+        "post": {
+          "tags": [
+            "Plant Type"
+          ],
+          "description": "lister la liste de plant type en fonction des recherches.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes plant_type summary",
+              "schema": {
+                "$ref": "#/definitions/PlantTypesSearch"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/plant_type/description/byid": {
+        "post": {
+          "tags": [
+            "Plant Type"
+          ],
+          "description": "Afficher la description de plant type.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes plant_type summary",
+              "schema": {
+                "$ref": "#/definitions/IdInformation"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      }
+    },
+    "definitions": {
+      "Connection": {
+        "type": "object",
+        "properties": {
+          "pseudo": {
+            "type": "string",
+            "example": "test05@test.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "aaaaaa"
+          }
+        }
+      },
+      "Person": {
+        "type": "object",
+        "properties": {
+          "pseudo": {
+            "type": "string",
+            "example": "test"
+          },
+          "mail": {
+            "type": "string",
+            "example": "test"
+          },
+          "password": {
+            "type": "string",
+            "example": "password_exemple"
+          },
+          "firstname": {
+            "type": "string",
+            "example": "test"
+          },
+          "surname": {
+            "type": "string",
+            "example": "test"
+          },
+          "number_phone": {
+            "type": "string",
+            "example": "test"
+          },
+          "last_connexion": {
+            "type": "date",
+            "example": "2023/01/01"
+          }
+        }
+      },
+      "ObjectProfileCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "NamePlant"
+          },
+          "id_object": {
+            "type": "int",
+            "example": 1
+          },
+          "id_plant_type": {
+            "type": "int",
+            "example": 1
+          },
+          "id_person": {
+            "type": "int",
+            "example": 19
+          },
+          "activate": {
+            "type": "int",
+            "example": 0
+          }
+        }
+      },
+      "ObjectProfileSummary": {
+      "type": "object",
+      "properties": {
+        "id_person": {
+          "type": "int",
+          "example": "1"
+        }
+        }
+        },
+        "ObjectProfileDetails": {
+      "type": "object",
+      "properties": {
+        "id_object_profile": {
+          "type": "int",
+          "example": "1"
+        }
+        }
+        },
+         "PlantTypesSearch": {
+          "type": "object",
+          "properties": {
+          "title": {
+            "type": "string",
+            "example": "Lavande"
+          }
+        }
+        },
+         "IdInformation": {
+          "type": "object",
+          "properties": {
+          "id": {
+            "type": "int",
+            "example": "1"
+          }
+        }
+        }
+      
+    }
+  }

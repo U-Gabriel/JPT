@@ -1,0 +1,20 @@
+name: Deploy API
+on:
+  push:
+    branches: [ main ] # Se déclenche quand on pousse sur main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: debian
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/www/ajpt
+            git pull origin main
+            npm install --production
+            pm2 restart all || pm2 start index.js --name "api-jpt"
