@@ -23,6 +23,7 @@ class ObjectProfile {
     exposition_time_sun;
     state_plant;
     is_water;
+    activate;
 }
 
 /**
@@ -107,7 +108,7 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
         LEFT JOIN avatar a 
             ON a.id_plant_type = pt.id_plant_type
             AND (a.evolution_number = op.state_plant OR a.evolution_number = 0)
-        WHERE op.id_person = $1
+        WHERE op.id_person = $1 AND activate = 1
         ORDER BY op.id_object_profile, 
                  CASE 
                     WHEN a.evolution_number = op.state_plant THEN 1 
@@ -185,16 +186,14 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
     }));
 };
 
- /**
-     * Met à jour un profil objet dynamiquement.
-     * @param {Object} body - Contient l'id et les champs à modifier.
-     * @returns {Promise<Object>} - L'objet mis à jour.
-     */
- const updateObjectProfile =  async (body) => {
-    const { id_object_profile, ...fields } = body;
+ const updateObjectProfile = async (body) => {
+    const { id_object_profile, id_person, ...fields } = body;
 
     if (!id_object_profile) {
         throw new Error("id_object_profile is required");
+    }
+    if (!id_person) {
+        throw new Error("id_person is required");
     }
     if (Object.keys(fields).length === 0) {
         throw new Error("No fields to update");
@@ -209,20 +208,21 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
         text: `
             UPDATE object_profile
             SET ${setClauses.join(", ")}
-            WHERE id_object_profile = $${values.length + 1}
+            WHERE id_object_profile = $${values.length + 1} AND id_person = $${values.length + 2}
             RETURNING *;
         `,
-        values: [...values, id_object_profile],
+        values: [...values, id_object_profile, id_person],
     };
 
     const { rows } = await pool.query(query);
 
     if (rows.length === 0) {
-        throw new Error(`ObjectProfile with id ${id_object_profile} not found`);
+        throw new Error(`ObjectProfile with id ${id_object_profile} not found or does not belong to this user`);
     }
 
     return rows[0];
-}
+};
+
 
 
 const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
@@ -373,4 +373,30 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
     }));
 };
 
-export { ObjectProfile, createObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP };
+const DeleteObjectProfile = async (op) => {
+  if (!op.id_object_profile) throw new Error("id_object_profile is required");
+  if (!op.id_person) throw new Error("id_person is required");
+
+  const query = {
+    text: `
+      DELETE FROM object_profile
+      WHERE id_object_profile = $1 AND id_person = $2
+      RETURNING id_object_profile;
+    `,
+    values: [op.id_object_profile, op.id_person],
+  };
+
+  const { rows } = await pool.query(query);
+
+  if (rows.length === 0) {
+    throw new Error(`ObjectProfile with id ${op.id_object_profile} not found or does not belong to this user`);
+  }
+
+  return {
+    success: true,
+    deleted_id: rows[0].id_object_profile,
+  };
+};
+
+
+export { ObjectProfile, createObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP, DeleteObjectProfile };

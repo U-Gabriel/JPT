@@ -1,4 +1,4 @@
-import {ObjectProfile, createObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP } from "../models/object_profile.mjs";
+import {ObjectProfile, createObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP, DeleteObjectProfile } from "../models/object_profile.mjs";
 import {ResponseApi} from "../models/response-api.mjs";
 
 /**
@@ -90,27 +90,39 @@ const GetObjectProfileResumeFavorisByPerson = (op) => {
 
 /**
  * Update an object_profile by id with dynamic fields
+ * Requires id_person in the body to ensure ownership
  * @returns {Promise<unknown>}
  * @constructor
  */
-const UpdateObjectProfileController = (body) => {
+const UpdateObjectProfileController = (op) => {
     return new Promise((resolve) => {
-        if (!body) {
+        // Vérifie que body, id_object_profile et id_person sont présents
+        if (!op || !op.id_object_profile || !op.id_person) {
             resolve(new ResponseApi().InitMissingParameters());
-        } else {
-            updateObjectProfile(body)
-                .then((data) => {
-                    resolve(new ResponseApi().InitOK(data));
-                })
-                .catch((e) => {
-                    if (e.code === "23503") {
-                        resolve(new ResponseApi().InitBadRequest(e.message));
-                        return;
-                    }
-                    console.error(e);
-                    resolve(new ResponseApi().InitInternalServer(e.message));
-                });
+            return;
         }
+
+        // Appelle la fonction update avec le body complet
+        updateObjectProfile(op)
+            .then((data) => {
+                // Vérifie que le profil appartient bien à l'utilisateur
+                if (data.id_person !== op.id_person) {
+                    resolve(new ResponseApi().InitBadRequest(
+                        "You cannot update this ObjectProfile because it does not belong to you."
+                    ));
+                    return;
+                }
+
+                resolve(new ResponseApi().InitOK(data));
+            })
+            .catch((e) => {
+                if (e.code === "23503") {
+                    resolve(new ResponseApi().InitBadRequest(e.message));
+                    return;
+                }
+                console.error(e);
+                resolve(new ResponseApi().InitInternalServer(e.message));
+            });
     });
 };
 
@@ -142,4 +154,30 @@ const GetRequestObjectProfiledetailsByOPController = (op) => {
 };
 
 
-export {CreateRequestObjectProfile, GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson, UpdateObjectProfileController, GetRequestObjectProfiledetailsByOPController }
+const DeleteObjectProfileController = (op) => {
+    return new Promise(async (resolve) => {
+        if (!op || !op.id_object_profile || !op.id_person) {
+            resolve(new ResponseApi().InitMissingParameters());
+            return;
+        }
+
+        try {
+            const result = await DeleteObjectProfile(op);
+            resolve(new ResponseApi().InitOK(result));
+        } catch (e) {
+            if (e.code === "23503") {
+                resolve(new ResponseApi().InitBadRequest(e.message));
+                return;
+            }
+            if (e.message?.includes("not found")) {
+                resolve(new ResponseApi().InitBadRequest(e.message));
+                return;
+            }
+            console.error(e);
+            resolve(new ResponseApi().InitInternalServer(e.message));
+        }
+    });
+};
+
+
+export {CreateRequestObjectProfile, GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson, UpdateObjectProfileController, GetRequestObjectProfiledetailsByOPController, DeleteObjectProfileController }

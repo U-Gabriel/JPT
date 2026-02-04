@@ -181,7 +181,7 @@
               "in": "body",
               "description": "Listes object_profiles summary",
               "schema": {
-                "$ref": "#/definitions/ObjectProfileDetails"
+                "$ref": "#/definitions/ObjectProfileUP"
               }
             }
           ],
@@ -212,6 +212,36 @@
               "description": "Listes object_profiles summary",
               "schema": {
                 "$ref": "#/definitions/ObjectProfileDetails"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/object_profile/delete/byobjectprofile": {
+        "post": {
+          "tags": [
+            "Object Profile"
+          ],
+          "description": "Supprimer un object_profiles.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Del object_profiles",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileDel"
               }
             }
           ],
@@ -365,14 +395,40 @@
         }
         }
         },
-        "ObjectProfileDetails": {
+      "ObjectProfileDel": {
       "type": "object",
       "properties": {
+        "id_person": {
+          "type": "int",
+          "example": "1"
+        },
         "id_object_profile": {
           "type": "int",
           "example": "1"
         }
         }
+        },
+        "ObjectProfileDetails": {
+          "type": "object",
+          "properties": {
+            "id_object_profile": {
+              "type": "int",
+              "example": "1"
+            }
+            }
+        },
+        "ObjectProfileUP": {
+          "type": "object",
+          "properties": {
+            "id_person": {
+              "type": "int",
+              "example": "1"
+            },
+            "id_object_profile": {
+              "type": "int",
+              "example": "1"
+            }
+            }
         },
          "PlantTypesSearch": {
           "type": "object",

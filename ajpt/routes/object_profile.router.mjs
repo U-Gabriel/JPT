@@ -1,4 +1,4 @@
-import {CreateRequestObjectProfile, GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson, UpdateObjectProfileController, GetRequestObjectProfiledetailsByOPController } from "../controllers/object_profile.controller.mjs";
+import {CreateRequestObjectProfile, GetObjectProfileResumeByPerson, GetObjectProfileResumeFavorisByPerson, UpdateObjectProfileController, GetRequestObjectProfiledetailsByOPController, DeleteObjectProfileController } from "../controllers/object_profile.controller.mjs";
 import express from "express"
 
 
@@ -28,6 +28,11 @@ routerObjectProfile.patch("/object_profile/update/byobjectprofile", async (req, 
 routerObjectProfile.post("/object_profile/detail/byop", async (req, res) => {
     const response = await GetRequestObjectProfiledetailsByOPController(req.body)
     res.status(response.code).send(response)
+});
+
+routerObjectProfile.post("/object_profile/delete/byobjectprofile", async (req, res) => {
+    const response = await DeleteObjectProfileController(req.body);
+    res.status(response.code).send(response);
 });
 
 export {routerObjectProfile}

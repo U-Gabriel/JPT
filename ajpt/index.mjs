@@ -34,6 +34,7 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swagger, {swaggerOptions: {
 // Token JWT
 app.use(authToken)
 
+
 // Routers
 app.use(routerAuth)
 app.use(routerObjectProfile)
