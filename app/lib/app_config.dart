@@ -1,8 +1,8 @@
 import 'package:app/models/plant_type.dart';
 
 class AppConfig {
-  static const String url = "http://10.0.2.2";
-  static const String url_s = "http://localhost";
+  static const String url = "http://51.77.141.175";
+  static const String url_s = "http://51.77.141.175";
   static const String url_dataset = "http://51.77.141.175";
   static const String port = "3000";
 
@@ -15,6 +15,7 @@ class AppConfig {
   static String get requestPasswordResetEndpoint => "$baseUrl/auth/request-password-reset";
   static String get resetPasswordEndpoint => "$baseUrl/auth/user/reset_password";
 
+  static String objectProfilesEndpointCreate() => "$baseUrl/object_profile/create/init";
   static String objectProfilesEndpointList() => "$baseUrl/object_profile/resume/byperson";
   static String objectProfilesEndpointListFavoris() => "$baseUrl/object_profile/resume/favoris/byperson";
   static String objectProfilesEndpointDetails() => "$baseUrl/object_profile/detail/byop";

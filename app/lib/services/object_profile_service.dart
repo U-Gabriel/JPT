@@ -7,6 +7,41 @@ import 'package:app/app_config.dart';
 class ObjectProfileService {
   final String baseUrl =  AppConfig.baseUrl;
 
+  Future<int?> createObjectProfileShort({
+    required String title,
+    required int idObject,
+    required int idPlantType,
+    required int idPerson,
+    required String token,
+  }) async {
+    final url = Uri.parse(AppConfig.objectProfilesEndpointCreate());
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "title": title,
+        "id_object": idObject,
+        "id_plant_type": idPlantType,
+        "id_person": idPerson,
+        "activate": 0
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      if (decoded['status'] == "OK") {
+        return decoded['data']['id_object_profile'];
+      }
+    }
+
+    // Si on arrive ici, c'est qu'il y a un souci
+    throw Exception("Erreur lors de la création du profil");
+  }
+
 
   Future<List<ObjectProfile>> fetchObjectProfilesList(String personId, String token) async {
     final url = Uri.parse(AppConfig.objectProfilesEndpointList());

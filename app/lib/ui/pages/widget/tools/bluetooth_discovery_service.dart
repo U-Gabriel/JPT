@@ -3,74 +3,171 @@ import 'dart:async';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BluetoothDiscoveryService {
-  final StreamController<int?> _objectIdController = StreamController<int?>();
-  final StreamController<String?> _errorController = StreamController<String?>();
 
-  // Flux pour l'ID de l'objet
+  BluetoothCharacteristic? _targetCharacteristic;
+
+  // Configuration
+  static const String deviceName = "JACKPOTE_OBJECT_1";
+  static const String targetCharUuid = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+
+  // Contrôleurs de flux
+  final StreamController<int?> _objectIdController = StreamController<int?>.broadcast();
+  final StreamController<String?> _errorController = StreamController<String?>.broadcast();
+
   Stream<int?> get objectIdStream => _objectIdController.stream;
-  // Flux pour les messages d'erreur à afficher à l'utilisateur
   Stream<String?> get errorStream => _errorController.stream;
 
-  final String targetCharacteristicUuid = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+  StreamSubscription? _scanSubscription;
+  bool _isFound = false;
 
   void startSearching() async {
-    await FlutterBluePlus.stopScan();
-    bool found = false;
+    _isFound = false;
 
-    try {
-      // PRO : On demande au téléphone de filtrer DIRECTEMENT par UUID au niveau du scan
-      // Cela évite de réveiller ton code pour les écouteurs du voisin.
-      await FlutterBluePlus.startScan(
-        withServices: [Guid("0000180d-0000-1000-8000-00805f9b34fb")], // <--- TON SERVICE UUID ICI
-        timeout: const Duration(seconds: 15),
-        androidUsesFineLocation: true,
-      );
-    } catch (e) {
-      _errorController.add("Erreur scan: $e");
+    // 1. Arrêter tout scan ou connexion en cours pour repartir à zéro
+    await FlutterBluePlus.stopScan();
+
+    // 2. Vérifier l'état du Bluetooth
+    if (await FlutterBluePlus.adapterState.first != BluetoothAdapterState.on) {
+      _errorController.add("Veuillez activer le Bluetooth.");
       return;
     }
 
-    // Timer de sécurité si rien n'est trouvé
-    Future.delayed(const Duration(seconds: 16), () {
-      if (!found && !_objectIdController.isClosed) {
-        _errorController.add("Aucun objet détecté.");
+    // 3. Lancer le scan
+    try {
+      await FlutterBluePlus.startScan(
+        timeout: const Duration(seconds: 30),
+        androidUsesFineLocation: true,
+      );
+    } catch (e) {
+      _errorController.add("Impossible de démarrer le scan.");
+      return;
+    }
+
+    // 4. Écouter les résultats
+    _scanSubscription = FlutterBluePlus.scanResults.listen((results) async {
+      if (_isFound) return;
+
+      for (ScanResult r in results) {
+        if (r.device.platformName == deviceName) {
+          _isFound = true;
+          await FlutterBluePlus.stopScan();
+          await _connectToDevice(r.device);
+          break;
+        }
       }
     });
 
-    FlutterBluePlus.scanResults.listen((results) async {
-      for (ScanResult r in results) {
-        // On vérifie le nom OU l'UUID pour être sûr à 100%
-        if (r.device.platformName.startsWith("JACKPOTE_OBJECT") || found == false) {
-          found = true;
-          await FlutterBluePlus.stopScan();
-
-          try {
-            await r.device.connect().timeout(const Duration(seconds: 25));
-
-            // Une fois connecté, on cherche notre caractéristique
-            List<BluetoothService> services = await r.device.discoverServices();
-            for (var service in services) {
-              for (var characteristic in service.characteristics) {
-                if (characteristic.uuid.toString() == targetCharacteristicUuid) {
-                  // LECTURE DU JSON
-                  List<int> value = await characteristic.read();
-                  String rawJson = utf8.decode(value);
-                  final data = jsonDecode(rawJson);
-
-                  _objectIdController.add(data['id_object']);
-                }
-              }
-            }
-          } catch (e) {
-            _errorController.add("Erreur : $e");
-            r.device.disconnect();
-          }
-        }
+    // Gestion du Timeout
+    Future.delayed(const Duration(seconds: 16), () {
+      if (!_isFound && !_objectIdController.isClosed) {
+        _errorController.add("Aucun objet Jackpote détecté à proximité.");
       }
     });
   }
 
+  Future<void> _connectToDevice(BluetoothDevice device) async {
+    try {
+      await device.connect(autoConnect: false).timeout(const Duration(seconds: 10));
+
+      // Laisser le temps à l'ESP32 de stabiliser la connexion
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      List<BluetoothService> services = await device.discoverServices();
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      for (var service in services) {
+        for (var characteristic in service.characteristics) {
+          print("UUID Trouvé : ${characteristic.uuid.toString()}");
+          if (characteristic.uuid.toString().toLowerCase() == targetCharUuid) {
+            //GARDER LA RÉFÉRENCE ICI
+            _targetCharacteristic = characteristic;
+
+            // Lecture des données
+            List<int> value = await characteristic.read().timeout(const Duration(seconds: 5));
+            String rawJson = utf8.decode(value);
+
+            // Parsing JSON sécurisé
+            try {
+              final data = jsonDecode(rawJson);
+              if (data is Map && data.containsKey('id_object')) {
+                _objectIdController.add(data['id_object']);
+              } else {
+                _errorController.add("Données reçues invalides.");
+              }
+            } catch (e) {
+              _errorController.add("Erreur de formatage des données.");
+            }
+
+            // Une fois lu, on se déconnecte pour économiser l'énergie (Optionnel)
+            // await device.disconnect();
+            return;
+          }
+        }
+      }
+      _errorController.add("Service Jackpote non trouvé sur cet appareil.");
+    } catch (e) {
+      _isFound = false;
+      _errorController.add("Échec de la connexion à l'objet.");
+    }
+  }
+
+  Future<bool> sendWifiData(String jsonPayload) async {
+    if (_targetCharacteristic == null) return false;
+
+    try {
+      // Conversion du texte JSON en liste d'octets (bytes)
+      List<int> bytes = utf8.encode(jsonPayload);
+
+      // Envoi à l'ESP32
+      await _targetCharacteristic!.write(bytes);
+      print("JSON envoyé avec succès à l'objet");
+      return true;
+    } catch (e) {
+      print("Erreur lors de l'envoi Bluetooth : $e");
+      return false;
+    }
+  }
+
+  Future<int?> sendWifiAndGetStatus(String jsonPayload) async {
+    if (_targetCharacteristic == null) return null;
+
+    final Completer<int> resultCompleter = Completer<int>();
+    StreamSubscription? subscription;
+
+    try {
+      await _targetCharacteristic!.setNotifyValue(true);
+
+      // 1. On prépare l'écoute précise
+      subscription = _targetCharacteristic!.lastValueStream.listen((value) {
+        if (value.isNotEmpty) {
+          int status = value[0];
+          print("Notification reçue : $status");
+
+          if (status == 0 || status == 1) {
+            if (!resultCompleter.isCompleted) {
+              resultCompleter.complete(status);
+            }
+          }
+        }
+      });
+
+      // 2. Envoi du JSON
+      await _targetCharacteristic!.write(utf8.encode(jsonPayload), timeout: 10);
+      print("Paquet envoyé, attente du résultat final...");
+
+      // 3. Attente avec un gros timeout de 45s (pour laisser l'ESP bosser)
+      return await resultCompleter.future.timeout(const Duration(seconds: 45));
+
+    } catch (e) {
+      print("Erreur pendant l'attente : $e");
+      return null;
+    } finally {
+      // Toujours nettoyer la souscription
+      await subscription?.cancel();
+    }
+  }
   void dispose() {
+    _scanSubscription?.cancel();
     _objectIdController.close();
     _errorController.close();
   }

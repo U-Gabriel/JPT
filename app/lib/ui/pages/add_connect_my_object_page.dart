@@ -1,6 +1,13 @@
-import 'package:app/ui/pages/widget/popup/connection_error_dialog.dart';
-import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:app/ui/pages/widget/popup/success_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:app/providers/auth_provider.dart';
+import 'package:app/ui/pages/widget/controllers/object_connection_controller.dart';
+import 'package:app/ui/pages/widget/popup/connection_error_dialog.dart';
+import 'package:app/ui/pages/widget/popup/wifi_error_dialog.dart';
+import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
 import 'widget/tools/bluetooth_discovery_service.dart';
 
 class AddConnectMyObjectPage extends StatefulWidget {
@@ -14,6 +21,13 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
 
   final BluetoothDiscoveryService _btService = BluetoothDiscoveryService();
 
+  StreamSubscription? _idSub;
+  StreamSubscription? _errSub;
+
+  final ObjectConnectionController _connectionController = ObjectConnectionController();
+  bool isCreatingProfile = false;
+  int? objectProfileId;
+
   int? plantId;
   String plantName = "votre plante";
   String? ssid;
@@ -21,6 +35,8 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
 
   int? objectId;
   bool isSearching = true;
+
+
 
   @override
   void initState() {
@@ -30,18 +46,19 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
   }
 
   void _setupBluetoothListeners() {
-    // Écoute du succès
-    _btService.objectIdStream.listen((id) {
+    _idSub = _btService.objectIdStream.listen((id) {
       if (mounted) {
         setState(() {
           objectId = id;
           isSearching = false;
         });
+        // DÈS QU'ON A L'ID, ON LANCE L'API AUTOMATIQUEMENT
+        _handleAutoCreate();
       }
     });
 
     // Écoute des erreurs avec la Pop-up
-    _btService.errorStream.listen((errorMessage) async {
+    _errSub = _btService.errorStream.listen((errorMessage) async {
       if (mounted && errorMessage != null) {
 
         // On affiche la pop-up et on attend la réponse (true ou false)
@@ -61,6 +78,8 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
 
   @override
   void dispose() {
+    _idSub?.cancel();
+    _errSub?.cancel();
     _btService.dispose(); // Très important pour éviter les fuites de mémoire
     super.dispose();
   }
@@ -91,7 +110,7 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
         foregroundColor: Colors.black,
         title: const Text("Connexion"),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,19 +147,17 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
                   const Divider(),
 
                   // --- NOUVELLE SECTION BLUETOOTH ---
-                  isSearching
+                  (isSearching || isCreatingProfile)
                       ? Column(
                     children: [
                       const SizedBox(height: 10),
-                      const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.green)
-                      ),
+                      const CircularProgressIndicator(strokeWidth: 2, color: Colors.green),
                       const SizedBox(height: 10),
-                      const Text(
-                        "Veuillez patienter en attendant la connexion...",
-                        style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.black54),
+                      Text(
+                        isCreatingProfile
+                            ? "Création de votre profil plante..."
+                            : "Recherche de l'objet...",
+                        style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.black54),
                       ),
                     ],
                   )
@@ -149,23 +166,30 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
               ),
             ),
 
-            const Spacer(),
+            const SizedBox(height: 40),
 
             // Le bouton final qui lancera l'action
             SizedBox(
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                // On désactive le bouton (onPressed = null) si on cherche encore
-                onPressed: isSearching ? null : () {
-                  print("Prêt à connecter : ID $plantId sur $ssid avec l'objet $objectId");
+                // On active SEULEMENT si on ne cherche plus ET que le profil est créé
+                onPressed: (isSearching || isCreatingProfile || objectProfileId == null)
+                    ? null
+                    : () {
+                  print("Action finale avec Profile ID: $objectProfileId");
+                  // C'est ici qu'on enverra le WIFI plus tard
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isSearching ? Colors.grey : Colors.green[700],
+                  backgroundColor: (isSearching || isCreatingProfile || objectProfileId == null)
+                      ? Colors.grey
+                      : Colors.green[700],
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 child: Text(
-                    isSearching ? "Recherche de l'objet..." : "Lancer la connexion",
+                    isSearching
+                        ? "Recherche..."
+                        : (isCreatingProfile ? "Création profil..." : "Lancer la connexion"),
                     style: const TextStyle(fontSize: 18, color: Colors.white)
                 ),
               ),
@@ -188,5 +212,80 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleAutoCreate() async {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final token = auth.accessToken ?? "";
+    final int userId = int.tryParse(auth.userId ?? "") ?? 0;
+
+    // 1. On affiche le loader
+    setState(() => isCreatingProfile = true);
+
+    // --- ÉTAPE 1 : CRÉATION DU PROFIL EN BDD D'ABORD ---
+    print("Étape 1 : Création du profil en base de données...");
+
+    final int? newId = await _connectionController.createProfile(
+      context: context,
+      title: plantName,
+      idObject: objectId!,
+      idPlantType: plantId!,
+      idPerson: userId,
+      token: token,
+    );
+
+    if (newId == null) {
+      // Si l'API échoue, on arrête tout (le controller affiche déjà l'erreur)
+      setState(() => isCreatingProfile = false);
+      return;
+    }
+
+    // --- ÉTAPE 2 : TEST DU WIFI SUR L'OBJET AVEC LE VRAI ID ---
+    print("Étape 2 : Profil créé (ID: $newId). Envoi des infos à l'objet...");
+
+    final Map<String, dynamic> testPayload = {
+      "id_object_profile": newId, // ON ENVOIE LE VRAI ID MAINTENANT !
+      "ssid_wifi": ssid,
+      "password_wifi": password,
+    };
+
+    // On met en pause les erreurs Bluetooth auto le temps du test
+    _errSub?.pause();
+
+    int? wifiStatus = await _btService.sendWifiAndGetStatus(jsonEncode(testPayload));
+
+    if (!mounted) return;
+    setState(() => isCreatingProfile = false);
+
+    if (wifiStatus == 0) {
+      // SUCCÈS TOTAL : OBJET CONNECTÉ + ID SAUVÉ DANS L'ESP32
+      print("Wi-Fi validé par l'objet et ID sauvegardé.");
+
+      await SuccessDialog.show(
+        context: context,
+        title: "Félicitations !",
+        message: "Votre $plantName est maintenant configurée et connectée !",
+        routeName: "/",
+      );
+    }
+    else {
+      // ÉCHEC DU TEST WIFI OU TIMEOUT
+      _errSub?.resume();
+
+      if (wifiStatus == 1) {
+        await WifiErrorDialog.show(
+            context,
+            "L'objet a reçu ses paramètres mais n'a pas pu se connecter au Wi-Fi. Vérifiez vos identifiants."
+        );
+      } else {
+        ConnectionErrorDialog.show(
+          context,
+          message: "L'objet n'a pas renvoyé de confirmation (Timeout).",
+        );
+      }
+
+      // Note: Ici, le profil est créé en BDD mais l'objet n'est pas connecté.
+      if (mounted) Navigator.of(context).pop();
+    }
   }
 }
