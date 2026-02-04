@@ -11,10 +11,10 @@ class BluetoothDiscoveryService {
   static const String targetCharUuid = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
 
   // Contrôleurs de flux
-  final StreamController<int?> _objectIdController = StreamController<int?>.broadcast();
+  final StreamController<Map<String, dynamic>?> _objectIdController = StreamController<Map<String, dynamic>?>.broadcast();
   final StreamController<String?> _errorController = StreamController<String?>.broadcast();
 
-  Stream<int?> get objectIdStream => _objectIdController.stream;
+  Stream<Map<String, dynamic>?> get objectIdStream => _objectIdController.stream;
   Stream<String?> get errorStream => _errorController.stream;
 
   StreamSubscription? _scanSubscription;
@@ -90,7 +90,11 @@ class BluetoothDiscoveryService {
             try {
               final data = jsonDecode(rawJson);
               if (data is Map && data.containsKey('id_object')) {
-                _objectIdController.add(data['id_object']);
+                // ON ENVOIE TOUT LE PAQUET À LA PAGE (id_object ET id_object_profile)
+                _objectIdController.add({
+                  'id_object': data['id_object'],
+                  'id_object_profile': data['id_object_profile'] ?? 0,
+                });
               } else {
                 _errorController.add("Données reçues invalides.");
               }

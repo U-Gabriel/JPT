@@ -8,6 +8,7 @@ import 'package:app/ui/pages/widget/controllers/object_connection_controller.dar
 import 'package:app/ui/pages/widget/popup/connection_error_dialog.dart';
 import 'package:app/ui/pages/widget/popup/wifi_error_dialog.dart';
 import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
+import '../../services/object_profile_service.dart';
 import 'widget/tools/bluetooth_discovery_service.dart';
 
 class AddConnectMyObjectPage extends StatefulWidget {
@@ -15,11 +16,13 @@ class AddConnectMyObjectPage extends StatefulWidget {
 
   @override
   State<AddConnectMyObjectPage> createState() => _AddConnectMyObjectPageState();
+
 }
 
 class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
 
   final BluetoothDiscoveryService _btService = BluetoothDiscoveryService();
+  final ObjectProfileService _profileService = ObjectProfileService();
 
   StreamSubscription? _idSub;
   StreamSubscription? _errSub;
@@ -46,34 +49,73 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
   }
 
   void _setupBluetoothListeners() {
-    _idSub = _btService.objectIdStream.listen((id) {
-      if (mounted) {
+    _idSub = _btService.objectIdStream.listen((data) async {
+      if (mounted && data != null) {
+        int receivedObjectId = data['id_object'];
+        int existingProfileId = data['id_object_profile'];
+
+        // --- LOGIQUE DE VÉRIFICATION INTELLIGENTE ---
+        if (existingProfileId != 0) {
+          setState(() => isSearching = false);
+
+          try {
+            final auth = Provider.of<AuthProvider>(context, listen: false);
+            // On vérifie si ce profil existe vraiment encore pour quelqu'un
+            final profile = await _profileService.fetchObjectProfileDetails(existingProfileId, auth.accessToken!);
+
+            // SI ON ARRIVE ICI, LE PROFIL EXISTE VRAIMENT EN BDD
+            await showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => AlertDialog(
+                title: const Text("Objet déjà associé"),
+                content: Text("Cet objet est déjà lié à la fleur '${profile.title}'.\n\nVeuillez d'abord supprimer la fleur associée dans vos paramètres."),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      Navigator.pop(context);
+                    },
+                    child: const Text("COMPRIS"),
+                  ),
+                ],
+              ),
+            );
+            return; // Blocage réel car le profil existe en BDD
+
+          } catch (e) {
+            // SI ON ARRIVE ICI (Erreur 404 ou autre), le profil n'existe plus en BDD
+            // L'objet est orphelin : ON CONTINUE LA CONNEXION NORMALEMENT
+            print("L'objet avait l'ID $existingProfileId mais il n'existe plus en BDD. On écrase.");
+          }
+        }
+
+        // --- SI L'OBJET EST NEUF (0) OU ORPHELIN (ID INEXISTANT EN BDD) ---
         setState(() {
-          objectId = id;
+          objectId = receivedObjectId;
           isSearching = false;
         });
-        // DÈS QU'ON A L'ID, ON LANCE L'API AUTOMATIQUEMENT
+
         _handleAutoCreate();
       }
     });
+      // Écoute des erreurs avec la Pop-up
+      _errSub = _btService.errorStream.listen((errorMessage) async {
+        if (mounted && errorMessage != null) {
 
-    // Écoute des erreurs avec la Pop-up
-    _errSub = _btService.errorStream.listen((errorMessage) async {
-      if (mounted && errorMessage != null) {
+          // On affiche la pop-up et on attend la réponse (true ou false)
+          bool? retry = await ConnectionErrorDialog.show(context, message: errorMessage);
 
-        // On affiche la pop-up et on attend la réponse (true ou false)
-        bool? retry = await ConnectionErrorDialog.show(context, message: errorMessage);
-
-        if (retry == true) {
-          // Option "Réessayer"
-          setState(() => isSearching = true);
-          _btService.startSearching();
-        } else {
-          // Option "Annuler"
-          if (mounted) Navigator.of(context).pop(); // Retour à la page précédente
+          if (retry == true) {
+            // Option "Réessayer"
+            setState(() => isSearching = true);
+            _btService.startSearching();
+          } else {
+            // Option "Annuler"
+            if (mounted) Navigator.of(context).pop(); // Retour à la page précédente
+          }
         }
-      }
-    });
+      });
   }
 
   @override
@@ -259,32 +301,63 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
 
     if (wifiStatus == 0) {
       // SUCCÈS TOTAL : OBJET CONNECTÉ + ID SAUVÉ DANS L'ESP32
-      print("Wi-Fi validé par l'objet et ID sauvegardé.");
+      print("Wi-Fi OK. Activation du profil $newId...");
 
-      await SuccessDialog.show(
-        context: context,
-        title: "Félicitations !",
-        message: "Votre $plantName est maintenant configurée et connectée !",
-        routeName: "/",
+      bool activated = await _profileService.updateObjectProfile(
+        idPerson: userId,
+        idObjectProfile: newId,
+        otherFields: {"activate": 1}, // <--- C'est ici que c'est dynamique
+        token: token,
       );
+
+      setState(() => isCreatingProfile = false);
+
+      if (activated) {
+        // SUCCÈS TOTAL
+        await SuccessDialog.show(
+          context: context,
+          title: "Félicitations !",
+          message: "Votre $plantName est configurée et activée !",
+          routeName: "/",
+        );
+      } else {
+
+        print("Échec Wi-Fi. Rollback...");
+        await _profileService.deleteObjectProfile(idPerson: userId, idObjectProfile: newId, token: token);
+
+        _errSub?.resume();
+
+        await ConnectionErrorDialog.show(context, message: "L'objet ne répond plus. Profil annulé.");
+
+        if (mounted) Navigator.of(context).pop();
+      }
+
     }
     else {
-      // ÉCHEC DU TEST WIFI OU TIMEOUT
+      // --- ÉCHEC : ROLLBACK (SUPPRESSION) ---
+      print("Échec Wi-Fi. Suppression du profil $newId en cours...");
+
+      await _profileService.deleteObjectProfile(
+        idPerson: userId,
+        idObjectProfile: newId,
+        token: token,
+      );
+
+      setState(() => isCreatingProfile = false);
       _errSub?.resume();
 
       if (wifiStatus == 1) {
         await WifiErrorDialog.show(
             context,
-            "L'objet a reçu ses paramètres mais n'a pas pu se connecter au Wi-Fi. Vérifiez vos identifiants."
+            "L'objet n'a pas pu se connecter au Wi-Fi. Le profil a été annulé."
         );
       } else {
         ConnectionErrorDialog.show(
           context,
-          message: "L'objet n'a pas renvoyé de confirmation (Timeout).",
+          message: "L'objet ne répond plus. Connexion annulée.",
         );
       }
 
-      // Note: Ici, le profil est créé en BDD mais l'objet n'est pas connecté.
       if (mounted) Navigator.of(context).pop();
     }
   }

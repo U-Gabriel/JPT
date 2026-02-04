@@ -95,24 +95,40 @@ class ObjectProfileService {
     }
   }
 
-  Future<void> updateObjectProfile({
-    required String id,
-    required Map<String, dynamic> body,
+  Future<bool> updateObjectProfile({
+    required int idPerson,
+    required int idObjectProfile,
+    required Map<String, dynamic> otherFields,
     required String token,
   }) async {
-    final url = Uri.parse(AppConfig.updateObjectProfileEndpoint(id));
+    final url = Uri.parse(AppConfig.objectProfileEndpointUpdate());
 
-    final response = await http.patch(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
-    );
+    // On crée le body avec les champs obligatoires
+    final Map<String, dynamic> fullBody = {
+      "id_person": idPerson,
+      "id_object_profile": idObjectProfile,
+    };
 
-    if (response.statusCode != 200) {
-      throw Exception("Erreur mise à jour : ${response.statusCode}");
+    fullBody.addAll(otherFields);
+
+    try {
+      final response = await http.patch( // Utilise patch ou post selon ton API
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(fullBody),
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        return decoded['status'] == "OK";
+      }
+      return false;
+    } catch (e) {
+      print("Erreur lors de l'update : $e");
+      return false;
     }
   }
 
@@ -144,6 +160,37 @@ class ObjectProfileService {
       return ObjectProfile.fromJson(data.first);
     } else {
       throw Exception('Erreur de chargement: ${response.statusCode}');
+    }
+  }
+
+  Future<bool> deleteObjectProfile({
+    required int idPerson,
+    required int idObjectProfile,
+    required String token,
+  }) async {
+    final url = Uri.parse(AppConfig.objectProfilesEndpointDelete());
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "id_person": idPerson,
+          "id_object_profile": idObjectProfile,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        return decoded['status'] == "OK" && decoded['data']['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      print("Erreur lors de la suppression du profil : $e");
+      return false;
     }
   }
 

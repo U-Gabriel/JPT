@@ -50,8 +50,9 @@ class _PlantControlSwitchesState extends State<PlantControlSwitches> {
 
     try {
       await ObjectProfileService().updateObjectProfile(
-        id: widget.plant.idObjectProfile.toString(),
-        body: {field: value},
+        idPerson: widget.plant.idObjectProfile,
+        idObjectProfile:widget.plant.idObjectProfile ,
+        otherFields: {field: value},
         token: token,
       );
     } catch (e) {
