@@ -157,7 +157,7 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
         LEFT JOIN avatar a 
             ON a.id_plant_type = pt.id_plant_type
             AND (a.evolution_number = op.state_plant OR a.evolution_number = 0)
-        WHERE op.id_person = $1 AND op.is_favorite = true
+        WHERE op.id_person = $1 AND op.is_favorite = true AND op.activate = 1
         ORDER BY op.id_object_profile, 
                  CASE 
                     WHEN a.evolution_number = op.state_plant THEN 1 
@@ -186,7 +186,7 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
     }));
 };
 
- const updateObjectProfile = async (body) => {
+const updateObjectProfile = async (body) => {
     const { id_object_profile, id_person, ...fields } = body;
 
     if (!id_object_profile) {
@@ -296,7 +296,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         LEFT JOIN avatar a 
             ON a.id_plant_type = pt.id_plant_type
             AND (a.evolution_number = op.state_plant OR a.evolution_number = 0)
-        WHERE op.id_object_profile = $1;
+        WHERE op.id_object_profile = $1 AND op.activate = 1;
         `;
 
     const { rows } = await pool.query(query, [id_object_profile]);

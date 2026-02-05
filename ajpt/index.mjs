@@ -8,6 +8,7 @@ import file from 'fs'
 import swaggerUi from 'swagger-ui-express'
 import {routerAuth} from './routes/auth.router.mjs'
 import {routerObjectProfile} from './routes/object_profile.router.mjs'
+import {routerObject} from './routes/object.router.mjs'
 import {routerPlantType} from './routes/plant_type.router.mjs'
 
 const app = express()
@@ -30,6 +31,8 @@ app.use(cors());
 const swagger = JSON.parse(file.readFileSync('./swagger/swagger_output.json', 'utf8'))
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swagger, {swaggerOptions: {persistAuthorization: true}}))
 
+// Routers
+app.use(routerObject)
 
 // Token JWT
 app.use(authToken)
