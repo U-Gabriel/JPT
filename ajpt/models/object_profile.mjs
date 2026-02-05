@@ -296,7 +296,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         LEFT JOIN avatar a 
             ON a.id_plant_type = pt.id_plant_type
             AND (a.evolution_number = op.state_plant OR a.evolution_number = 0)
-        WHERE op.id_object_profile = $1 AND op.activate = 1;
+        WHERE op.id_object_profile = $1;
         `;
 
     const { rows } = await pool.query(query, [id_object_profile]);
