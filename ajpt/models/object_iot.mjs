@@ -15,7 +15,7 @@ const updateObjectProfileObj = async (body) => {
     if (!sensor_data || !sensor_data.length) throw new Error("sensor_data is required");
 
     
-    const [latestUV, latestTemp, latestHum, latestArid] = sensor_data[0];
+    const [latestUV, latestTemp, latestHum, latestArid] = sensor_data[sensor_data.length - 1];
     const count = sensor_data.length;
     
     const sums = sensor_data.reduce((acc, curr) => [
