@@ -32,10 +32,4 @@ const UpdateObjectProfileObjController = (op) => {
     });
 };
 
-
-
-
-
-
-
 export { UpdateObjectProfileObjController }
