@@ -47,7 +47,7 @@ const updateObjectProfileObj = async (body) => {
                     last_watering_date = COALESCE($11, last_watering_date),
                     is_water = false
                 WHERE id_object_profile = $10
-                RETURNING id_object_profile, id_plant_type
+                RETURNING id_object_profile, id_plant_type, is_automatic
             )
             SELECT 
                 g.conductivity_electrique_fertility_sensor,
@@ -56,7 +56,7 @@ const updateObjectProfileObj = async (body) => {
                 g.exposition_time_uv,
                 g.watering_time,
                 g.prority_plant,
-                true AS is_activate
+                up.is_automatic
             FROM updated_op up
             LEFT JOIN group_plant_type g ON (
                 (g.id_object_profile = up.id_object_profile AND g.is_active = true)
