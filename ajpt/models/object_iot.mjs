@@ -84,4 +84,48 @@ const updateObjectProfileObj = async (body) => {
     return rows[0];
 };
 
-export { updateObjectProfileObj };
+
+/**
+ * Alterne l'état (Toggle) de is_automatic pour un profil donné.
+ * Si c'était true, passe à false. Si c'était false, passe à true.
+ */
+const updateIsAutomaticObjectProfileObj = async (body) => {
+    const { id_object_profile } = body;
+
+    // 1. Validation de l'ID
+    if (!id_object_profile) {
+        throw new Error("id_object_profile is required");
+    }
+
+    // 2. Requête SQL d'inversion
+    const query = {
+        text: `
+            UPDATE object_profile
+            SET 
+                is_automatic = NOT is_automatic, -- Inverse le booléen
+                modify_op = NOW()                -- Actualise la date de modif
+            WHERE id_object_profile = $1
+            RETURNING id_object_profile, is_automatic;
+        `,
+        values: [id_object_profile]
+    };
+
+    try {
+        const { rows } = await pool.query(query);
+
+        // 3. Vérification si le profil existe
+        if (rows.length === 0) {
+            throw new Error("Update failed: Object profile not found");
+        }
+
+        // 4. Renvoie la nouvelle valeur (ex: { id_object_profile: 78, is_automatic: false })
+        return rows[0];
+
+    } catch (error) {
+        // Log de l'erreur pour le debug serveur
+        console.error("Error in updateIsAutomaticObjectProfileObj:", error.message);
+        throw error;
+    }
+};
+
+export { updateObjectProfileObj, updateIsAutomaticObjectProfileObj };
