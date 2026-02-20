@@ -128,4 +128,44 @@ const updateIsAutomaticObjectProfileObj = async (body) => {
     }
 };
 
-export { updateObjectProfileObj, updateIsAutomaticObjectProfileObj };
+/**
+ * Vérifie si un ordre d'arrosage est en attente (is_water).
+ * Si oui, renvoie true et repasse immédiatement la base à false.
+ * @param {Object} body { id_object_profile }
+ */
+const updateCheckAndResetIsWaterObj = async (body) => {
+    const { id_object_profile } = body;
+
+    if (!id_object_profile) {
+        throw new Error("id_object_profile is required");
+    }
+
+    const query = {
+        text: `
+            WITH currentState AS (
+                -- On mémorise l'état actuel avant de le modifier
+                SELECT is_water FROM object_profile WHERE id_object_profile = $1
+            )
+            UPDATE object_profile
+            SET 
+                is_water = false,
+                -- On ne met à jour la date que si on a réellement consommé un arrosage
+                modify_op = CASE WHEN (SELECT is_water FROM currentState) = true THEN NOW() ELSE modify_op END
+            WHERE id_object_profile = $1
+            -- On retourne l'état mémorisé au tout début
+            RETURNING (SELECT is_water FROM currentState) AS is_water;
+        `,
+        values: [id_object_profile]
+    };
+
+    const { rows } = await pool.query(query);
+
+    if (rows.length === 0) {
+        throw new Error("Check is_water failed: Object profile not found");
+    }
+
+    // Renvoie un objet simple : { is_water: true } ou { is_water: false }
+    return rows[0];
+};
+
+export { updateObjectProfileObj, updateIsAutomaticObjectProfileObj, updateCheckAndResetIsWaterObj };
