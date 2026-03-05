@@ -93,29 +93,40 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
     if (!id_person) throw new Error("id_person is required");
 
     const query = `
-        SELECT DISTINCT ON (op.id_object_profile)
-            op.id_object_profile,
-            op.title AS op_title,
-            op.is_automatic,
-            op.is_water,
-            op.state_plant,
-            pt.id_plant_type AS id_plant_type,
-            pt.title AS plant_title,
-            a.title AS avatar_title,
-            a.picture_path AS path_picture
-        FROM object_profile op
-        LEFT JOIN plant_type pt ON pt.id_plant_type = op.id_plant_type
-        LEFT JOIN avatar a 
-            ON a.id_plant_type = pt.id_plant_type
-            AND (a.evolution_number = op.state_plant OR a.evolution_number = 0)
-        WHERE op.id_person = $1 AND activate = 1
-        ORDER BY op.id_object_profile, 
-                 CASE 
-                    WHEN a.evolution_number = op.state_plant THEN 1 
-                    WHEN a.evolution_number = 0 THEN 2
-                    ELSE 3 
-                 END;
-    `;
+            SELECT DISTINCT ON (op.id_object_profile)
+                op.id_object_profile,
+                op.title AS op_title,
+                op.is_automatic,
+                op.is_water,
+                op.state_plant,
+                pt.id_plant_type AS id_plant_type,
+                pt.title AS plant_title,
+                a.title AS avatar_title,
+                a.picture_path AS path_picture
+            FROM object_profile op
+            LEFT JOIN plant_type pt ON pt.id_plant_type = op.id_plant_type
+            -- On ouvre le JOIN pour permettre à SQL de voir toutes les photos dispo pour cette plante
+            LEFT JOIN avatar a ON a.id_plant_type = pt.id_plant_type
+            WHERE op.id_person = $1 AND op.activate = 1
+            ORDER BY op.id_object_profile, 
+                    CASE 
+                        -- PRIORITÉ 0 : L'image exacte de l'état (ex: state 3 -> photo 3)
+                        WHEN a.evolution_number = op.state_plant THEN 0
+                        
+                        -- PRIORITÉ 1 : Si l'état est 3 ou 4, on cherche la photo 3
+                        WHEN op.state_plant IN (3, 4) AND a.evolution_number = 3 THEN 1
+                        
+                        -- PRIORITÉ 2 : Si l'état est 0, 1 ou 2, on cherche la photo 0
+                        WHEN op.state_plant IN (0, 1, 2) AND a.evolution_number = 0 THEN 2
+                        
+                        -- PRIORITÉ 3 : Sécurité, on prend l'avatar le plus élevé qui ne dépasse pas l'état
+                        WHEN a.evolution_number < op.state_plant THEN 3
+                        
+                        ELSE 4
+                    END ASC,
+                    -- En cas d'égalité sur la priorité, on prend l'évolution la plus haute
+                    a.evolution_number DESC;
+        `;
 
     const { rows } = await pool.query(query, [id_person]);
 
@@ -151,19 +162,32 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
             pt.id_plant_type AS id_plant_type,
             pt.title AS plant_title,
             a.title AS avatar_title,
-            a.picture_path AS path_picture
+            a.picture_path AS path_picture,
+            a.evolution_number
         FROM object_profile op
         LEFT JOIN plant_type pt ON pt.id_plant_type = op.id_plant_type
-        LEFT JOIN avatar a 
-            ON a.id_plant_type = pt.id_plant_type
-            AND (a.evolution_number = op.state_plant OR a.evolution_number = 0)
-        WHERE op.id_person = $1 AND op.is_favorite = true AND op.activate = 1
+        LEFT JOIN avatar a ON a.id_plant_type = pt.id_plant_type
+        WHERE op.id_person = $1 
+        AND op.is_favorite = true 
+        AND op.activate = 1
         ORDER BY op.id_object_profile, 
-                 CASE 
-                    WHEN a.evolution_number = op.state_plant THEN 1 
-                    WHEN a.evolution_number = 0 THEN 2
-                    ELSE 3 
-                 END;
+                CASE 
+                    -- 1. Si la photo exacte existe, c'est le top priorité
+                    WHEN a.evolution_number = op.state_plant THEN 0
+                    
+                    -- 2. Gestion du palier [3, 4] -> on cherche la photo 3
+                    WHEN op.state_plant IN (3, 4) AND a.evolution_number = 3 THEN 1
+                    
+                    -- 3. Gestion du palier [0, 1, 2] -> on cherche la photo 0
+                    WHEN op.state_plant IN (0, 1, 2) AND a.evolution_number = 0 THEN 1
+                    
+                    -- 4. Pour tout le reste (ex: state 5), on prend l'avatar le plus élevé qui ne dépasse pas le state
+                    WHEN a.evolution_number < op.state_plant THEN 2
+                    
+                    ELSE 3
+                END ASC,
+                -- Si plusieurs photos sont dans la même priorité, on prend la plus grande
+                a.evolution_number DESC;
     `;
 
     const { rows } = await pool.query(query, [id_person]);
