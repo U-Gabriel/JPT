@@ -312,6 +312,36 @@
             }
           ]
         }
+      },
+      "/group_plant_type/resume": {
+        "post": {
+          "tags": [
+            "Group Plant Type"
+          ],
+          "description": "Afficher la liste des group plant type.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Listes plant_type summary",
+              "schema": {
+                "$ref": "#/definitions/ObjectProfileDel"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
       }
     },
     "definitions": {

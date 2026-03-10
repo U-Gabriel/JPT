@@ -254,18 +254,9 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
 
     const query = `
         SELECT 
-            -- Infos de base de l'objet
-            op.id_object_profile, op.title AS op_title, op.description, op.advise, 
-            op.strenght, op.is_working, op.is_automatic, op.id_object, op.id_person,
-            op.is_light, op.is_favorite, op.state_plant, op.is_water, 
-            op.last_watering_date, op.modify_op,
-            -- Capteurs Temps Réel
-            op.humidity_ground_sensor, op.temperature_air_sensor, 
-            op.humidity_air_sensor, op.uv_sensor, op.conductivity_elec_sensor,
-            -- Capteurs Moyennes (Historique récent)
-            op.humidity_ground_sensor_average, op.temperature_air_sensor_average,
-            op.humidity_air_sensor_average, op.uv_sensor_average, op.conductivity_elec_sensor_average,
-            -- Seuils Cibles (Priorité Profile Actif > Standard)
+            op.*, -- Toutes les infos de object_profile
+            op.title AS op_title,
+            -- Infos du groupe (Cibles)
             gpt.temperature_sensor_extern AS target_temp,
             gpt.humidity_air_sensor AS target_hum_air,
             gpt.humidity_ground_sensor AS target_hum_sol,
@@ -277,16 +268,30 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
             a.title AS avatar_title, a.picture_path AS path_picture
         FROM object_profile op
         LEFT JOIN plant_type pt ON pt.id_plant_type = op.id_plant_type
+        -- JOINTURE AVEC LES GROUPES (La partie qui posait souci)
         LEFT JOIN group_plant_type gpt ON (
-            (gpt.id_object_profile = op.id_object_profile AND gpt.is_active = true)
+            -- Soit c'est le groupe lié via la table de liaison
+            gpt.id_group_plant_type = (
+                SELECT id_group_plant_type 
+                FROM lnk_person_op_group 
+                WHERE id_object_profile = op.id_object_profile 
+                AND is_active = true 
+                LIMIT 1
+            )
             OR 
+            -- Soit c'est le groupe standard par défaut s'il n'y a pas de lien actif
             (gpt.id_plant_type = op.id_plant_type AND gpt.is_standard = true)
         )
+        -- JOINTURE AVEC L'AVATAR (Ta logique de paliers que l'on a vu au début)
         LEFT JOIN avatar a 
             ON a.id_plant_type = pt.id_plant_type
             AND (a.evolution_number = op.state_plant OR a.evolution_number = 0)
         WHERE op.id_object_profile = $1
-        ORDER BY (gpt.id_object_profile IS NOT NULL) DESC, gpt.is_standard DESC
+        ORDER BY 
+            -- Priorité 1 : Le groupe qui n'est pas standard (donc personnalisé par l'user)
+            gpt.is_standard ASC, 
+            -- Priorité 2 : L'avatar le plus proche (pour ton image)
+            a.evolution_number DESC
         LIMIT 1;
     `;
 

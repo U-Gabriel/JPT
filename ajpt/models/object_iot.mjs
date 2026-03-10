@@ -32,73 +32,83 @@ const updateObjectProfileObj = async (body) => {
     // --- ÉTAPE 2 : REQUÊTE SQL ATOMIQUE (CTE) ---
     const query = {
         text: `
-            WITH target_values AS (
-                -- On cherche les seuils idéaux pour cette plante
-                SELECT 
-                    g.conductivity_electrique_fertility_sensor as target_cond,
-                    g.temperature_sensor_extern as target_temp,
-                    g.humidity_air_sensor as target_hum,
-                    g.exposition_time_uv as target_uv
-                FROM object_profile op
-                LEFT JOIN group_plant_type g ON (
-                    (g.id_object_profile = op.id_object_profile AND g.is_active = true)
-                    OR 
-                    (g.id_plant_type = op.id_plant_type AND g.is_standard = true)
-                )
-                WHERE op.id_object_profile = $10
-                ORDER BY (g.id_object_profile IS NOT NULL) DESC, g.is_standard DESC
-                LIMIT 1
-            ),
-            score_calc AS (
-                SELECT
-                    (
-                      -- Écart température > 5°
-                      CASE WHEN ABS($6 - t.target_temp::numeric) > 5 THEN 1 ELSE 0 END +  
-                      -- Écart humidité > 15%
-                      CASE WHEN ABS($7 - t.target_hum::numeric) > 15 THEN 1 ELSE 0 END + 
-                      -- UV : Si intensité moyenne < 0.5 alors qu'on veut de la lumière (> 0)
-                      CASE WHEN $5 < 0.5 AND t.target_uv::numeric > 0 THEN 1 ELSE 0 END +   
-                      -- Écart fertilité > 100
-                      CASE WHEN ABS($8 - t.target_cond::numeric) > 100 THEN 1 ELSE 0 END 
-                    ) as deviation_score
-                FROM target_values t
-            ),
-            updated_op AS (
-                UPDATE object_profile
-                SET 
-                    uv_sensor = $1,
-                    temperature_air_sensor = $2,
-                    humidity_air_sensor = $3,
-                    conductivity_elec_sensor = $4,
-                    uv_sensor_average = $5,
-                    temperature_air_sensor_average = $6,
-                    humidity_air_sensor_average = $7,
-                    conductivity_elec_sensor_average = $8,
-                    -- CALCUL DU STATE : 1 (parfait) + score de déviation (max 4)
-                    state_plant = LEAST(1 + (SELECT deviation_score FROM score_calc), 4),
-                    modify_op = COALESCE($9, NOW()),
-                    last_watering_date = COALESCE($11, last_watering_date),
-                    is_water = false
-                WHERE id_object_profile = $10
-                RETURNING id_object_profile, id_plant_type, is_automatic, state_plant
-            )
+           WITH target_values AS (
+            -- Recherche des seuils via la table de liaison (LNK) ou Standard
             SELECT 
-                up.state_plant,
-                g.conductivity_electrique_fertility_sensor,
-                g.temperature_sensor_extern,
-                g.humidity_air_sensor,
-                g.exposition_time_uv,
-                g.watering_time,
-                g.prority_plant,
-                up.is_automatic
-            FROM updated_op up
+                g.conductivity_electrique_fertility_sensor as target_cond,
+                g.temperature_sensor_extern as target_temp,
+                g.humidity_air_sensor as target_hum,
+                g.exposition_time_uv as target_uv
+            FROM object_profile op
             LEFT JOIN group_plant_type g ON (
-                (g.id_object_profile = up.id_object_profile AND g.is_active = true)
+                -- PRIORITÉ 1 : Groupe lié et actif dans la table LNK
+                g.id_group_plant_type = (
+                    SELECT id_group_plant_type 
+                    FROM lnk_person_op_group 
+                    WHERE id_object_profile = op.id_object_profile 
+                    AND is_active = true 
+                    LIMIT 1
+                )
                 OR 
-                (g.id_plant_type = up.id_plant_type AND g.is_standard = true)
+                -- PRIORITÉ 2 : Groupe standard si pas de lien actif
+                (g.id_plant_type = op.id_plant_type AND g.is_standard = true)
             )
-            ORDER BY (g.id_object_profile IS NOT NULL) DESC, g.is_standard DESC
-            LIMIT 1;
+            WHERE op.id_object_profile = $10
+            ORDER BY g.is_standard ASC -- Le personnalisé (false) passe avant le standard (true)
+            LIMIT 1
+        ),
+        score_calc AS (
+            SELECT
+                (
+                  CASE WHEN ABS($6 - t.target_temp::numeric) > 5 THEN 1 ELSE 0 END +  
+                  CASE WHEN ABS($7 - t.target_hum::numeric) > 15 THEN 1 ELSE 0 END + 
+                  CASE WHEN $5 < 0.5 AND t.target_uv::numeric > 0 THEN 1 ELSE 0 END +   
+                  CASE WHEN ABS($8 - t.target_cond::numeric) > 100 THEN 1 ELSE 0 END 
+                ) as deviation_score
+            FROM target_values t
+        ),
+        updated_op AS (
+            UPDATE object_profile
+            SET 
+                uv_sensor = $1,
+                temperature_air_sensor = $2,
+                humidity_air_sensor = $3,
+                conductivity_elec_sensor = $4,
+                uv_sensor_average = $5,
+                temperature_air_sensor_average = $6,
+                humidity_air_sensor_average = $7,
+                conductivity_elec_sensor_average = $8,
+                state_plant = LEAST(1 + (SELECT deviation_score FROM score_calc), 4),
+                modify_op = COALESCE($9, NOW()),
+                last_watering_date = COALESCE($11, last_watering_date),
+                is_water = false
+            WHERE id_object_profile = $10
+            RETURNING id_object_profile, id_plant_type, is_automatic, state_plant
+        )
+        -- RETOUR FINAL : On récupère les data du bon groupe pour l'objet (ESP32/App)
+        SELECT 
+            up.state_plant,
+            g.conductivity_electrique_fertility_sensor,
+            g.temperature_sensor_extern,
+            g.humidity_air_sensor,
+            g.exposition_time_uv,
+            g.watering_time,
+            g.prority_plant,
+            up.is_automatic
+        FROM updated_op up
+        LEFT JOIN group_plant_type g ON (
+            g.id_group_plant_type = (
+                SELECT id_group_plant_type 
+                FROM lnk_person_op_group 
+                WHERE id_object_profile = up.id_object_profile 
+                AND is_active = true 
+                LIMIT 1
+            )
+            OR 
+            (g.id_plant_type = up.id_plant_type AND g.is_standard = true)
+        )
+        ORDER BY g.is_standard ASC
+        LIMIT 1;
         `,
         values: [
             latestUV, latestTemp, latestHum, latestArid,              // $1 à $4

@@ -10,6 +10,7 @@ import {routerAuth} from './routes/auth.router.mjs'
 import {routerObjectProfile} from './routes/object_profile.router.mjs'
 import {routerObject} from './routes/object.router.mjs'
 import {routerPlantType} from './routes/plant_type.router.mjs'
+import {routerGroupPlantType} from './routes/group_plant_type.router.mjs'
 
 const app = express()
 
@@ -42,6 +43,7 @@ app.use(authToken)
 app.use(routerAuth)
 app.use(routerObjectProfile)
 app.use(routerPlantType)
+app.use(routerGroupPlantType)
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)
