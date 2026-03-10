@@ -4,6 +4,7 @@ class PlantType {
   final int? idPlantType;
   final String title;
   final String? description;
+  final String? advise;
   final String? scientistName;
   final String? familyName;
   final String? typeName;
@@ -16,8 +17,15 @@ class PlantType {
   final double? temperatureSensorExtern;
   final double? humidityAirSensor;
   final double? humidityGroundSensor;
-  final double? expositionTimeSun;
   final String? pathPicture;
+  final String? height;
+  final String? category;
+  final String? plantationSaison;
+  final String? saisonFirst;
+  final String? saisonSecond;
+  final String? saisonThird;
+  final String? saisonLast;
+  final double? expositionTimeSun;
   final List<Avatar>? avatars;
 
 
@@ -25,6 +33,7 @@ class PlantType {
     required this.idPlantType,
     required this.title,
     this.description,
+    this.advise,
     this.scientistName,
     this.familyName,
     this.typeName,
@@ -37,8 +46,15 @@ class PlantType {
     this.temperatureSensorExtern,
     this.humidityAirSensor,
     this.humidityGroundSensor,
-    this.expositionTimeSun,
     this.pathPicture,
+    this.height,
+    this.category,
+    this.plantationSaison,
+    this.saisonFirst,
+    this.saisonSecond,
+    this.saisonThird,
+    this.saisonLast,
+    this.expositionTimeSun,
     this.avatars,
   });
 
@@ -47,11 +63,12 @@ class PlantType {
     idPlantType: json['id_plant_type'] ?? 0,
     title: json['title'],
     description: json['description'],
-    scientistName: json['scientistName'],
-    familyName: json['familyName'],
-    typeName: json['typeName'],
-    expositionType: json['expositionType'],
-    groundType: json['groundType'],
+    advise: json['advise'],
+    scientistName: json['scientist_name'],
+    familyName: json['family_name'],
+    typeName: json['type_name'],
+    expositionType: json['exposition_type'],
+    groundType: json['ground_type'],
     phGroundSensor: double.tryParse(json['phGroundSensor'] ?? ''),
     conductivityElectriqueFertilitySensor:
     double.tryParse(json['conductivityElectriqueFertilitySensor'] ?? ''),
@@ -60,10 +77,27 @@ class PlantType {
     temperatureSensorExtern: double.tryParse(json['temperatureSensorExtern'] ?? ''),
     humidityAirSensor: double.tryParse(json['humidityAirSensor'] ?? ''),
     humidityGroundSensor: double.tryParse(json['humidityGroundSensor'] ?? ''),
-    expositionTimeSun: double.tryParse(json['expositionTimeSun'] ?? ''),
     pathPicture: json['picture_path'] ?? json['path_picture'],
+    height: json['height'],
+    category: json['category'],
+    plantationSaison: json['plantation_saison'],
+    saisonFirst: json['saison_first'],
+    saisonSecond: json['saison_second'],
+    saisonThird: json['saison_third'],
+    saisonLast: json['saison_last'],
+    expositionTimeSun: double.tryParse(json['exposition_time_sun']?.toString() ?? ''),
     avatars: (json['avatars'] as List? ?? [])
         .map((item) => Avatar.fromJson(item))
         .toList(),
   );
+
+
+  factory PlantType.defaultType() {
+    return PlantType(
+      idPlantType: 0,
+      title: "Plante inconnue",
+      description: "Pas de description",
+      pathPicture: null,
+    );
+  }
 }

@@ -1,3 +1,7 @@
+
+import 'package:app/models/plant_details.dart';
+import 'package:app/models/sensor_data.dart';
+
 import 'object_model.dart';
 import 'plant_type.dart';
 
@@ -21,6 +25,13 @@ class ObjectProfile {
   final double? temperatureSensorExtern;
   final double? expositionTimeSun;
 
+  final String? adviceRealtime;
+  final bool isWater;
+  final bool isFavorite;
+  final String? lastWatering;
+  final SensorData sensors;
+  final PlantDetails plantDetails;
+
   ObjectProfile({
     required this.idObjectProfile,
     required this.title,
@@ -40,6 +51,14 @@ class ObjectProfile {
     this.temperatureSensorGround,
     this.temperatureSensorExtern,
     this.expositionTimeSun,
+
+    this.adviceRealtime,
+    required this.isWater,
+    required this.isFavorite,
+    this.lastWatering,
+    required this.sensors,
+    required this.plantDetails,
+
   });
 
   factory ObjectProfile.fromJson(Map<String, dynamic> json) {
@@ -54,7 +73,11 @@ class ObjectProfile {
         isAutomatic: json['is_automatic'],
         isWillWatering: json['is_water'],
         object: json['object'] != null ? ObjectModel.fromJson(json['object']) : null,
-        plantType: PlantType.fromJson(json['plant_type']),
+
+        plantType: json['plant_type'] != null
+            ? PlantType.fromJson(json['plant_type'])
+            : PlantType.defaultType(),
+
         humidityAirSensor: parseDouble(json['humidity_air_sensor']),
         humidityGroundSensor: parseDouble(json['humidity_ground_sensor']),
         phGroundSensor: parseDouble(json['ph_ground_sensor']),
@@ -63,6 +86,22 @@ class ObjectProfile {
         temperatureSensorGround: parseDouble(json['temperature_ground_sensor']),
         temperatureSensorExtern: parseDouble(json['temperature_air_sensor']),
         expositionTimeSun: parseDouble(json['exposition_time_sun']),
+
+
+
+        sensors: json['sensors'] != null
+            ? SensorData.fromJson(json['sensors'])
+            : SensorData.empty(), // On crée une méthode empty() pour éviter le crash
+
+        plantDetails: json['plant_details'] != null
+            ? PlantDetails.fromJson(json['plant_details'])
+            : PlantDetails.empty(), // Idem ici
+
+
+        adviceRealtime: json['advice_realtime'] ?? '',
+        isWater: json['is_water'] ?? false,
+        isFavorite: json['is_favorite'] ?? false,
+        lastWatering: json['last_watering'],
       );
     } catch (e, stack) {
       print("Erreur de parsing ObjectProfile: $e");
@@ -90,6 +129,13 @@ class ObjectProfile {
     double? temperatureSensorGround,
     double? temperatureSensorExtern,
     double? expositionTimeSun,
+
+    String? adviceRealtime,
+    bool? isWater,
+    bool? isFavorite,
+    DateTime? lastWatering,
+    SensorData? sensors,
+    PlantDetails? plantDetails,
   }) {
     return ObjectProfile(
       idObjectProfile: idObjectProfile ?? this.idObjectProfile,
@@ -110,12 +156,19 @@ class ObjectProfile {
       temperatureSensorGround: temperatureSensorGround ?? this.temperatureSensorGround,
       temperatureSensorExtern: temperatureSensorExtern ?? this.temperatureSensorExtern,
       expositionTimeSun: expositionTimeSun ?? this.expositionTimeSun,
+
+      adviceRealtime: adviceRealtime ?? this.adviceRealtime,
+      isWater: isWater ?? this.isWater,
+      isFavorite: isFavorite ?? this.isFavorite,
+      sensors: sensors ?? this.sensors,
+      plantDetails: plantDetails ?? this.plantDetails,
     );
   }
 }
 
 // Texte lisible pour les états
 String getStateText(int? state) {
+  if (state == null) return "Chargement...";
   switch (state) {
     case 0: return "Parfait pour moi";
     case 1: return "Je vais très bien";

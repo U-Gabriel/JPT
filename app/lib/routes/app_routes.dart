@@ -11,6 +11,7 @@ import '../ui/pages/forgot_password_page.dart';
 import '../ui/pages/get_code_email_page.dart';
 import '../ui/pages/my_plant_page.dart';
 import '../ui/pages/my_plant_page_login.dart';
+import '../ui/pages/plant_detail_known_page.dart';
 import '../ui/pages/profile_page.dart';
 import '../ui/pages/login_page.dart';
 import '../ui/pages/reset_password_page.dart';
@@ -34,6 +35,10 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/add_wifi_information': (_) => const AddWifiInformationPage(),
   '/add_connect_my_object': (_) => const AddConnectMyObjectPage(),
   '/buy_my_object': (_) => const BuyMyObjectPage(),
+  '/plant_detail_known': (context) {
+    final int plantId = ModalRoute.of(context)!.settings.arguments as int;
+    return PlantDetailKnownPage(plantId: plantId);
+  },
 
 
 };

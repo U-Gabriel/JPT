@@ -11,101 +11,125 @@ class PlantItemWidget extends StatelessWidget {
   final Function(bool)? onToggleWillWatering;
 
   PlantItemWidget({
-    Key? key,
-    required this.plant,
+    Key? key, required this.plant,
     this.onToggleAutomatic,
     this.onToggleWillWatering,
   }) : super(key: ValueKey(plant.idObjectProfile));
 
-
+  Color getStateColor(int? state) {
+    if (state == 5) return const Color(0xFFE53935); // Rouge 600
+    if (state == 3 || state == 4) return const Color(0xFFFFA000); // Amber 700
+    if (state == 1 || state == 2) return const Color(0xFF43A047); // Green 600
+    return const Color(0xFF9E9E9E); // Grey 500
+  }
 
   @override
   Widget build(BuildContext context) {
     final pathPicture = plant.plantType.pathPicture;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final stateColor = getStateColor(plant.state);
 
-    print(plant);
-
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: screenWidth * 0.8,  // Largeur max à 80% écran
-          maxHeight: screenHeight * 0.95, // Hauteur max à 95% écran
-        ),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PlantDetailPage(plantId: plant.idObjectProfile),
-              ),
-            );
-          },
-    borderRadius: BorderRadius.circular(16),
-        child: Card(
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-              color: (plant.state == 5) ? Colors.red : Colors.green,
-              width: 2,
-            ),
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                PlantDetailPage(plantId: plant.idObjectProfile),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              child: IntrinsicHeight(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        elevation: 6,
+        shadowColor: Colors.black.withOpacity(0.1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: stateColor,
+            width: 2,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // IMAGE HEADER
+            if (pathPicture != null)
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+                child: Stack(
                   children: [
-                    Text(
-                      plant.title ?? 'Nom inconnu',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                    Image.network(
+                      Uri.parse(AppConfig.baseUrlDataset)
+                          .resolve(pathPicture)
+                          .toString(),
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+
+                    // Overlay léger pour effet pro
+                    Container(
+                      height: 180,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.3),
+                            Colors.transparent,
+                          ],
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    // Image centrée et crop intelligente
-                    if (pathPicture != null)
-                      Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            height: 180,
-                            width: 180,
-                            color: Colors.grey[200],
-                            child: Image.network(
-                              Uri.parse(AppConfig.baseUrlDataset).resolve(pathPicture).toString(),
-                              fit: BoxFit.cover,
-                              alignment: Alignment.center,
-                              errorBuilder: (context, error, stackTrace) =>
-                              const Center(child: Text("Image non disponible")),
-                            ),
+
+                    // Badge état
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: stateColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          getStateText(plant.state),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
                           ),
                         ),
-                      )
-                    else
-                      const Text("Pas d'image disponible"),
-                    const SizedBox(height: 8),
-                    Text(
-                      getStateText(plant.state),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
                       ),
                     ),
-                    // use switch dynamic
-                    PlantControlSwitches(plant: plant),
                   ],
                 ),
               ),
-            ),
-          ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: SizedBox(
+                    width: double.infinity, // Occupe toute la largeur de la card
+                    child: Text(
+                      plant.title ?? "Nom inconnu",
+                      textAlign: TextAlign.center, // Aligne le texte au centre du SizedBox
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold, // Plus propre pour un titre
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+              ),
+
+
+          ],
         ),
-      ),
       ),
     );
   }

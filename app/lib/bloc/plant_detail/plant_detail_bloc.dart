@@ -16,6 +16,7 @@ class PlantDetailBloc extends Bloc<PlantDetailEvent, PlantDetailState> {
   ObjectProfile? _currentPlant;
   Timer? _pollingTimer;
 
+
   PlantDetailBloc({
     required this.service,
     required this.plantId,
@@ -23,9 +24,12 @@ class PlantDetailBloc extends Bloc<PlantDetailEvent, PlantDetailState> {
   }) : super(PlantDetailInitial()) {
     on<LoadPlantDetail>(_onLoadPlantDetail);
 
-    // Load initial
+    on<ToggleFavorite>(_onToggleFavorite);
+
+    // 1. Premier chargement immédiat
     add(LoadPlantDetail(plantId, token));
 
+    // 2. Polling automatique (Toutes les 15 secondes)
     _pollingTimer = Timer.periodic(const Duration(seconds: 15), (_) {
       add(LoadPlantDetail(plantId, token));
     });
@@ -34,44 +38,29 @@ class PlantDetailBloc extends Bloc<PlantDetailEvent, PlantDetailState> {
   Future<void> _onLoadPlantDetail(
       LoadPlantDetail event, Emitter<PlantDetailState> emit) async {
     try {
+      print("--- POLLING: Récupération des données ---");
+
       final fresh = await service.fetchObjectProfileDetails(plantId, token);
 
-      if (_currentPlant == null) {
-        _currentPlant = fresh;
-        _plantController.add(fresh);
-        emit(PlantDetailLoaded(fresh));
-      } else {
-        final changed = _diffAndUpdate(_currentPlant!, fresh);
-        if (changed) {
-          _currentPlant = fresh;
-          _plantController.add(fresh);
-          emit(PlantDetailLoaded(fresh));
-        }
-      }
+      _currentPlant = fresh;
+
+      // ON FORCE LA MISE À JOUR :
+      // On envoie systématiquement au stream pour que l'UI (StreamBuilder) se reconstruise
+      _plantController.add(fresh);
+
+      // On émet l'état Loaded pour le BlocBuilder
+      emit(PlantDetailLoaded(fresh));
+
+      print("Mise à jour effectuée pour: ${fresh.title}");
+
     } catch (e) {
-      emit(PlantDetailError("Erreur de chargement : $e"));
+      print("ERREUR POLLING: $e");
+      // On n'émet l'erreur que si on n'a vraiment aucune donnée (état initial)
+      if (state is! PlantDetailLoaded) {
+        emit(PlantDetailError("Erreur de chargement : $e"));
+      }
     }
   }
-
-  bool _diffAndUpdate(ObjectProfile oldP, ObjectProfile newP) {
-    return oldP.title != newP.title ||
-        oldP.description != newP.description ||
-        oldP.advise != newP.advise ||
-        oldP.recipe != newP.recipe ||
-        oldP.isAutomatic != newP.isAutomatic ||
-        oldP.isWillWatering != newP.isWillWatering ||
-        oldP.state != newP.state ||
-        oldP.humidityAirSensor != newP.humidityAirSensor ||
-        oldP.humidityGroundSensor != newP.humidityGroundSensor ||
-        oldP.phGroundSensor != newP.phGroundSensor ||
-        oldP.conductivityElectriqueFertilitySensor != newP.conductivityElectriqueFertilitySensor ||
-        oldP.lightSensor != newP.lightSensor ||
-        oldP.temperatureSensorGround != newP.temperatureSensorGround ||
-        oldP.temperatureSensorExtern != newP.temperatureSensorExtern ||
-        oldP.expositionTimeSun != newP.expositionTimeSun ||
-        oldP.plantType.pathPicture != newP.plantType.pathPicture;
-  }
-
 
   @override
   Future<void> close() {
@@ -79,4 +68,33 @@ class PlantDetailBloc extends Bloc<PlantDetailEvent, PlantDetailState> {
     _plantController.close();
     return super.close();
   }
+  Future<void> _onToggleFavorite(ToggleFavorite event, Emitter<PlantDetailState> emit) async {
+    if (_currentPlant == null) return;
+
+    // On calcule la NOUVELLE valeur (l'inverse de l'actuelle)
+    final bool currentStatus = _currentPlant!.isFavorite;
+    final bool nextStatus = !currentStatus;
+
+    print("DEBUG FAVORITE: Passage de $currentStatus à $nextStatus pour l'OP: $plantId");
+
+    try {
+      final success = await service.updateObjectProfile(
+        idPerson: event.idPerson,
+        idObjectProfile: plantId,
+        otherFields: {"is_favorite": nextStatus},
+        token: token,
+      );
+
+      if (success) {
+        print("DEBUG FAVORITE: Update réussi sur le serveur");
+        // On force le rechargement immédiat des détails pour mettre à jour _currentPlant
+        add(LoadPlantDetail(plantId, token));
+      } else {
+        print("DEBUG FAVORITE: Le serveur a renvoyé une erreur (Status non OK)");
+      }
+    } catch (e) {
+      print("DEBUG FAVORITE: Exception lors de l'appel : $e");
+    }
+  }
+
 }

@@ -10,3 +10,8 @@ class LoadPlantDetail extends PlantDetailEvent {
 class ToggleAutomatic extends PlantDetailEvent {}
 
 class ToggleWillWatering extends PlantDetailEvent {}
+
+class ToggleFavorite extends PlantDetailEvent {
+  final int idPerson;
+  ToggleFavorite(this.idPerson);
+}

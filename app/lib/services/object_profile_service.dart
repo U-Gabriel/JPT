@@ -149,15 +149,16 @@ class ObjectProfileService {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
-      List<dynamic> data = decoded["data"] ?? [];
+      //List<dynamic> data = decoded["data"] ?? [];
 
-      print(data);
+      final data = decoded["data"];
 
-      if (data.isEmpty) {
+      if (data == null) {
         throw Exception("Aucun détail trouvé pour l'objet $plantId");
       }
 
-      return ObjectProfile.fromJson(data.first);
+      // On passe directement l'objet à la factory
+      return ObjectProfile.fromJson(data);
     } else {
       throw Exception('Erreur de chargement: ${response.statusCode}');
     }

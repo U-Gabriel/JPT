@@ -56,7 +56,7 @@ class _MyPlantPageState extends State<MyPlantPage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  height: 450,
+                  height: 300,
                   child: StreamBuilder<List<ObjectProfile>>(
                     stream: favoriteBloc.profilesStream,
                     builder: (context, snapshot) {
