@@ -24,6 +24,8 @@ class AppConfig {
 
   static String PlantTypeEndpointSearch() => "$baseUrl/plant_type/search/bytitle";
 
+  static String GroupPlantTypeEndpointGet() => "$baseUrl/group_plant_type/resume";
+
 
   // old function
   static String objectProfilesEndpoint(String personId) => "$baseUrl/person/$personId/object-profiles";

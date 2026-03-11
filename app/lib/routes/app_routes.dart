@@ -9,6 +9,7 @@ import '../ui/pages/buy_my_object_page.dart';
 import '../ui/pages/event_page.dart';
 import '../ui/pages/forgot_password_page.dart';
 import '../ui/pages/get_code_email_page.dart';
+import '../ui/pages/group_plant_type_page.dart';
 import '../ui/pages/my_plant_page.dart';
 import '../ui/pages/my_plant_page_login.dart';
 import '../ui/pages/plant_detail_known_page.dart';
@@ -38,6 +39,10 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/plant_detail_known': (context) {
     final int plantId = ModalRoute.of(context)!.settings.arguments as int;
     return PlantDetailKnownPage(plantId: plantId);
+  },
+  '/group_plant_type': (context) {
+    final int objectProfileId = ModalRoute.of(context)!.settings.arguments as int;
+    return GroupPlantTypePage(objectProfileId: objectProfileId);
   },
 
 

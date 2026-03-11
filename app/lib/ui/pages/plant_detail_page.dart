@@ -84,6 +84,16 @@ class PlantDetailPage extends StatelessWidget {
                             );
                           },
                         ),
+                        IconButton(
+                          icon: const Icon(Icons.settings_input_component, color: Colors.white),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/group_plant_type',
+                              arguments: plant.idObjectProfile, // On passe l'ID de l'objet
+                            );
+                          },
+                        ),
                       ],
                       flexibleSpace: FlexibleSpaceBar(
                         title: Text(plant.title,
