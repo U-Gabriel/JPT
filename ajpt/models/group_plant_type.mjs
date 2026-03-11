@@ -37,6 +37,90 @@ class GroupPlantType {
     id_object_profile
 }
 
+const CreateAndAssignCustomGroup = async (body) => {
+    const {
+        id_person,
+        id_object_profile,
+        id_plant_type,
+        title,
+        conductivity_electrique_fertility_sensor,
+        temperature_sensor_extern,
+        humidity_air_sensor,
+        priority_plant,
+        watering_time
+    } = body;
+
+    // 1. Validation de sécurité
+    if (!id_person || !id_object_profile || !id_plant_type || !title) {
+        throw new Error("Missing mandatory fields: id_person, id_object_profile, id_plant_type and title are required.");
+    }
+
+    const client = await pool.connect(); // On récupère un client pour la transaction
+
+    try {
+        await client.query('BEGIN'); // Début de la transaction
+
+        // ÉTAPE 1 : Désactiver tous les groupes actuels pour cet objet dans la table LNK
+        await client.query(`
+            UPDATE lnk_person_op_group
+            SET is_active = false
+            WHERE id_person = $1 AND id_object_profile = $2
+        `, [id_person, id_object_profile]);
+
+        // ÉTAPE 2 : Créer le nouveau groupe personnalisé
+        // Note : is_standard est à false par défaut
+        const groupQuery = `
+            INSERT INTO group_plant_type (
+                title, 
+                id_plant_type, 
+                id_object_profile,
+                conductivity_electrique_fertility_sensor,
+                temperature_sensor_extern,
+                humidity_air_sensor,
+                prority_plant,
+                watering_time,
+                is_standard
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, false)
+            RETURNING id_group_plant_type;
+        `;
+        
+        const groupRes = await client.query(groupQuery, [
+            title, 
+            id_plant_type, 
+            id_object_profile,
+            conductivity_electrique_fertility_sensor,
+            temperature_sensor_extern,
+            humidity_air_sensor,
+            priority_plant,
+            watering_time
+        ]);
+
+        const newGroupId = groupRes.rows[0].id_group_plant_type;
+
+        // ÉTAPE 3 : Créer le lien dans LNK et le mettre en actif
+        await client.query(`
+            INSERT INTO lnk_person_op_group (id_person, id_object_profile, id_group_plant_type, is_active)
+            VALUES ($1, $2, $3, true)
+        `, [id_person, id_object_profile, newGroupId]);
+
+        await client.query('COMMIT'); // On valide tout d'un coup
+
+        return {
+            success: true,
+            id_group_plant_type: newGroupId,
+            message: "Nouveau groupe créé et assigné avec succès."
+        };
+
+    } catch (error) {
+        await client.query('ROLLBACK'); // En cas d'erreur, on annule tout (pas de groupe fantôme)
+        console.error("Error in CreateAndAssignCustomGroup:", error.message);
+        throw error;
+    } finally {
+        client.release(); // On libère le client pour le pool
+    }
+};
+
 const GetRequestGroupPlantType = async ({ id_person, id_object_profile }) => {
     if (!id_person || !id_object_profile) throw new Error("Missing parameters");
 
@@ -194,4 +278,4 @@ const DeleteRequestGroupPlantType = async ({ id_person, id_group_plant_type }) =
     }
 };
 
-export { GetRequestGroupPlantType, PatchAssignGroupRequestGroupPlantType, DeleteRequestGroupPlantType };
+export { CreateAndAssignCustomGroup, GetRequestGroupPlantType, PatchAssignGroupRequestGroupPlantType, DeleteRequestGroupPlantType };

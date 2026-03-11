@@ -313,6 +313,36 @@
           ]
         }
       },
+      "/group_plant_type/create/byid": {
+        "post": {
+          "tags": [
+            "Group Plant Type"
+          ],
+          "description": "Créer la liste des group plant type.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Créer plant_type group",
+              "schema": {
+                "$ref": "#/definitions/GroupPlantObjectCreateAssignation"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
       "/group_plant_type/resume": {
         "post": {
           "tags": [
@@ -537,6 +567,47 @@
             "example": "1"
           }
         }
+        },
+        "GroupPlantObjectCreateAssignation": {
+          "type": "object",
+          "properties": {
+            "id_person": {
+              "type": "int",
+              "example": 19
+            },
+            "id_object_profile": {
+              "type": "int",
+              "example": 84
+            },
+            "id_plant_type": {
+              "type": "int",
+              "example": 1
+            },
+            "title": {
+              "type": "string",
+              "example": "Mes réglages personnalisés"
+            },
+            "conductivity_electrique_fertility_sensor": {
+              "type": "number",
+              "example": 1.5
+            },
+            "temperature_sensor_extern": {
+              "type": "number",
+              "example": 22.5
+            },
+            "humidity_air_sensor": {
+              "type": "number",
+              "example": 45.0
+            },
+            "priority_plant": {
+              "type": "int",
+              "example": 1
+            },
+            "watering_time": {
+              "type": "int",
+              "example": 10
+            }
+          }
         },
         "GroupPlantObjectUpdateAssignation": {
           "type": "object",

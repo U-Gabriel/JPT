@@ -1,7 +1,12 @@
-import {GetGroupPlantType, PatchAssignGroupPlantType, DeleteGroupPlantType} from "../controllers/group_plant_type.controller.mjs";
+import {CreateAndAssignGroup, GetGroupPlantType, PatchAssignGroupPlantType, DeleteGroupPlantType} from "../controllers/group_plant_type.controller.mjs";
 import express from "express"
 
 const routerGroupPlantType = express.Router()
+
+routerGroupPlantType.post("/group_plant_type/create/byid", async (req, res) => {
+    const response = await CreateAndAssignGroup(req.body)
+    res.status(response.code).send(response)
+});
 
 routerGroupPlantType.post("/group_plant_type/resume", async (req, res) => {
     const response = await GetGroupPlantType(req.body)
