@@ -342,6 +342,66 @@
             }
           ]
         }
+      },
+      "/group_plant_type/patch/assignation/byid": {
+        "patch": {
+          "tags": [
+            "Group Plant Type"
+          ],
+          "description": "Modifier group plant type assignation.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Update group_plant_type assignation",
+              "schema": {
+                "$ref": "#/definitions/GroupPlantObjectUpdateAssignation"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/group_plant_type/delete/byid": {
+        "delete": {
+          "tags": [
+            "Group Plant Type"
+          ],
+          "description": "Supprimer group plant type.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "op",
+              "in": "body",
+              "description": "Delete group_plant_type",
+              "schema": {
+                "$ref": "#/definitions/GroupPlantObjectDelete"
+              }
+            }
+          ],
+          "responses": {},
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
       }
     },
     "definitions": {
@@ -424,27 +484,27 @@
           "example": "1"
         }
         }
-        },
+      },
       "ObjectProfileDel": {
-      "type": "object",
-      "properties": {
-        "id_person": {
-          "type": "int",
-          "example": "1"
-        },
-        "id_object_profile": {
-          "type": "int",
-          "example": "1"
-        }
-        }
-        },
-        "ObjectProfileDetails": {
-          "type": "object",
-          "properties": {
+        "type": "object",
+        "properties": {
+            "id_person": {
+              "type": "int",
+              "example": "1"
+            },
             "id_object_profile": {
               "type": "int",
               "example": "1"
             }
+          }
+        },
+        "ObjectProfileDetails": {
+          "type": "object",
+          "properties": {
+              "id_object_profile": {
+                "type": "int",
+                "example": "1"
+              }
             }
         },
         "ObjectProfileUP": {
@@ -477,6 +537,40 @@
             "example": "1"
           }
         }
+        },
+        "GroupPlantObjectUpdateAssignation": {
+          "type": "object",
+          "properties": {
+            "id_person": {
+              "type": "int",
+              "example": "19"
+            },
+            "id_group_plant_type": {
+              "type": "int",
+              "example": "3"
+            },
+            "id_object_profile": {
+              "type": "int",
+              "example": "84"
+            },
+            "is_standard": {
+              "type": "bool",
+              "example": false
+            }
+          }
+        },
+        "GroupPlantObjectDelete": {
+          "type": "object",
+          "properties": {
+            "id_person": {
+              "type": "int",
+              "example": "19"
+            },
+            "id_group_plant_type": {
+              "type": "int",
+              "example": "3"
+            }
+          }
         }
       
     }

@@ -98,4 +98,100 @@ const GetRequestGroupPlantType = async ({ id_person, id_object_profile }) => {
     }));
 };
 
-export { GetRequestGroupPlantType };
+const PatchAssignGroupRequestGroupPlantType = async ({ id_person, id_group_plant_type, id_object_profile, is_standard }) => {
+    // 1. Validation de base
+    if (!id_person || !id_object_profile) {
+        throw new Error("Missing parameters: id_person, id_group_plant_type, and id_object_profile are required");
+    }
+
+    try {
+        // 2. SI STANDARD : On désactive juste les liens personnalisés
+        if (is_standard === true) {
+            const queryStandard = `
+                UPDATE lnk_person_op_group
+                SET is_active = false
+                WHERE id_person = $1 AND id_object_profile = $2;
+            `;
+            await pool.query(queryStandard, [id_person, id_object_profile]);
+            
+            return { 
+                success: true, 
+                active_group_id: id_group_plant_type,
+                message: "Retour au mode standard" 
+            };
+        }
+
+        // 3. SI PERSO (ou si is_standard est absent/false) : On fait l'Upsert
+        const query = `
+            WITH deactivate_all AS (
+                UPDATE lnk_person_op_group
+                SET is_active = false
+                WHERE id_person = $1 AND id_object_profile = $3
+                RETURNING id_person
+            ),
+            upsert_active AS (
+                INSERT INTO lnk_person_op_group (id_person, id_group_plant_type, id_object_profile, is_active)
+                VALUES ($1, $2, $3, true)
+                ON CONFLICT (id_person, id_group_plant_type, id_object_profile) 
+                DO UPDATE SET is_active = true
+                RETURNING id_group_plant_type
+            )
+            SELECT id_group_plant_type FROM upsert_active;
+        `;
+
+        const { rows } = await pool.query(query, [id_person, id_group_plant_type, id_object_profile]);
+        
+        return {
+            success: true,
+            active_group_id: rows[0]?.id_group_plant_type,
+            message: "Group assignment updated successfully"
+        };
+
+    } catch (error) {
+        // Capturera les erreurs pour les DEUX types de requêtes
+        console.error("Error in PatchAssignGroup:", error.message);
+        throw error;
+    }
+};
+
+const DeleteRequestGroupPlantType = async ({ id_person, id_group_plant_type }) => {
+    if (!id_person || !id_group_plant_type) {
+        throw new Error("id_person and id_group_plant_type are required");
+    }
+
+    const query = `
+        WITH verify_ownership AS (
+            -- On vérifie d'abord si l'utilisateur est lié à ce groupe
+            -- et que ce n'est PAS un groupe standard (on ne veut pas que l'user supprime les réglages par défaut)
+            SELECT id_group_plant_type 
+            FROM lnk_person_op_group 
+            WHERE id_person = $1 AND id_group_plant_type = $2
+            LIMIT 1
+        ),
+        delete_lnk AS (
+            -- 1. Supprimer toutes les lignes de liaison pour ce groupe (pour TOUS les objets de cet user)
+            DELETE FROM lnk_person_op_group
+            WHERE id_group_plant_type IN (SELECT id_group_plant_type FROM verify_ownership)
+        )
+        -- 2. Supprimer le groupe lui-même
+        DELETE FROM group_plant_type
+        WHERE id_group_plant_type IN (SELECT id_group_plant_type FROM verify_ownership)
+        AND is_standard = false
+        RETURNING id_group_plant_type;
+    `;
+
+    try {
+        const { rows } = await pool.query(query, [id_person, id_group_plant_type]);
+
+        if (rows.length === 0) {
+            throw new Error("Suppression impossible : groupe introuvable, déjà supprimé ou vous n'avez pas les droits.");
+        }
+
+        return { success: true, deleted_id: rows[0].id_group_plant_type };
+    } catch (error) {
+        console.error("Error in DeleteGroupPlantType:", error.message);
+        throw error;
+    }
+};
+
+export { GetRequestGroupPlantType, PatchAssignGroupRequestGroupPlantType, DeleteRequestGroupPlantType };
