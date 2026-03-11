@@ -36,7 +36,6 @@ class PlantService {
   }
 
   Future<PlantType?> getDescriptionPlantType(int id, String token) async {
-    // Remplacez par votre endpoint réel dans AppConfig si nécessaire
     final url = Uri.parse('${AppConfig.baseUrl}/plant_type/description/byid');
 
     try {

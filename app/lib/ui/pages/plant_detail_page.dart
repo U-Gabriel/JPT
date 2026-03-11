@@ -187,7 +187,7 @@ class PlantDetailPage extends StatelessWidget {
                   Navigator.pushNamed(
                     context,
                     '/plant_detail_known',
-                    arguments: plant.idObjectProfile,
+                    arguments: plant.plantDetails.typeId,
                   );
                 },
                 child: Icon(Icons.info_outline, size: 20, color: Colors.green.withOpacity(0.7)),

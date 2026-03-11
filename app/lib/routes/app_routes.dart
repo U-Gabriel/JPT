@@ -6,6 +6,7 @@ import '../ui/pages/add_wifi_information_page.dart';
 import '../ui/pages/advise_page.dart';
 import '../ui/pages/auth_wrapper_redirection.dart';
 import '../ui/pages/buy_my_object_page.dart';
+import '../ui/pages/create_group_plant_page.dart';
 import '../ui/pages/event_page.dart';
 import '../ui/pages/forgot_password_page.dart';
 import '../ui/pages/get_code_email_page.dart';
@@ -43,6 +44,10 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/group_plant_type': (context) {
     final int objectProfileId = ModalRoute.of(context)!.settings.arguments as int;
     return GroupPlantTypePage(objectProfileId: objectProfileId);
+  },
+  '/create_group_plant': (context) {
+    final int objectProfileId = ModalRoute.of(context)!.settings.arguments as int;
+    return CreateGroupPlantPage(objectProfileId: objectProfileId);
   },
 
 

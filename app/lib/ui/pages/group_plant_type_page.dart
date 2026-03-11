@@ -1,3 +1,4 @@
+import 'package:app/ui/pages/widget/popup/delete_confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../providers/auth_provider.dart';
@@ -16,6 +17,7 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
   final GroupPlantService _service = GroupPlantService();
   List<PlantGroup> _groups = [];
   PlantGroup? _selectedGroup;
+  PlantGroup? _activeGroup;
   bool _isLoading = true;
 
   // --- INITIALISATION ---
@@ -35,7 +37,10 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
       final result = await _service.getGroupsResume(userId, widget.objectProfileId, token);
       setState(() {
         _groups = result;
-        if (_groups.isNotEmpty) _selectedGroup = _groups.first;
+        if (_groups.isNotEmpty) {
+          _activeGroup = _groups.first;
+          _selectedGroup = _groups.first;
+        }
         _isLoading = false;
       });
     }
@@ -60,6 +65,8 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeaderCard(),
+            const SizedBox(height: 25),
+            _buildCreateButton(),
             const SizedBox(height: 25),
             const Text("Choisir un groupe de paramètres",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
@@ -97,6 +104,46 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
     );
   }
 
+  Widget _buildCreateButton() {
+    return InkWell(
+      onTap: () => Navigator.pushNamed(
+          context,
+          '/create_group_plant',
+          arguments: widget.objectProfileId
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.green.withOpacity(0.2)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+              child: const Icon(Icons.add, color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 15),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Configuration personnalisée",
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)),
+                  Text("Créez vos propres règles d'arrosage",
+                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.green),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildHeaderCard() {
     return Container(
       width: double.infinity,
@@ -115,7 +162,7 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
           ),
           SizedBox(height: 8),
           Text(
-            "Nous appliquons les réglages ci-dessous pour garantir la santé de votre plante.",
+            "Nous appliquons les réglages ci-dessous pour garantir la santé de votre plante. Grâce à cela l'objet optimise les calculs et sait les valeurs cble à atteindre.",
             style: TextStyle(color: Colors.white, fontSize: 14),
           ),
         ],
@@ -137,13 +184,23 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down, color: Colors.green),
           items: _groups.map((group) {
+            bool isActive = group.idGroup == _activeGroup?.idGroup;
             return DropdownMenuItem(
               value: group,
-              child: Text(group.title,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: group.isStandard ? Colors.green[700] : Colors.black87
-                  )),
+              child: Row(
+                children: [
+                  Text(group.title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: isActive ? Colors.green : Colors.black87
+                      )
+                  ),
+                  if (isActive) ...[
+                    const SizedBox(width: 8),
+                    const Icon(Icons.check_circle, size: 16, color: Colors.green),
+                  ]
+                ],
+              ),
             );
           }).toList(),
           onChanged: (val) => setState(() => _selectedGroup = val),
@@ -206,43 +263,54 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
 
   Widget _buildActionButtons() {
     bool isStandard = _selectedGroup?.isStandard ?? false;
+    // On vérifie si le groupe sélectionné est déjà celui qui est actif
+    bool isAlreadyActive = _selectedGroup?.idGroup == _activeGroup?.idGroup;
 
     return Column(
       children: [
-        // BOUTON ASSIGNER
         SizedBox(
           width: double.infinity,
           height: 55,
           child: ElevatedButton.icon(
-            onPressed: () {
-              print("Action: Assigner le groupe ${_selectedGroup?.idGroup}");
-            },
-            icon: const Icon(Icons.check_circle_outline, color: Colors.white),
-            label: const Text(
-              "Assigner ce groupe à mon objet",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+            // Si déjà actif, onPressed est null (ce qui grise le bouton automatiquement)
+            onPressed: isAlreadyActive ? null : () => _handleAssignGroup(),
+            icon: Icon(
+                isAlreadyActive ? Icons.verified : Icons.check_circle_outline,
+                color: Colors.white
+            ),
+            label: Text(
+              isAlreadyActive ? "Déjà configuré sur cet objet" : "Assigner ce groupe à mon objet",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              // On gère la couleur "grisée" manuellement pour le design
+              backgroundColor: isAlreadyActive ? Colors.grey[400] : Colors.green,
+              disabledBackgroundColor: Colors.grey[400], // Sécurité Flutter
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              elevation: 2,
+              elevation: isAlreadyActive ? 0 : 2,
             ),
           ),
         ),
-
         const SizedBox(height: 16),
 
-        // BOUTON SUPPRIMER (affiché seulement si ce n'est pas un groupe standard)
-        if (!isStandard)
+        // Sécurité : On ne supprime pas un groupe standard, NI le groupe actuellement actif !
+        if (!isStandard && !isAlreadyActive)
           TextButton.icon(
             onPressed: () {
-              print("Action: Supprimer le groupe ${_selectedGroup?.idGroup}");
+              // On appelle notre classe Helper
+              DeleteConfirmDialog.show(
+                context,
+                groupTitle: _selectedGroup!.title,
+                onConfirm: () => _handleDeleteGroup(),
+              );
             },
             icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-            label: const Text(
-              "Supprimer ce groupe personnalisé",
-              style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600),
-            ),
+            label: const Text("Supprimer ce groupe personnalisé"),
+          )
+        else if (isAlreadyActive)
+          const Text(
+            "Impossible de supprimer le groupe actif",
+            style: TextStyle(color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
           )
         else
           const Text(
@@ -252,6 +320,86 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
       ],
     );
   }
+
+  // Fonction d'appel api
+
+
+  Future<void> _handleDeleteGroup() async {
+    if (_selectedGroup == null) return;
+
+    final auth = context.read<AuthProvider>();
+    final token = auth.accessToken;
+    final userId = int.tryParse(auth.userId ?? '') ?? 0;
+
+    if (token == null) return;
+
+    // 1. Afficher un indicateur de chargement
+    setState(() => _isLoading = true);
+
+    // 2. Appel au service
+    final success = await _service.deleteGroup(userId, _selectedGroup!.idGroup, token);
+
+    if (success) {
+      // 3. Rafraîchir la liste localement
+      await _loadGroups();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Groupe supprimé avec succès"), backgroundColor: Colors.green),
+        );
+      }
+    } else {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Erreur lors de la suppression"), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleAssignGroup() async {
+    if (_selectedGroup == null) return;
+
+    final auth = context.read<AuthProvider>();
+    final token = auth.accessToken;
+    final userId = int.tryParse(auth.userId ?? '') ?? 0;
+
+    if (token == null) return;
+
+    setState(() => _isLoading = true);
+
+    final success = await _service.assignGroup(
+      idPerson: userId,
+      idObjectProfile: widget.objectProfileId,
+      idGroup: _selectedGroup!.idGroup,
+      isStandard: _selectedGroup!.isStandard,
+      token: token,
+    );
+
+    if (success) {
+      // Recharger les groupes pour que le nouveau groupe assigné remonte en 1ère position (actif)
+      await _loadGroups();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_selectedGroup!.isStandard ? "Mode standard activé" : "Paramètres appliqués avec succès"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } else {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Erreur lors de l'assignation"), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  ////////
+
+
 
   // --- LOGIQUE DE TRADUCTION ---
 
