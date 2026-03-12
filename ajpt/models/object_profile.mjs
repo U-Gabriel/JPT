@@ -378,29 +378,52 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
     };
 };
 
-const DeleteObjectProfile = async (op) => {
-  if (!op.id_object_profile) throw new Error("id_object_profile is required");
-  if (!op.id_person) throw new Error("id_person is required");
-
-  const query = {
-    text: `
-      DELETE FROM object_profile
-      WHERE id_object_profile = $1 AND id_person = $2
-      RETURNING id_object_profile;
-    `,
-    values: [op.id_object_profile, op.id_person],
-  };
-
-  const { rows } = await pool.query(query);
-
-  if (rows.length === 0) {
-    throw new Error(`ObjectProfile with id ${op.id_object_profile} not found or does not belong to this user`);
+const DeleteObjectProfile = async ({ id_object_profile, id_person }) => {
+  if (!id_object_profile || !id_person) {
+    throw new Error("id_object_profile and id_person are required");
   }
 
-  return {
-    success: true,
-    deleted_id: rows[0].id_object_profile,
-  };
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // ÉTAPE 1 : Supprimer les liens dans la table LNK
+    // On sécurise avec id_person pour être sûr que l'utilisateur ne supprime que ses propres liens
+    await client.query(
+      `DELETE FROM lnk_person_op_group 
+       WHERE id_object_profile = $1 AND id_person = $2`,
+      [id_object_profile, id_person]
+    );
+
+    // ÉTAPE 2 : Supprimer le profil lui-même
+    // On garde la condition id_person ici aussi par sécurité
+    const deleteRes = await client.query(
+      `DELETE FROM object_profile 
+       WHERE id_object_profile = $1 AND id_person = $2 
+       RETURNING id_object_profile`,
+      [id_object_profile, id_person]
+    );
+
+    if (deleteRes.rows.length === 0) {
+      throw new Error("Profil introuvable ou vous n'avez pas les droits de suppression.");
+    }
+
+    await client.query('COMMIT');
+
+    return {
+      success: true,
+      deleted_id: deleteRes.rows[0].id_object_profile,
+      message: "Profil et liens supprimés avec succès. Les groupes associés restent intacts."
+    };
+
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error("Erreur lors de la suppression du profil :", error.message);
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 

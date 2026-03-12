@@ -153,27 +153,29 @@ const GetRequestObjectProfiledetailsByOPController = (op) => {
     });
 };
 
-
-const DeleteObjectProfileController = (op) => {
+const DeleteObjectProfileController = (body) => {
     return new Promise(async (resolve) => {
-        if (!op || !op.id_object_profile || !op.id_person) {
-            resolve(new ResponseApi().InitMissingParameters());
-            return;
+        // Destructuring pour être sûr de ce qu'on teste
+        const { id_object_profile, id_person } = body || {};
+
+        if (!id_object_profile || !id_person) {
+            return resolve(new ResponseApi().InitMissingParameters());
         }
 
         try {
-            const result = await DeleteObjectProfile(op);
+            const result = await DeleteObjectProfile({ id_object_profile, id_person });
             resolve(new ResponseApi().InitOK(result));
         } catch (e) {
+            // Code 23503 = Violation de contrainte (clé étrangère)
             if (e.code === "23503") {
-                resolve(new ResponseApi().InitBadRequest(e.message));
-                return;
+                return resolve(new ResponseApi().InitBadRequest("Impossible de supprimer : ce profil est encore utilisé par des groupes de plantes."));
             }
-            if (e.message?.includes("not found")) {
-                resolve(new ResponseApi().InitBadRequest(e.message));
-                return;
+            
+            if (e.message?.includes("not found") || e.message?.includes("denied")) {
+                return resolve(new ResponseApi().InitBadRequest(e.message));
             }
-            console.error(e);
+
+            console.error("Erreur Delete Controller:", e);
             resolve(new ResponseApi().InitInternalServer(e.message));
         }
     });

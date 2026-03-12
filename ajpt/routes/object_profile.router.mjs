@@ -36,10 +36,16 @@ routerObjectProfile.post("/object_profile/delete/byobjectprofile", async (req, r
     res.status(response.code).send(response);
 });
 
-// API objet
+routerObjectProfile.delete("/object_profile/delete/byobjectprofile", async (req, res) => {
+    const response = await DeleteObjectProfileController(req.body);
+    res.status(response.code).send(response);
+});
+
 routerObjectProfile.patch("/object/object_profile/update/byobjectprofile", objectAuth, async (req, res) => {
     const response = await UpdateObjectProfileController(req.body)
     res.status(response.code).send(response)
 });
+
+
 
 export {routerObjectProfile}

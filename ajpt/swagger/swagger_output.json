@@ -224,7 +224,7 @@
         }
       },
       "/object_profile/delete/byobjectprofile": {
-        "post": {
+        "delete": {
           "tags": [
             "Object Profile"
           ],
