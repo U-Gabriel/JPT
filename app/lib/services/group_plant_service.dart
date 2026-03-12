@@ -4,6 +4,52 @@ import '../app_config.dart';
 import '../models/plant_group.dart';
 
 class GroupPlantService {
+
+  Future<bool> createGroup({
+    required int idPerson,
+    required int idObjectProfile,
+    required int idPlantType,
+    required String title,
+    required double fertility,
+    required double temperature,
+    required double humidityAir,
+    required int priority,
+    required int wateringTime,
+    required String token,
+  }) async {
+    final url = Uri.parse(AppConfig.GroupPlantTypeEndpointCreate());
+
+    final body = jsonEncode({
+      "id_person": idPerson,
+      "id_object_profile": idObjectProfile,
+      "id_plant_type": idPlantType,
+      "title": title,
+      "conductivity_electrique_fertility_sensor": fertility,
+      "temperature_sensor_extern": temperature,
+      "humidity_air_sensor": humidityAir,
+      "priority_plant": priority,
+      "watering_time": wateringTime
+    });
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print("Erreur création groupe: $e");
+      return false;
+    }
+  }
+
+
+
   Future<List<PlantGroup>> getGroupsResume(int idPerson, int idObjectProfile, String token) async {
     final url = Uri.parse(AppConfig.GroupPlantTypeEndpointGet());
 

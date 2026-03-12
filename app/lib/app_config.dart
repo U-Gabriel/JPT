@@ -24,6 +24,7 @@ class AppConfig {
 
   static String PlantTypeEndpointSearch() => "$baseUrl/plant_type/search/bytitle";
 
+  static String GroupPlantTypeEndpointCreate() => "$baseUrl/group_plant_type/create/byid";
   static String GroupPlantTypeEndpointGet() => "$baseUrl/group_plant_type/resume";
   static String GroupPlantTypeEndpointDelete() => "$baseUrl/group_plant_type/delete/byid";
   static String GroupPlantTypeEndpointAssign() => "$baseUrl/group_plant_type/patch/assignation/byid";

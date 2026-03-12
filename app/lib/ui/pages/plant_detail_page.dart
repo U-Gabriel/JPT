@@ -90,7 +90,10 @@ class PlantDetailPage extends StatelessWidget {
                             Navigator.pushNamed(
                               context,
                               '/group_plant_type',
-                              arguments: plant.idObjectProfile, // On passe l'ID de l'objet
+                                arguments: {
+                                  'objectProfileId': plant.idObjectProfile,
+                                  'plantId': plant.plantDetails.typeId,
+                                }
                             );
                           },
                         ),

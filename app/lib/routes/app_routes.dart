@@ -42,12 +42,18 @@ final Map<String, WidgetBuilder> appRoutes = {
     return PlantDetailKnownPage(plantId: plantId);
   },
   '/group_plant_type': (context) {
-    final int objectProfileId = ModalRoute.of(context)!.settings.arguments as int;
-    return GroupPlantTypePage(objectProfileId: objectProfileId);
+    final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return GroupPlantTypePage(
+      objectProfileId: args['objectProfileId'] as int,
+      plantId: args['plantId'] as int,
+    );
   },
   '/create_group_plant': (context) {
-    final int objectProfileId = ModalRoute.of(context)!.settings.arguments as int;
-    return CreateGroupPlantPage(objectProfileId: objectProfileId);
+    final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return CreateGroupPlantPage(
+      objectProfileId: args['objectProfileId'] as int,
+      plantId: args['plantId'] as int,
+    );
   },
 
 

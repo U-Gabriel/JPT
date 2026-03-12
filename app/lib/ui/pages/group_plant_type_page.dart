@@ -7,7 +7,8 @@ import '../../../services/group_plant_service.dart';
 
 class GroupPlantTypePage extends StatefulWidget {
   final int objectProfileId;
-  const GroupPlantTypePage({super.key, required this.objectProfileId});
+  final int plantId;
+  const GroupPlantTypePage({super.key, required this.objectProfileId, required this.plantId});
 
   @override
   State<GroupPlantTypePage> createState() => _GroupPlantTypePageState();
@@ -59,58 +60,72 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Colors.green))
-          : SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeaderCard(),
-            const SizedBox(height: 25),
-            _buildCreateButton(),
-            const SizedBox(height: 25),
-            const Text("Choisir un groupe de paramètres",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
-            const SizedBox(height: 10),
-            _buildDropdown(),
-            const SizedBox(height: 30),
-            if (_selectedGroup != null) ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          : RefreshIndicator(
+            onRefresh: _loadGroups, // Appelle la même fonction lors d'un pull-to-refresh
+            color: Colors.green,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Détails du groupe",
+                  _buildHeaderCard(),
+                  const SizedBox(height: 25),
+                  _buildCreateButton(),
+                  const SizedBox(height: 25),
+                  const Text("Choisir un groupe de paramètres",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
-                  if (_selectedGroup!.isStandard)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text("STANDARD PLANTE",
-                          style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  _buildDropdown(),
+                  const SizedBox(height: 30),
+                  if (_selectedGroup != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Détails du groupe",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
+                        if (_selectedGroup!.isStandard)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text("STANDARD PLANTE",
+                                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                          ),
+                      ],
                     ),
+                    const SizedBox(height: 15),
+                    _buildDetailsGrid(),
+                    const SizedBox(height: 40),
+                    _buildActionButtons(),
+                    const SizedBox(height: 20),
+
+                  ],
                 ],
               ),
-              const SizedBox(height: 15),
-              _buildDetailsGrid(),
-              const SizedBox(height: 40),
-              _buildActionButtons(),
-              const SizedBox(height: 20),
-
-            ],
-          ],
-        ),
-      ),
+            ),
+          ),
     );
   }
 
   Widget _buildCreateButton() {
     return InkWell(
-      onTap: () => Navigator.pushNamed(
+      onTap: () async {
+        // 1. On attend le résultat de la navigation
+        final result = await Navigator.pushNamed(
           context,
           '/create_group_plant',
-          arguments: widget.objectProfileId
-      ),
+          arguments: {
+            'objectProfileId': widget.objectProfileId,
+            'plantId': widget.plantId,
+          },
+        );
+
+        if (result == true) {
+          _loadGroups(); // Appelle ta fonction de chargement API
+        }
+      },
       child: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
@@ -405,25 +420,28 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
 
   String _getFertilityText(String? value) {
     final val = double.tryParse(value ?? '') ?? 0;
-    if (val <= 25) return "Sol aride";
-    if (val <= 35) return "Sol sec";
-    if (val <= 60) return "Sol humide";
-    if (val <= 80) return "Sol très humide";
-    if (val <= 90) return "Sol très riche";
+    if (val <= 20) return "Désertique";
+    if (val <= 35) return "Sol Sec";
+    if (val <= 45) return "Sol Équilibré";
+    if (val <= 55) return "Sol Humide";
+    if (val <= 70) return "Sol Tropical";
+    if (val <= 85) return "Sol Aquatique";
     return "Excès de nutriments";
   }
 
+
   String _getPriorityText(int? priority) {
     switch (priority) {
-      case 1: return "Terre (Capteur)";
-      case 2: return "Temps (Calendrier)";
+      case 1: return "Terre Prioritaire";
+      case 2: return "Temps Prioritaire";
       case 3: return "Terre ou Temps";
-      case 4: return "Terre et Temps";
-      case 5: return "Terre atteint + Temps proche";
+      case 4: return "Terre ET Temps";
+      case 5: return "Terre atteinte + Temps proche";
       case 6: return "Temps atteint + Terre proche";
       default: return "Non défini";
     }
   }
+
 
   String _formatWateringTime(int? seconds) {
     if (seconds == null || seconds == 0) return "Pas d'arrosage planifié";
