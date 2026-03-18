@@ -29,8 +29,8 @@ class PlantDetailBloc extends Bloc<PlantDetailEvent, PlantDetailState> {
     // 1. Premier chargement immédiat
     add(LoadPlantDetail(plantId, token));
 
-    // 2. Polling automatique (Toutes les 15 secondes)
-    _pollingTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+    // 2. Polling automatique (Toutes les 5 secondes)
+    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       add(LoadPlantDetail(plantId, token));
     });
   }

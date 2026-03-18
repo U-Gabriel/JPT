@@ -1,3 +1,4 @@
+import 'package:app/ui/pages/widget/popup/delete_confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../providers/auth_provider.dart';
@@ -57,6 +58,24 @@ class PlantDetailPage extends StatelessWidget {
                       expandedHeight: MediaQuery.of(context).size.height * 0.30,
                       pinned: true,
                       actions: [
+                        IconButton(
+                          icon: const Icon(Icons.wifi_find, color: Colors.white),
+                          onPressed: () {
+                            print("DEBUG: Navigation vers WiFi avec ID = ${plant.idObjectProfile}");
+                            Navigator.pushNamed(
+                              context,
+                              '/modification_wifi_my_object',
+                              arguments: {
+                                'objectProfileId': plant.idObjectProfile,
+                                'title': plant.title,
+                              },
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.white),
+                          onPressed: () => _handleDelete(context, plant),
+                        ),
                         IconButton(
                           icon: Icon(
                             plant.isFavorite ? Icons.star : Icons.star_border,
@@ -362,6 +381,42 @@ class PlantDetailPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  // À ajouter dans la classe PlantDetailPage
+  void _handleDelete(BuildContext context, ObjectProfile plant) {
+    final authProvider = context.read<AuthProvider>();
+    final userId = int.tryParse(authProvider.userId ?? '') ?? 0;
+    final token = authProvider.accessToken ?? '';
+
+    DeleteConfirmDialog.show(
+      context,
+      title: "Supprimer les réglages",
+      message: "Voulez-vous vraiment supprimer  votre plante ${plant.title} ?",
+      onConfirm: () async {
+        final success = await ObjectProfileService().deleteObjectProfile(
+          idPerson: userId,
+          idObjectProfile: plant.idObjectProfile,
+          token: token,
+        );
+
+        if (success) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Profil supprimé avec succès"), backgroundColor: Colors.green),
+            );
+            // On retourne à la liste (Home)
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Erreur lors de la suppression"), backgroundColor: Colors.red),
+            );
+          }
+        }
+      },
     );
   }
 

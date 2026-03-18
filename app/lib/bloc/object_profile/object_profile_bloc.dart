@@ -27,8 +27,8 @@ class ObjectProfileBloc extends Bloc<ObjectProfileEvent, ObjectProfileState> {
     on<ToggleAutomatic>(_onToggleAutomatic);
     on<ToggleWillWatering>(_onToggleWillWatering);
 
-    // Démarrage du polling automatique toutes les 10 secondes
-    _pollingTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+    // Démarrage du polling automatique toutes les 5 secondes
+    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       add(LoadProfiles());
     });
 

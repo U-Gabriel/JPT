@@ -315,7 +315,8 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
               // On appelle notre classe Helper
               DeleteConfirmDialog.show(
                 context,
-                groupTitle: _selectedGroup!.title,
+                title: "Supprimer les réglages",
+                message: "Voulez-vous supprimer le groupe de réglages '${_selectedGroup!.title}' ?",
                 onConfirm: () => _handleDeleteGroup(),
               );
             },
