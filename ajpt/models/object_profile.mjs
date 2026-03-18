@@ -241,7 +241,9 @@ const updateObjectProfile = async (body) => {
     const { rows } = await pool.query(query);
 
     if (rows.length === 0) {
-        throw new Error(`ObjectProfile with id ${id_object_profile} not found or does not belong to this user`);
+        // ON LANCE UNE ERREUR SPÉCIFIQUE
+        const error = new Error("NOT_FOUND");
+        throw error;
     }
 
     return rows[0];
@@ -387,6 +389,21 @@ const DeleteObjectProfile = async ({ id_object_profile, id_person }) => {
 
   try {
     await client.query('BEGIN');
+
+    // ÉTAPE 0 : Vérifier si l'objet est en mode automatique
+    const checkRes = await client.query(
+      `SELECT is_automatic FROM object_profile 
+       WHERE id_object_profile = $1 AND id_person = $2`,
+      [id_object_profile, id_person]
+    );
+
+    if (checkRes.rows.length === 0) {
+      throw new Error("Profil introuvable.");
+    }
+
+    if (checkRes.rows[0].is_automatic === true) {
+      throw new Error("Impossible de supprimer : l'objet est en mode AUTOMATIQUE. Veuillez le passer en MANUEL d'abord.");
+    }
 
     // ÉTAPE 1 : Supprimer les liens dans la table LNK
     // On sécurise avec id_person pour être sûr que l'utilisateur ne supprime que ses propres liens

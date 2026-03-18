@@ -116,6 +116,10 @@ const UpdateObjectProfileController = (op) => {
                 resolve(new ResponseApi().InitOK(data));
             })
             .catch((e) => {
+                if (e.message === "NOT_FOUND") {
+                    // C'est ce 404 qui fera dire "-1" à l'ESP32
+                    return resolve(new ResponseApi().InitNotFound("Profil inexistant"));
+                }
                 if (e.code === "23503") {
                     resolve(new ResponseApi().InitBadRequest(e.message));
                     return;
