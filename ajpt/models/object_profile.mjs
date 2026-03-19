@@ -257,6 +257,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
     const query = `
         SELECT 
             op.*, -- Toutes les infos de object_profile
+            op.modify_op,
             op.title AS op_title,
             -- Infos du groupe (Cibles)
             gpt.temperature_sensor_extern AS target_temp,
@@ -344,6 +345,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         is_water: row.is_water,
         is_favorite: row.is_favorite,
         last_watering: row.last_watering_date,
+        last_update: row.modify_op,
         
         // Données capteurs groupées
         sensors: {
