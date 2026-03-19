@@ -381,69 +381,51 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         }
     };
 };
-
 const DeleteObjectProfile = async ({ id_object_profile, id_person }) => {
-  if (!id_object_profile || !id_person) {
-    throw new Error("id_object_profile and id_person are required");
-  }
-
   const client = await pool.connect();
-
   try {
     await client.query('BEGIN');
 
-    // ÉTAPE 0 : Vérifier si l'objet est en mode automatique
+    // ÉTAPE 0 : Vérification de l'état
     const checkRes = await client.query(
-      `SELECT is_automatic FROM object_profile 
+      `SELECT is_automatic, 
+       (last_update >= NOW() - INTERVAL '24 hours') as is_stable
+       FROM object_profile 
        WHERE id_object_profile = $1 AND id_person = $2`,
       [id_object_profile, id_person]
     );
 
     if (checkRes.rows.length === 0) {
-      throw new Error("Profil introuvable.");
+      return { status: 404, message: "Profil introuvable." };
     }
 
-    if (checkRes.rows[0].is_automatic === true) {
-      throw new Error("Impossible de supprimer : l'objet est en mode AUTOMATIQUE. Veuillez le passer en MANUEL d'abord.");
+    const { is_automatic, is_stable } = checkRes.rows[0];
+
+    // On bloque si c'est Auto ET Stable
+    if (is_automatic && is_stable) {
+      return { status: 403, message: "BLOCK_AUTO" };
     }
 
-    // ÉTAPE 1 : Supprimer les liens dans la table LNK
-    // On sécurise avec id_person pour être sûr que l'utilisateur ne supprime que ses propres liens
-    await client.query(
-      `DELETE FROM lnk_person_op_group 
-       WHERE id_object_profile = $1 AND id_person = $2`,
-      [id_object_profile, id_person]
-    );
+    // Détermination du code succès
+    const successCode = (is_automatic && !is_stable) ? 202 : 200;
 
-    // ÉTAPE 2 : Supprimer le profil lui-même
-    // On garde la condition id_person ici aussi par sécurité
-    const deleteRes = await client.query(
-      `DELETE FROM object_profile 
-       WHERE id_object_profile = $1 AND id_person = $2 
-       RETURNING id_object_profile`,
-      [id_object_profile, id_person]
-    );
-
-    if (deleteRes.rows.length === 0) {
-      throw new Error("Profil introuvable ou vous n'avez pas les droits de suppression.");
-    }
+    // Suppression
+    await client.query(`DELETE FROM lnk_person_op_group WHERE id_object_profile = $1`, [id_object_profile]);
+    await client.query(`DELETE FROM object_profile WHERE id_object_profile = $1`, [id_object_profile]);
 
     await client.query('COMMIT');
 
-    return {
-      success: true,
-      deleted_id: deleteRes.rows[0].id_object_profile,
-      message: "Profil et liens supprimés avec succès. Les groupes associés restent intacts."
+    return { 
+      status: successCode, 
+      message: successCode === 202 ? "OFFLINE_FORCE_DELETE" : "SUCCESS_DELETE" 
     };
 
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error("Erreur lors de la suppression du profil :", error.message);
-    throw error;
+    return { status: 500, message: error.message };
   } finally {
     client.release();
   }
 };
-
 
 export { ObjectProfile, createObjectProfile, GetRequestObjectProfileResumeByPerson, GetRequestObjectProfileResumeFavorisByPerson, updateObjectProfile, GetRequestObjectProfiledetailsByOP, DeleteObjectProfile };
