@@ -381,15 +381,15 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         }
     };
 };
+
 const DeleteObjectProfile = async ({ id_object_profile, id_person }) => {
   const client = await pool.connect();
   try {
-    await client.query('BEGIN');
+    // 1. On vérifie l'existence et l'état
 
-    // ÉTAPE 0 : Vérification de l'état
     const checkRes = await client.query(
       `SELECT is_automatic, 
-       (last_update >= NOW() - INTERVAL '24 hours') as is_stable
+       (modify_op >= NOW() - INTERVAL '24 hours') as is_stable
        FROM object_profile 
        WHERE id_object_profile = $1 AND id_person = $2`,
       [id_object_profile, id_person]
@@ -401,17 +401,27 @@ const DeleteObjectProfile = async ({ id_object_profile, id_person }) => {
 
     const { is_automatic, is_stable } = checkRes.rows[0];
 
-    // On bloque si c'est Auto ET Stable
+    // 2. Logique de blocage Sécurisée
     if (is_automatic && is_stable) {
       return { status: 403, message: "BLOCK_AUTO" };
     }
 
-    // Détermination du code succès
     const successCode = (is_automatic && !is_stable) ? 202 : 200;
 
-    // Suppression
-    await client.query(`DELETE FROM lnk_person_op_group WHERE id_object_profile = $1`, [id_object_profile]);
-    await client.query(`DELETE FROM object_profile WHERE id_object_profile = $1`, [id_object_profile]);
+    await client.query('BEGIN');
+
+    // 3. Suppression dans l'ordre des contraintes
+    // Supprimer d'abord la table de liaison
+    await client.query(
+      `DELETE FROM lnk_person_op_group WHERE id_object_profile = $1`, 
+      [id_object_profile]
+    );
+
+    // Enfin, supprimer le profil lui-même
+    await client.query(
+      `DELETE FROM object_profile WHERE id_object_profile = $1 AND id_person = $2`, 
+      [id_object_profile, id_person]
+    );
 
     await client.query('COMMIT');
 
@@ -421,8 +431,9 @@ const DeleteObjectProfile = async ({ id_object_profile, id_person }) => {
     };
 
   } catch (error) {
-    await client.query('ROLLBACK');
-    return { status: 500, message: error.message };
+    if (client) await client.query('ROLLBACK');
+    console.error("ERREUR SQL:", error);
+    return { status: 500, message: "Erreur base de données : " + error.message };
   } finally {
     client.release();
   }
