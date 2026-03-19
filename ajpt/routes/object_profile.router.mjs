@@ -38,7 +38,7 @@ routerObjectProfile.post("/object_profile/delete/byobjectprofile", async (req, r
 
 routerObjectProfile.delete("/object_profile/delete/byobjectprofile", async (req, res) => {
     const response = await DeleteObjectProfileController(req.body);
-    res.status(response.code).send(response);
+    res.status(response.code).json(response);
 });
 
 routerObjectProfile.patch("/object/object_profile/update/byobjectprofile", objectAuth, async (req, res) => {

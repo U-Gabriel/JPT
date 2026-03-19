@@ -168,7 +168,15 @@ const DeleteObjectProfileController = (body) => {
 
         try {
             const result = await DeleteObjectProfile({ id_object_profile, id_person });
-            resolve(new ResponseApi().InitOK(result));
+
+            // On crée une réponse générique et on lui affecte le code et le message du résultat
+            const response = new ResponseApi();
+            response.code = result.status;
+            response.status = result.status < 400 ? "OK" : "KO";
+            response.message = result.message;
+            response.data = result;
+
+            resolve(response);
         } catch (e) {
             // Code 23503 = Violation de contrainte (clé étrangère)
             if (e.code === "23503") {
