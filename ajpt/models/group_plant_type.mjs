@@ -47,7 +47,8 @@ const CreateAndAssignCustomGroup = async (body) => {
         temperature_sensor_extern,
         humidity_air_sensor,
         priority_plant,
-        watering_time
+        watering_time,
+        watering_period_open
     } = body;
 
     // 1. Validation de sécurité
@@ -79,9 +80,11 @@ const CreateAndAssignCustomGroup = async (body) => {
                 humidity_air_sensor,
                 prority_plant,
                 watering_time,
+                watering_period_open,
                 is_standard
+                
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, false)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, false)
             RETURNING id_group_plant_type;
         `;
         
@@ -93,7 +96,8 @@ const CreateAndAssignCustomGroup = async (body) => {
             temperature_sensor_extern,
             humidity_air_sensor,
             priority_plant,
-            watering_time
+            watering_time,
+            watering_period_open
         ]);
 
         const newGroupId = groupRes.rows[0].id_group_plant_type;
@@ -136,6 +140,7 @@ const GetRequestGroupPlantType = async ({ id_person, id_object_profile }) => {
             gpt.humidity_air_sensor AS humidity_extern,
             gpt.humidity_ground_sensor AS humidity_ground,
             gpt.watering_time,
+            gpt.watering_period_open,
             gpt.prority_plant AS priority_plant
         FROM group_plant_type gpt
         -- Jointure pour connaître le type de plante de l'objet actuel
@@ -177,6 +182,7 @@ const GetRequestGroupPlantType = async ({ id_person, id_object_profile }) => {
             humidity_air: row.humidity_extern,
             humidity_ground: row.humidity_ground,
             watering_time: row.watering_time,
+            watering_period_open: row.watering_period_open,
             priority: row.priority_plant
         }
     }));
