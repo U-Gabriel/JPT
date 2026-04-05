@@ -8,6 +8,7 @@ const updateObjectProfileObj = async (body) => {
         last_time_arrosage, 
         sensor_data, 
         last_watering_date,  
+        is_almost_empty_container
     } = body;
 
     // 2. VALIDATIONS DES DONNÉES
@@ -81,7 +82,8 @@ const updateObjectProfileObj = async (body) => {
                 state_plant = LEAST(1 + (SELECT deviation_score FROM score_calc), 4),
                 modify_op = COALESCE($9, NOW()),
                 last_watering_date = COALESCE($11, last_watering_date),
-                is_water = false
+                is_water = false,
+                is_almost_empty_container = COALESCE($12, is_almost_empty_container)
             WHERE id_object_profile = $10
             RETURNING id_object_profile, id_plant_type, is_automatic, state_plant
         )
@@ -94,6 +96,7 @@ const updateObjectProfileObj = async (body) => {
             g.exposition_time_uv,
             g.watering_time,
             g.prority_plant,
+            g.watering_period_open,
             up.is_automatic
         FROM updated_op up
         LEFT JOIN group_plant_type g ON (
@@ -115,7 +118,8 @@ const updateObjectProfileObj = async (body) => {
             averages.uv, averages.temp, averages.hum, averages.arid,  // $5 à $8
             last_time_arrosage || null,                               // $9
             id_object_profile,                                        // $10
-            last_watering_date || null                                // $11
+            last_watering_date || null,                               // $11
+            is_almost_empty_container ?? null                          // $12
         ]
     };
 
