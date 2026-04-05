@@ -29,6 +29,9 @@ class _CreateGroupPlantPageState extends State<CreateGroupPlantPage> {
 
   // Contrôleurs
   final TextEditingController _nameController = TextEditingController();
+
+  final TextEditingController _wateringDurationController = TextEditingController(text: "10");
+
   final TextEditingController _tempController = TextEditingController(text: "");
   final TextEditingController _humidityController = TextEditingController(text: "");
 
@@ -86,6 +89,7 @@ class _CreateGroupPlantPageState extends State<CreateGroupPlantPage> {
       humidityAir: double.tryParse(_humidityController.text) ?? 60.0,
       priority: _selectedPriority,
       wateringTime: _selectedWateringSeconds,
+      wateringPeriodOpen: int.tryParse(_wateringDurationController.text) ?? 5,
       token: token,
     );
 
@@ -135,6 +139,11 @@ class _CreateGroupPlantPageState extends State<CreateGroupPlantPage> {
                   _buildFieldTitle("Fréquence d'arrosage (Temps)"),
                   _buildDropdown<int>(_selectedWateringSeconds, _wateringOptions, (val) => setState(() => _selectedWateringSeconds = val!)),
                   _buildDescription("Délai maximum entre deux arrosages si la priorité inclut le facteur temps."),
+
+                  const SizedBox(height: 25),
+                  _buildFieldTitle("Durée d'activation de la pompe"),
+                  _buildTextField(_wateringDurationController, "Ex: 5", Icons.timer_outlined, isNumber: true),
+                  _buildDescription("Temps d'écoulement de l'eau en secondes. Ce réglage permet de contrôler avec précision la quantité d'eau délivrée à chaque cycle d'arrosage."),
 
                   const SizedBox(height: 25),
                   _buildFieldTitle("Objectif de Fertilité"),

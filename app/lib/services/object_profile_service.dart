@@ -164,7 +164,7 @@ class ObjectProfileService {
     }
   }
 
-  Future<bool> deleteObjectProfile({
+  Future<int> deleteObjectProfile({
     required int idPerson,
     required int idObjectProfile,
     required String token,
@@ -184,14 +184,11 @@ class ObjectProfileService {
         }),
       );
 
-      if (response.statusCode == 200) {
-        final decoded = json.decode(response.body);
-        return decoded['status'] == "OK" && decoded['data']['success'] == true;
-      }
-      return false;
+      return response.statusCode;
+
     } catch (e) {
       print("Erreur lors de la suppression du profil : $e");
-      return false;
+      return 500;
     }
   }
 

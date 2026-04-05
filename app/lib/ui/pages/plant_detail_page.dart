@@ -256,7 +256,6 @@ class PlantDetailPage extends StatelessWidget {
     );
   }
 
-  // CORRECTION DU GRIDVIEW POUR L'ADAPTABILITÉ
   Widget _buildSensorGrid(ObjectProfile plant) {
     final sensors = plant.sensors;
 
@@ -272,7 +271,7 @@ class PlantDetailPage extends StatelessWidget {
       crossAxisSpacing: 16,
       children: [
         _buildSensorTile("Température", "${format(sensors.averages['temp'])}°C", sensors.targets['temp'], sensors.averages['temp'], Icons.thermostat, "°C"),
-        _buildSensorTile("Humidité Sol", "${format(sensors.averages['hum_sol'])}%", sensors.targets['hum_sol'], sensors.averages['hum_sol'], Icons.water_drop, "%"),
+        _buildSensorTile("Humidité Sol", "${format(sensors.averages['fertility'])}%", sensors.targets['fertility'], sensors.averages['fertility'], Icons.water_drop, "%"),
         _buildSensorTile("Humidité Air", "${format(sensors.averages['hum_air'])}%", sensors.targets['hum_air'], sensors.averages['hum_air'], Icons.cloud, "%"),
         _buildSensorTile("Fertilité", format(sensors.averages['fertility']), sensors.targets['fertility'], sensors.averages['fertility'], Icons.science, ""),
       ],
@@ -384,7 +383,6 @@ class PlantDetailPage extends StatelessWidget {
     );
   }
 
-  // À ajouter dans la classe PlantDetailPage
   void _handleDelete(BuildContext context, ObjectProfile plant) {
     final authProvider = context.read<AuthProvider>();
     final userId = int.tryParse(authProvider.userId ?? '') ?? 0;
@@ -393,46 +391,65 @@ class PlantDetailPage extends StatelessWidget {
     DeleteConfirmDialog.show(
       context,
       title: "Supprimer les réglages",
-      message: "Voulez-vous vraiment supprimer  votre plante ${plant.title} ?",
+      message: "Voulez-vous vraiment supprimer votre plante ${plant.title} ?",
       onConfirm: () async {
-        final success = await ObjectProfileService().deleteObjectProfile(
+        final statusCode = await ObjectProfileService().deleteObjectProfile(
           idPerson: userId,
           idObjectProfile: plant.idObjectProfile,
           token: token,
         );
 
-        if (success) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Profil supprimé avec succès"), backgroundColor: Colors.green),
-            );
-            // On retourne à la liste (Home)
+        if (!context.mounted) return;
+
+        switch (statusCode) {
+          case 200: // Succès normal
+            _showSnack(context, "Profil supprimé avec succès", Colors.green);
             Navigator.of(context).popUntil((route) => route.isFirst);
-          }
-        } else {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Erreur lors de la suppression"), backgroundColor: Colors.red),
-            );
-          }
+            break;
+
+          case 202: // Succès forcé (hors ligne)
+            _showSnack(context, "Connexion perdue : suppression appliquée par sécurité", Colors.blueGrey);
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            break;
+
+          case 403: // Refusé (Auto + stable)
+            _showSnack(context, "Impossible : l'objet est connecté et en mode AUTO. Passez en MANUEL.", Colors.orange);
+            break;
+
+          default: // Erreur 404 ou 500
+            _showSnack(context, "Erreur lors de la suppression.", Colors.red);
         }
       },
     );
   }
 
-  bool _isConnectionStable(String? lastWatering) {
-    if (lastWatering == null) return false;
+// Petit helper pour les messages
+  void _showSnack(BuildContext context, String msg, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: color, behavior: SnackBarBehavior.floating),
+    );
+  }
+
+  /// Vérifie la stabilité en fonction d'une durée flexible
+  bool _isConnectionStable(String? dateString, {int maxDays = 1}) {
+    if (dateString == null) return false;
     try {
-      final lastDate = DateTime.parse(lastWatering);
-      final difference = DateTime.now().difference(lastDate).inDays;
-      return difference <= 7;
+      // DateTime.parse gère très bien le format ISO "2026-03-19T00:00:00.000Z"
+      final lastDate = DateTime.parse(dateString).toLocal();
+      final now = DateTime.now();
+
+      // On calcule la différence en jours
+      final difference = now.difference(lastDate).inDays;
+
+      return difference <= maxDays;
     } catch (e) {
       return false;
     }
   }
 
   Widget _buildConnectionStatus(ObjectProfile plant) {
-    final bool isStable = _isConnectionStable(plant.lastWatering);
+    final bool isStable = _isConnectionStable(plant.lastUpdate, maxDays: 1) ||
+        _isConnectionStable(plant.lastWatering, maxDays: 6);
 
     return Container(
       width: double.infinity,

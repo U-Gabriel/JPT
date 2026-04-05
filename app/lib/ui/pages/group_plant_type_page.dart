@@ -230,6 +230,12 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
       children: [
         _buildInfoTile("Nom de la configuration", _selectedGroup!.title, Icons.label_important_outline),
         const SizedBox(height: 12),
+        _buildInfoTile("Priorité d'arrosage", _getPriorityText(d.priority), Icons.star_outline),
+        const SizedBox(height: 12),
+        _buildInfoTile("Fréquence d'arrosage", _formatWateringTime(d.wateringTime), Icons.event_repeat),
+        const SizedBox(height: 12),
+        _buildInfoTile("Durée d'activation d'arrosage", _formatDuration(d.watering_period_open), Icons.timer_outlined),
+        const SizedBox(height: 12),
         _buildInfoTile("Objectif Fertilité", _getFertilityText(d.fertility), Icons.opacity, trailing: "${d.fertility}%"),
         const SizedBox(height: 12),
         Row(
@@ -239,10 +245,7 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
             Expanded(child: _buildInfoTile("Humidité Air", "${d.humidityAir ?? '--'}%", Icons.air)),
           ],
         ),
-        const SizedBox(height: 12),
-        _buildInfoTile("Priorité d'arrosage", _getPriorityText(d.priority), Icons.star_outline),
-        const SizedBox(height: 12),
-        _buildInfoTile("Fréquence d'arrosage", _formatWateringTime(d.wateringTime), Icons.event_repeat),
+
       ],
     );
   }
@@ -440,6 +443,27 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
       case 5: return "Terre atteinte + Temps proche";
       case 6: return "Temps atteint + Terre proche";
       default: return "Non défini";
+    }
+  }
+
+  String _formatDuration(int? seconds) {
+    if (seconds == null || seconds == 0) {
+      return "0 seconde";
+    }
+
+    if (seconds < 60) {
+      return "$seconds secondes";
+    }
+
+    // Si on dépasse 60 secondes, on affiche en minutes
+    final minutes = seconds / 60;
+
+    // truncateToDouble() == minutes permet de savoir si c'est un compte rond (ex: 2.0 min -> 2 min)
+    if (minutes.truncateToDouble() == minutes) {
+      return "${minutes.toInt()} minutes";
+    } else {
+      // Sinon on affiche une décimale (ex: 1.5 min)
+      return "${minutes.toStringAsFixed(1)} minutes";
     }
   }
 

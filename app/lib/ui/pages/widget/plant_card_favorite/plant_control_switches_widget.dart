@@ -34,7 +34,7 @@ class _PlantControlSwitchesState extends State<PlantControlSwitches> {
   }
 
   Future<void> _startWatering() async {
-    final bool isStable = _isConnectionStable(widget.plant.lastWatering);
+    final bool isStable = _isConnectionStable(widget.plant.lastWatering) || _isConnectionStable(widget.plant.lastUpdate);
 
     // Si le mode auto est actif, on n'arrose pas, on explique pourquoi
     if (widget.plant.isAutomatic == true) {
@@ -66,7 +66,7 @@ class _PlantControlSwitchesState extends State<PlantControlSwitches> {
         token: token,
       );
 
-      Timer(const Duration(seconds: 10), () {
+      Timer(const Duration(seconds: 30), () {
         if (mounted) setState(() => _isWatering = false);
       });
     } catch (e) {

@@ -30,6 +30,7 @@ class GroupDetails {
   final String? humidityAir;
   final String? humidityGround;
   final int? wateringTime;
+  final int? watering_period_open;
   final int? priority;
 
   GroupDetails({
@@ -38,6 +39,7 @@ class GroupDetails {
     this.humidityAir,
     this.humidityGround,
     this.wateringTime,
+    this.watering_period_open,
     this.priority,
   });
 
@@ -48,6 +50,7 @@ class GroupDetails {
       humidityAir: json['humidity_air']?.toString(),
       humidityGround: json['humidity_ground']?.toString(),
       wateringTime: json['watering_time'] is int ? json['watering_time'] : null,
+      watering_period_open: json['watering_period_open'] is int ? json['watering_period_open'] : null,
       priority: json['priority'],
     );
   }

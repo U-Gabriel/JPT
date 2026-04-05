@@ -29,6 +29,7 @@ class ObjectProfile {
   final bool isWater;
   final bool isFavorite;
   final String? lastWatering;
+  final String? lastUpdate;
   final SensorData sensors;
   final PlantDetails plantDetails;
 
@@ -56,6 +57,7 @@ class ObjectProfile {
     required this.isWater,
     required this.isFavorite,
     this.lastWatering,
+    this.lastUpdate,
     required this.sensors,
     required this.plantDetails,
 
@@ -102,6 +104,7 @@ class ObjectProfile {
         isWater: json['is_water'] ?? false,
         isFavorite: json['is_favorite'] ?? false,
         lastWatering: json['last_watering'],
+        lastUpdate: json['last_update'],
       );
     } catch (e, stack) {
       print("Erreur de parsing ObjectProfile: $e");

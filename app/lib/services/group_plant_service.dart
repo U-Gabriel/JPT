@@ -15,6 +15,7 @@ class GroupPlantService {
     required double humidityAir,
     required int priority,
     required int wateringTime,
+    required int wateringPeriodOpen,
     required String token,
   }) async {
     final url = Uri.parse(AppConfig.GroupPlantTypeEndpointCreate());
@@ -28,7 +29,8 @@ class GroupPlantService {
       "temperature_sensor_extern": temperature,
       "humidity_air_sensor": humidityAir,
       "priority_plant": priority,
-      "watering_time": wateringTime
+      "watering_time": wateringTime,
+      "watering_period_open": wateringPeriodOpen
     });
 
     try {
