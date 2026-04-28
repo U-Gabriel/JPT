@@ -145,4 +145,105 @@ const GenerateToken = (person) => {
     }
 }
 
-export {Person, Add, GetByIdAndPassword, ModifyLastConnexion, GenerateToken}
+/**
+ * Vérifie l'existence d'un utilisateur par mail et enregistre le code de reset
+ * @param {string} mail 
+ * @param {string} code 
+ * @returns {Promise<object|null>} L'utilisateur si trouvé, sinon null
+ */
+const SetPasswordReset = (mail, code) => {
+    return new Promise((resolve, reject) => {
+        // On récupère d'abord l'utilisateur pour vérifier s'il existe et avoir son prénom
+        const queryCheck = {
+            text: 'SELECT id_person, firstname FROM person WHERE mail = $1',
+            values: [mail]
+        };
+
+        pool.query(queryCheck, (error, result) => {
+            if (error) return reject(error);
+            if (result.rows.length === 0) return resolve(null);
+
+            const user = result.rows[0];
+
+            // On met à jour le token et l'expiration
+            const queryUpdate = {
+                text: `UPDATE person 
+                       SET reset_password_token = encode(digest($1, 'sha256'), 'hex'), 
+                            reset_password_expires = (NOW() AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris') + INTERVAL '15 minutes'
+                       WHERE id_person = $2 
+                       RETURNING id_person, firstname`,
+                values: [code, user.id_person]
+            };
+
+            pool.query(queryUpdate, (error, updateResult) => {
+                if (error) return reject(error);
+                resolve(updateResult.rows[0]);
+            });
+        });
+    });
+};
+
+/**
+ * Vérifie si le code de récupération est valide sans modifier le mot de passe
+ * @param {string} mail 
+ * @param {string} code 
+ * @returns {Promise<boolean>}
+ */
+const CheckResetCode = (mail, code) => {
+    return new Promise((resolve, reject) => {
+        const query = {
+            text: `SELECT id_person FROM person 
+                   WHERE mail = $1 
+                   AND reset_password_token = encode(digest($2, 'sha256'), 'hex')
+                   AND reset_password_expires > (NOW() AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris')`,
+            values: [mail, code]
+        };
+
+        pool.query(query, (error, result) => {
+            if (error) return reject(error);
+            // Si on trouve une ligne, c'est que le code est bon et valide
+            resolve(result.rows.length > 0);
+        });
+    });
+};
+
+/**
+ * Modifie le mot de passe après validation finale du code
+ */
+const UpdatePasswordWithCode = (mail, code, newPassword) => {
+    return new Promise((resolve, reject) => {
+        // 1. On vérifie d'abord si le code est toujours valide
+        const checkQuery = {
+            text: `SELECT id_person FROM person 
+                   WHERE mail = $1 
+                   AND reset_password_token = encode(digest($2, 'sha256'), 'hex')
+                   AND reset_password_expires > (NOW() AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris')`,
+            values: [mail, code]
+        };
+
+        pool.query(checkQuery, (error, result) => {
+            if (error) return reject(error);
+            if (result.rows.length === 0) return resolve(null);
+
+            const id_person = result.rows[0].id_person;
+
+            // 2. Mise à jour du mot de passe + Nettoyage des champs de récupération
+            const updateQuery = {
+                text: `UPDATE person 
+                       SET password = sha256($1), 
+                           reset_password_token = NULL, 
+                           reset_password_expires = NULL 
+                       WHERE id_person = $2 
+                       RETURNING id_person`,
+                values: [newPassword, id_person]
+            };
+
+            pool.query(updateQuery, (err, resUpdate) => {
+                if (err) return reject(err);
+                resolve(resUpdate.rows[0]);
+            });
+        });
+    });
+};
+
+export {Person, Add, GetByIdAndPassword, ModifyLastConnexion, GenerateToken, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode}

@@ -73,6 +73,81 @@
           "responses": {}
         }
       },
+      "/login_app/forgot_password": {
+        "patch": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Connexion et retourne le Bearer token (pour application).",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "connection",
+              "in": "body",
+              "description": "Envoie mail pour l'oublie d'un mdp",
+              "schema": {
+                "$ref": "#/definitions/SimpleMail"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
+      "/login_app/forgot_password/confirmation_simple": {
+        "post": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Connexion et retourne le Bearer token (pour application).",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "connection",
+              "in": "body",
+              "description": "Confimation Code",
+              "schema": {
+                "$ref": "#/definitions/ForgotPassword"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
+      "/login_app/forgot_password/modification": {
+        "patch": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Connexion et retourne le Bearer token (pour application).",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "connection",
+              "in": "body",
+              "description": "Modification de password",
+              "schema": {
+                "$ref": "#/definitions/ForgotPasswordModification"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
       "/object_profile/create/init": {
         "post": {
           "tags": [
@@ -445,6 +520,45 @@
           "password": {
             "type": "string",
             "example": "aaaaaa"
+          }
+        }
+      },
+      "SimpleMail": {
+        "type": "object",
+        "properties": {
+          "mail": {
+            "type": "string",
+            "example": "test05@test.com"
+          }
+        }
+      },
+      "ForgotPassword": {
+        "type": "object",
+        "properties": {
+          "mail": {
+            "type": "string",
+            "example": "test05@test.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "6dwf5"
+          }
+        }
+      },
+      "ForgotPasswordModification": {
+        "type": "object",
+        "properties": {
+          "mail": {
+            "type": "string",
+            "example": "test05@test.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "6dwf5"
+          },
+          "password": {
+            "type": "string",
+            "example": "6dwf5"
           }
         }
       },
