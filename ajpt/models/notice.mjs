@@ -41,4 +41,14 @@ const CreateNoticeRequest = async (body) => {
   return rows[0];
 };
 
-export { CreateNoticeRequest };
+const CountUserNotices = async (id_person) => {
+    const query = {
+        text: `SELECT COUNT(*) FROM notice WHERE id_person = $1`,
+        values: [id_person]
+    };
+    const { rows } = await pool.query(query);
+    return parseInt(rows[0].count);
+};
+
+
+export { CreateNoticeRequest, CountUserNotices };

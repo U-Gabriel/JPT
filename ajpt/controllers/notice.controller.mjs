@@ -1,4 +1,4 @@
-import { CreateNoticeRequest } from "../models/notice.mjs";
+import { CreateNoticeRequest, CountUserNotices } from "../models/notice.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 /**
@@ -11,6 +11,13 @@ const CreateNotice = async (body) => {
         // Validation stricte des paramètres obligatoires
         if (!id_person || !title || !content) {
             return new ResponseApi().InitMissingParameters();
+        }
+
+        // --- AJOUT DE LA LIMITE ---
+        const noticeCount = await CountUserNotices(id_person);
+        
+        if (noticeCount >= 5) {
+            return new ResponseApi().InitBadRequest("Limite de 5 remarques atteinte. Merci de patienter que nos équipes traitent vos demandes actuelles.");
         }
 
         const data = await CreateNoticeRequest(body);
