@@ -48,6 +48,56 @@
           "responses": {}
         }
       },
+      "/register/send_mail": {
+        "patch": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Créer un compte basé sur le pseudo.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "person",
+              "in": "body",
+              "description": "La nouvelle personne",
+              "schema": {
+                "$ref": "#/definitions/SimpleMail"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
+      "/register/validate_account": {
+        "patch": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Créer un compte basé sur le pseudo.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "person",
+              "in": "body",
+              "description": "La nouvelle personne",
+              "schema": {
+                "$ref": "#/definitions/Person"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
       "/login_app": {
         "post": {
           "tags": [

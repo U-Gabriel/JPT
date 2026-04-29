@@ -17,7 +17,7 @@ export const getForgotEmailHtml = (firstname, resetCode) => {
                 <p style="font-size: 0.8em; color: #999;">Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer ce mail en toute sécurité.</p>
             </div>
             <div style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 0.8em; color: #777;">
-                &copy; 2026 Plante App - Votre compagnon vert.
+                &copy; 2026 GDOME App - La domotique à votre service.
             </div>
         </div>
     `;

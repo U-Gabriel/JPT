@@ -1,4 +1,4 @@
-import {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword} from '../controllers/auth.controller.mjs'
+import {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount} from '../controllers/auth.controller.mjs'
 import express from "express"
 
 const routerAuth = express.Router()
@@ -6,6 +6,16 @@ const routerAuth = express.Router()
 
 routerAuth.post("/register", async (req, res) => {
     const response = await Register(req.body)
+    res.status(response.code).send(response)
+});
+
+routerAuth.patch("/register/send_mail", async (req, res) => {
+    const response = await RegisterSendMail(req.body)
+    res.status(response.code).send(response)
+});
+
+routerAuth.patch("/register/validate_account", async (req, res) => {
+    const response = await RegisterAccount(req.body)
     res.status(response.code).send(response)
 });
 
