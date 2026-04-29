@@ -115,7 +115,7 @@ const SetRegisterVerification = (mail, code) => {
             text: `UPDATE person 
                    SET reset_password_token = encode(digest($1, 'sha256'), 'hex'), 
                        reset_password_expires = NOW() + INTERVAL '24 hours' 
-                   WHERE mail = $2 
+                   WHERE mail = $2 AND is_verified = false
                    RETURNING id_person, firstname`,
             values: [code, mail]
         };
