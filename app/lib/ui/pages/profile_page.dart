@@ -23,7 +23,7 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Bienvenue, ${authProvider.firstName ?? 'Utilisateur'}!'),
+            Text('Bienvenue, ${authProvider.pseudo ?? 'Utilisateur'}!'),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {

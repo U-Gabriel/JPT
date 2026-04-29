@@ -12,6 +12,11 @@ class AppConfig {
 
   static String get loginEndpoint => "$baseUrl/login_app";
   static String get signupEndpoint => "$baseUrl/register";
+  static String get sendMailEndpoint => "$baseUrl/register/send_mail";
+  static String get validateAccountEndpoint => "$baseUrl/register/validate_account";
+  static String get requestForgotPasswordResetEndpoint => "$baseUrl/login_app/forgot_password";
+  static String get requestConfimationSimpleForgotPasswordResetEndpoint => "$baseUrl/login_app/forgot_password/confirmation_simple";
+  static String get requestModificationPasswordResetEndpoint => "$baseUrl/login_app/forgot_password/modification";
   static String get requestPasswordResetEndpoint => "$baseUrl/auth/request-password-reset";
   static String get resetPasswordEndpoint => "$baseUrl/auth/user/reset_password";
 

@@ -20,6 +20,7 @@ import '../ui/pages/profile_page.dart';
 import '../ui/pages/login_page.dart';
 import '../ui/pages/reset_password_page.dart';
 import '../ui/pages/signup_page.dart';
+import '../ui/pages/signup_validation_page.dart';
 
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -32,6 +33,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/login': (_) => const LoginPage(),
   '/forgot_password': (_) => const ForgotPasswordPage(),
   '/signup': (_) => const SignupPage(),
+  '/signup_validation': (_) => const SignupValidationPage(),
   '/get_code_email': (_) => const GetCodeEmailPage(),
   '/reset_password': (_) => const ResetPasswordPage(),
   '/add_my_object': (_) => const AddMyObjectPage(),
