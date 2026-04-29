@@ -557,6 +557,45 @@
             }
           ]
         }
+      },
+      "/notice/create": {
+        "post": {
+          "tags": [
+            "Notice"
+          ],
+          "summary": "Création d'une remarque ou d'un feedback.",
+          "description": "Permet à un utilisateur d'envoyer une remarque, liée ou non à un objet spécifique.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "description": "Champs nécessaires pour créer une notice",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/NoticeCreate"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Notice créée avec succès"
+            },
+            "400": {
+              "description": "Paramètres manquants ou incorrects"
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
       }
     },
     "definitions": {
@@ -806,7 +845,50 @@
               "example": "3"
             }
           }
+        },
+        "NoticeCreate": {
+          "type": "object",
+          "required": [
+            "id_person",
+            "title",
+            "content"
+          ],
+          "properties": {
+            "id_person": {
+              "type": "integer",
+              "example": 37
+            },
+            "title": {
+              "type": "string",
+              "example": "Problème de connexion WiFi"
+            },
+            "content": {
+              "type": "string",
+              "example": "L'objet ne semble plus vouloir se connecter à ma box depuis la mise à jour."
+            },
+            "id_object_profile": {
+              "type": "integer",
+              "example": 12,
+              "description": "Optionnel : ID du profil de l'objet concerné"
+            },
+            "id_tag": {
+              "type": "integer",
+              "example": 1,
+              "description": "Optionnel : ID de la catégorie (ex: 1 pour Technique)"
+            },
+            "status": {
+              "type": "string",
+              "example": "PENDING",
+              "default": "PENDING"
+            },
+            "is_public": {
+              "type": "boolean",
+              "example": false,
+              "default": false
+            }
+          }
         }
+
       
     }
   }
