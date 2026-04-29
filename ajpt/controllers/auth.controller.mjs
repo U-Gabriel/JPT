@@ -24,10 +24,15 @@ const Register = async (person) => {
     try {
         const res = await Add(person);
         if (res) {
-            res.token = GenerateToken(res);
+
+            const lightUserData = {
+                mail: res.mail,
+                pseudo: res.pseudo
+            };
+
             // On utilise la variable "mail" extraite plus haut
             RegisterSendMail({ mail: mail }); 
-            return new ResponseApi().InitCreated("Compte prêt. Veuillez vérifier vos mails.", res);
+            return new ResponseApi().InitCreated("Compte prêt. Veuillez vérifier vos mails.", lightUserData);
         } else {
             // Ici aussi, on utilise la variable "mail" extraite
             sendAlreadyRegisteredMail(mail); 
@@ -81,7 +86,7 @@ const RegisterSendMail = async (body) => {
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: mail,
-                subject: 'Activez votre compte Plante App',
+                subject: 'Activez votre compte GDOME App',
                 html: getRegisterEmailHtml(user.mail, registerCode)
             };
             
@@ -117,13 +122,22 @@ const RegisterAccount = async (body) => {
             return new ResponseApi().InitBadRequest("Le code de validation est incorrect ou a expiré.");
         }
 
+        updatedUser.token = GenerateToken(updatedUser);
+
         sendWelcomeMail(updatedUser.mail);
 
         return new ResponseApi().InitOK({ 
             message: "Compte validé et profil mis à jour avec succès !",
             user: {
+                id_person: updatedUser.id_person,
                 pseudo: updatedUser.pseudo,
-                mail: updatedUser.mail
+                mail: updatedUser.mail,
+                firstname: updatedUser.firstname,
+                surname: updatedUser.surname,
+                number_phone: updatedUser.number_phone,
+                id_role: updatedUser.id_role,
+                last_connexion: updatedUser.last_connexion,
+                token: updatedUser.token
             }
         });
 

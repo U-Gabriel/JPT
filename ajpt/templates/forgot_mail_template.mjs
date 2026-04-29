@@ -7,7 +7,7 @@ export const getForgotEmailHtml = (firstname, resetCode) => {
             </div>
             <div style="padding: 30px; color: #333; line-height: 1.6;">
                 <h2 style="color: #4CAF50;">Bonjour ${firstname},</h2>
-                <p>Nous avons reçu une demande de réinitialisation de mot de passe pour votre espace <strong>Plante App</strong>.</p>
+                <p>Nous avons reçu une demande de réinitialisation de mot de passe pour votre espace <strong>GDOME App</strong>.</p>
                 <p>Veuillez utiliser le code de vérification suivant :</p>
                 <div style="margin: 30px 0; background: #f9f9f9; border-radius: 8px; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2e7d32; border: 1px dashed #4CAF50;">
                     ${resetCode}

@@ -6,7 +6,7 @@ export const getAlreadyRegisteredEmailHtml = (firstname) => {
             </div>
             <div style="padding: 30px; color: #333; line-height: 1.6;">
                 <h2 style="color: #F57C00;">Bonjour,</h2>
-                <p>Une personne a tenté de créer un compte <strong>Plante App</strong> avec votre adresse e-mail.</p>
+                <p>Une personne a tenté de créer un compte <strong>GDOME App</strong> avec votre adresse e-mail.</p>
                 
                 <div style="background-color: #FFF3E0; border-left: 4px solid #FF9800; padding: 15px; margin: 20px 0;">
                     <p style="margin: 0; font-weight: bold;">Bonne nouvelle : Votre compte est déjà actif et sécurisé.</p>

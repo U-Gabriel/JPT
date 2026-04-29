@@ -146,7 +146,7 @@ const FinalizeAccount = (body) => {
                      AND password = encode(digest($3, 'sha256'), 'hex')
                      AND reset_password_token = encode(digest($4, 'sha256'), 'hex')
                      AND reset_password_expires > (NOW() AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris')
-                   RETURNING id_person, pseudo, mail`,
+                   RETURNING id_person, pseudo, mail, firstname, surname, number_phone, id_role, last_connexion`,
             values: [mail, pseudo, password, code]
         };
 
