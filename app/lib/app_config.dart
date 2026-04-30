@@ -34,6 +34,11 @@ class AppConfig {
   static String GroupPlantTypeEndpointDelete() => "$baseUrl/group_plant_type/delete/byid";
   static String GroupPlantTypeEndpointAssign() => "$baseUrl/group_plant_type/patch/assignation/byid";
 
+  //tag && notice && faq
+  static String get tagsEndpoint => "$baseUrl/tags";
+  static String get noticeCreateEndpoint => "$baseUrl/notice/create";
+  static String get faqByTagEndpoint => "$baseUrl/faqs/tag";
+
   // old function
   static String objectProfilesEndpoint(String personId) => "$baseUrl/person/$personId/object-profiles";
   static String updateObjectProfileEndpoint(String id) => "$baseUrl/api/object-profile/$id";

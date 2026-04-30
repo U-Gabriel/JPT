@@ -44,9 +44,9 @@ class HomePage extends StatelessWidget {
         onTap: navProvider.setIndex,
         selectedItemColor: Colors.green,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Advise'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Conseils'),
           BottomNavigationBarItem(icon: Icon(Icons.local_florist), label: 'My Plant'),
-          BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Event'),
+          BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Magasin'),
         ],
       ),
     );

@@ -40,6 +40,7 @@ dependencies:
   equatable: ^2.0.3
   flutter_blue_plus: ^1.31.0
   flutter_svg: ^2.0.9
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +66,10 @@ flutter:
 
   assets:
     - assets/logo/logo_complet.svg
-    - assets/logo/logo_original.png
+    - assets/logo/logo_original.svg
+    - assets/logo/favicon_green.svg
+    - assets/logo/favicon_original.svg
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

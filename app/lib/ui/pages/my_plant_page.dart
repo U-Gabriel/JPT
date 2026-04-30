@@ -1,6 +1,7 @@
 import 'package:app/ui/pages/widget/plant_card_my_list/plant_item_my_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart'; // AJOUT DE L'IMPORT
 import '../../bloc/object_profile/object_profile_bloc.dart';
 import '../../bloc/object_profile/object_profile_event.dart';
 import '../../bloc/object_profile_my_list/object_profile_my_list_bloc.dart';
@@ -36,6 +37,44 @@ class _MyPlantPageState extends State<MyPlantPage> {
     await myListBloc.profilesStream.firstWhere((_) => true);
   }
 
+  // --- SHIMMER POUR LES FAVORIS (HORIZONTALE) ---
+  Widget _buildFavoriteShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        itemBuilder: (context, index) => Container(
+          width: 280,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // --- SHIMMER POUR MA LISTE (VERTICALE) ---
+  Widget _buildMyListShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        children: List.generate(3, (index) => Container(
+          height: 110,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+        )),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +89,6 @@ class _MyPlantPageState extends State<MyPlantPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Favoris
                 const Text(
                   'Mes favoris',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -61,7 +99,7 @@ class _MyPlantPageState extends State<MyPlantPage> {
                     stream: favoriteBloc.profilesStream,
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
+                        return _buildFavoriteShimmer(); // REMPLACÉ
                       }
                       final plants = snapshot.data!;
                       if (plants.isEmpty) {
@@ -84,10 +122,7 @@ class _MyPlantPageState extends State<MyPlantPage> {
                     },
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
-                // Ma Liste
                 const Text(
                   'Ma Liste',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -97,7 +132,7 @@ class _MyPlantPageState extends State<MyPlantPage> {
                   stream: myListBloc.profilesStream,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
+                      return _buildMyListShimmer(); // REMPLACÉ
                     }
                     final plants = snapshot.data!;
                     if (plants.isEmpty) {
@@ -118,7 +153,6 @@ class _MyPlantPageState extends State<MyPlantPage> {
           ),
         ),
       ),
-      // Button
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 30.0, right: 10.0),
         child: SizedBox(
@@ -130,18 +164,11 @@ class _MyPlantPageState extends State<MyPlantPage> {
             },
             backgroundColor: const Color(0xFF4CAF50),
             shape: const CircleBorder(),
-            child: const Icon(
-              Icons.add,
-              size: 40,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.add, size: 40, color: Colors.white),
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
-
   }
 }
-
-

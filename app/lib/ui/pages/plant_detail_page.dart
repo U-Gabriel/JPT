@@ -1,11 +1,12 @@
 import 'package:app/ui/pages/widget/popup/delete_confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart'; // AJOUT DE L'IMPORT
 import '../../../providers/auth_provider.dart';
 import '../../../services/object_profile_service.dart';
 import '../../bloc/plant_detail/plant_detail_bloc.dart';
 import '../../bloc/plant_detail/plant_detail_event.dart';
-import '../../bloc/plant_detail/plant_detail_state.dart'; // Assure-toi d'importer le state
+import '../../bloc/plant_detail/plant_detail_state.dart';
 import '../../../app_config.dart';
 import '../../models/object_profile.dart';
 import 'package:app/ui/pages/widget/plant_card_favorite/plant_control_switches_widget.dart';
@@ -13,6 +14,52 @@ import 'package:app/ui/pages/widget/plant_card_favorite/plant_control_switches_w
 class PlantDetailPage extends StatelessWidget {
   final int plantId;
   const PlantDetailPage({super.key, required this.plantId});
+
+  // --- NOUVELLE MÉTHODE SHIMMER ---
+  Widget _buildLoadingShimmer(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: MediaQuery.of(context).size.height * 0.30,
+            backgroundColor: Colors.white,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(color: Colors.white),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(height: 30, width: 200, color: Colors.white),
+                  const SizedBox(height: 16),
+                  Container(height: 50, width: double.infinity, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16))),
+                  const SizedBox(height: 16),
+                  Container(height: 100, width: double.infinity, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24))),
+                  const SizedBox(height: 32),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.4,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    children: List.generate(4, (index) => Container(
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                    )),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +74,10 @@ class PlantDetailPage extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Builder( // On utilise Builder pour accéder au bloc créé juste au-dessus
+        body: Builder(
           builder: (context) {
             final bloc = context.read<PlantDetailBloc>();
 
-            // On remet le StreamBuilder pour le côté dynamique / Polling
             return StreamBuilder<ObjectProfile>(
               stream: bloc.plantStream,
               builder: (context, snapshot) {
@@ -39,9 +85,8 @@ class PlantDetailPage extends StatelessWidget {
                   return Center(child: Text("Erreur : ${snapshot.error}"));
                 }
 
-                // Si on n'a pas encore de données, on regarde si le Bloc a un état initial
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return _buildLoadingShimmer(context); // REMPLACEMENT ICI
                 }
 
                 final plant = snapshot.data!;
@@ -53,7 +98,6 @@ class PlantDetailPage extends StatelessWidget {
                 return CustomScrollView(
                   physics: const BouncingScrollPhysics(),
                   slivers: [
-                    // --- APPBAR RESPONSIVE ---
                     SliverAppBar(
                       expandedHeight: MediaQuery.of(context).size.height * 0.30,
                       pinned: true,
@@ -61,7 +105,6 @@ class PlantDetailPage extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.wifi_find, color: Colors.white),
                           onPressed: () {
-                            print("DEBUG: Navigation vers WiFi avec ID = ${plant.idObjectProfile}");
                             Navigator.pushNamed(
                               context,
                               '/modification_wifi_my_object',
@@ -84,16 +127,8 @@ class PlantDetailPage extends StatelessWidget {
                           onPressed: () {
                             final userIdString = context.read<AuthProvider>().userId;
                             final userId = int.tryParse(userIdString ?? '') ?? 0;
-
-                            print("Envoi de ToggleFavorite pour User: $userId");
-
-                            // On récupère l'état AVANT le changement pour le message
                             final bool wasFavorite = plant.isFavorite;
-
-                            // On envoie l'ordre au bloc
                             context.read<PlantDetailBloc>().add(ToggleFavorite(userId));
-
-                            // On affiche un message cohérent avec l'action entreprise
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(!wasFavorite ? "Ajout aux favoris..." : "Retrait des favoris..."),
@@ -107,8 +142,8 @@ class PlantDetailPage extends StatelessWidget {
                           icon: const Icon(Icons.settings_input_component, color: Colors.white),
                           onPressed: () {
                             Navigator.pushNamed(
-                              context,
-                              '/group_plant_type',
+                                context,
+                                '/group_plant_type',
                                 arguments: {
                                   'objectProfileId': plant.idObjectProfile,
                                   'plantId': plant.plantDetails.typeId,
@@ -145,7 +180,6 @@ class PlantDetailPage extends StatelessWidget {
                       ),
                     ),
 
-                    // --- CONTENU ---
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -160,19 +194,13 @@ class PlantDetailPage extends StatelessWidget {
                             const SizedBox(height: 24),
                             _buildModeBanner(plant),
                             const SizedBox(height: 24),
-
-                            // Tes switchs dynamiques
                             PlantControlSwitches(plant: plant),
-
                             const SizedBox(height: 32),
                             const Text("État des capteurs",
                                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5)
                             ),
                             const SizedBox(height: 16),
-
-                            // Grille responsive corrigée (FittedBox)
                             _buildSensorGrid(plant),
-
                             const SizedBox(height: 32),
                             _buildInfoSection("À propos", plant.description ?? "Pas de description"),
                             _buildInfoSection("Conseil d'entretien", plant.advise ?? "Aucun conseil"),
@@ -191,8 +219,7 @@ class PlantDetailPage extends StatelessWidget {
     );
   }
 
-  // --- WIDGETS DE STRUCTURE ---
-
+  // --- GARDE LE RESTE DU CODE IDENTIQUE ---
   Widget _buildHeader(ObjectProfile plant, BuildContext context) {
     return Row(
       children: [
@@ -203,7 +230,6 @@ class PlantDetailPage extends StatelessWidget {
               Text(plant.plantDetails.typeTitle,
                   style: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold)),
               const SizedBox(width: 8),
-              // --- BOUTON INFO PRO ---
               GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(
@@ -258,15 +284,13 @@ class PlantDetailPage extends StatelessWidget {
 
   Widget _buildSensorGrid(ObjectProfile plant) {
     final sensors = plant.sensors;
-
-    // Petit helper pour éviter les crashs si une valeur est nulle
     String format(double? val) => val != null ? val.toStringAsFixed(1) : '--';
 
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
-      childAspectRatio: 1.4, // On ajuste un peu la hauteur
+      childAspectRatio: 1.4,
       mainAxisSpacing: 16,
       crossAxisSpacing: 16,
       children: [
@@ -280,7 +304,7 @@ class PlantDetailPage extends StatelessWidget {
 
   Widget _buildSensorTile(String label, String value, dynamic target, double? average, IconData icon, String unit) {
     return Container(
-      padding: const EdgeInsets.all(12), // Réduit un peu le padding (était à 16)
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.grey[50],
         borderRadius: BorderRadius.circular(20),
@@ -288,13 +312,13 @@ class PlantDetailPage extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min, // Utilise le minimum de place
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 20, color: Colors.green), // Réduit un peu l'icône (était à 22)
-          const SizedBox(height: 4), // Remplace Spacer() par un petit espace fixe
+          Icon(icon, size: 20, color: Colors.green),
+          const SizedBox(height: 4),
           Text(label,
               maxLines: 1,
-              overflow: TextOverflow.ellipsis, // Sécurité si le texte est long
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 11, color: Colors.grey)
           ),
           FittedBox(
@@ -332,10 +356,8 @@ class PlantDetailPage extends StatelessWidget {
     return Colors.red;
   }
 
-
   Widget _buildModeBanner(ObjectProfile plant) {
     final bool isAuto = plant.isAutomatic ?? false;
-
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -371,7 +393,7 @@ class PlantDetailPage extends StatelessWidget {
           Text(
             isAuto
                 ? "Le mode automatique est activé : le pot se comportera selon les paramètres optimaux définis pour votre plante."
-                : "Attention ! Le pot ne prendra aucune décision d'arrosage. Ce mode permet la surveillance et l'arrosage à distance. Pour changer de mode appuyer su le bouton rouge votre objet. Note : l'économie de batterie est désactivée.",
+                : "Attention ! Le pot ne prendra aucune décision d'arrosage. Ce mode permet la surveillance et l'arrosage à distance.",
             style: TextStyle(
               color: isAuto ? Colors.green[900] : Colors.orange[900],
               fontSize: 13,
@@ -402,46 +424,32 @@ class PlantDetailPage extends StatelessWidget {
         if (!context.mounted) return;
 
         switch (statusCode) {
-          case 200: // Succès normal
+          case 200:
             _showSnack(context, "Profil supprimé avec succès", Colors.green);
             Navigator.of(context).popUntil((route) => route.isFirst);
             break;
-
-          case 202: // Succès forcé (hors ligne)
-            _showSnack(context, "Connexion perdue : suppression appliquée par sécurité", Colors.blueGrey);
-            Navigator.of(context).popUntil((route) => route.isFirst);
+          case 403:
+            _showSnack(context, "Impossible : l'objet est connecté et en mode AUTO.", Colors.orange);
             break;
-
-          case 403: // Refusé (Auto + stable)
-            _showSnack(context, "Impossible : l'objet est connecté et en mode AUTO. Passez en MANUEL.", Colors.orange);
-            break;
-
-          default: // Erreur 404 ou 500
+          default:
             _showSnack(context, "Erreur lors de la suppression.", Colors.red);
         }
       },
     );
   }
 
-// Petit helper pour les messages
   void _showSnack(BuildContext context, String msg, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(msg), backgroundColor: color, behavior: SnackBarBehavior.floating),
     );
   }
 
-  /// Vérifie la stabilité en fonction d'une durée flexible
   bool _isConnectionStable(String? dateString, {int maxDays = 1}) {
     if (dateString == null) return false;
     try {
-      // DateTime.parse gère très bien le format ISO "2026-03-19T00:00:00.000Z"
       final lastDate = DateTime.parse(dateString).toLocal();
       final now = DateTime.now();
-
-      // On calcule la différence en jours
-      final difference = now.difference(lastDate).inDays;
-
-      return difference <= maxDays;
+      return now.difference(lastDate).inDays <= maxDays;
     } catch (e) {
       return false;
     }
@@ -474,7 +482,7 @@ class PlantDetailPage extends StatelessWidget {
             child: Text(
               isStable
                   ? "Objet bien connecté à l'application"
-                  : "Perte de contact avec la plante, veuillez vérifier son état ! Wifi ou connexion impossible !",
+                  : "Perte de contact avec la plante !",
               style: TextStyle(
                 color: isStable ? Colors.green[800] : Colors.red[800],
                 fontSize: 13,
@@ -483,8 +491,6 @@ class PlantDetailPage extends StatelessWidget {
               ),
             ),
           ),
-          if (isStable)
-            Icon(Icons.check_circle, color: Colors.green[700], size: 16),
         ],
       ),
     );
