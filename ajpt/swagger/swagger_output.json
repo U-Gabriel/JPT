@@ -635,6 +635,70 @@
             }
           ]
         }
+      },
+      "/faqs/tag": {
+        "post": {
+          "tags": ["FAQ"],
+          "summary": "Récupère les FAQs (filtrage par tag optionnel).",
+          "description": "Si id_tag n'est pas fourni dans le body, la route renvoie l'intégralité de la FAQ.",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_tag": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "ID du tag pour filtrer les questions."
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succès",
+              "schema": { "$ref": "#/definitions/FaqListResponse" }
+            },
+            "500": { "description": "Erreur serveur interne" }
+          }
+        }
+      },
+      "/faqs/object": {
+        "post": {
+          "tags": ["FAQ"],
+          "summary": "Récupère les FAQs liées à un objet spécifique.",
+          "description": "Cette route nécessite obligatoirement un id_object. Elle renvoie les questions spécifiques à ce matériel.",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "required": ["id_object"],
+                "properties": {
+                  "id_object": {
+                    "type": "integer",
+                    "example": 2,
+                    "description": "ID de l'objet physique concerné."
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succès",
+              "schema": { "$ref": "#/definitions/FaqListResponse" }
+            },
+            "401": { "description": "Paramètre id_object manquant." },
+            "500": { "description": "Erreur serveur interne" }
+          }
+        }
       }
       
     },
@@ -925,6 +989,29 @@
               "type": "boolean",
               "example": false,
               "default": false
+            }
+          }
+        },
+        "Faq": {
+          "type": "object",
+          "properties": {
+            "id_faq": { "type": "integer", "example": 10 },
+            "question": { "type": "string", "example": "Comment calibrer mon capteur ?" },
+            "answer": { "type": "string", "example": "Il suffit de rester appuyé sur le bouton bleu..." },
+            "id_tag": { "type": "integer", "example": 1 },
+            "id_object": { "type": "integer", "example": 2 },
+            "order_view": { "type": "integer", "example": 1 }
+          }
+        },
+        "FaqListResponse": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "example": "OK" },
+            "message": { "type": "string", "example": null },
+            "code": { "type": "integer", "example": 200 },
+            "data": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Faq" }
             }
           }
         }

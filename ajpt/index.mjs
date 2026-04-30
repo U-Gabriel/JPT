@@ -13,6 +13,7 @@ import {routerPlantType} from './routes/plant_type.router.mjs'
 import {routerGroupPlantType} from './routes/group_plant_type.router.mjs'
 import {routerNotice} from './routes/notice.router.mjs'
 import { routerTag } from './routes/tag.router.mjs'
+import { routerFaq } from './routes/faq.router.mjs'
 
 const app = express()
 
@@ -36,6 +37,7 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swagger, {swaggerOptions: {
 
 // Routers
 app.use(routerObject)
+app.use(routerFaq)
 
 // Token JWT
 app.use(authToken)
