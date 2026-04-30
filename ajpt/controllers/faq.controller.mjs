@@ -3,16 +3,14 @@ import { ResponseApi } from "../models/response-api.mjs";
 
 const GetFaqsByTags = async (body) => {
     try {
+        const { id_tag, title_search } = body || {}; 
 
-        const { id_tag } = body || {};
-
-        // On passe uniquement id_tag au modèle
-        const data = await GetFaqsByTagsRequest(id_tag);
+        // On passe les deux paramètres au modèle
+        const data = await GetFaqsByTagsRequest(id_tag, title_search);
         
         if (data) {
             return new ResponseApi().InitOK(data);
         } else {
-            
             return new ResponseApi().InitBadRequest("Erreur lors de la récupération de la FAQ.");
         }
         

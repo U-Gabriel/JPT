@@ -639,8 +639,8 @@
       "/faqs/tag": {
         "post": {
           "tags": ["FAQ"],
-          "summary": "Récupère les FAQs (filtrage par tag optionnel).",
-          "description": "Si id_tag n'est pas fourni dans le body, la route renvoie l'intégralité de la FAQ.",
+          "summary": "Récupère les FAQs (filtres tag et recherche textuelle).",
+          "description": "Permet de filtrer par ID de tag et/ou par mot-clé dans la question.",
           "parameters": [
             {
               "name": "body",
@@ -651,19 +651,19 @@
                 "properties": {
                   "id_tag": {
                     "type": "integer",
-                    "example": 1,
-                    "description": "ID du tag pour filtrer les questions."
+                    "example": 1
+                  },
+                  "title_search": {
+                    "type": "string",
+                    "example": "batterie",
+                    "description": "Recherche un mot ou une phrase dans le titre de la question."
                   }
                 }
               }
             }
           ],
           "responses": {
-            "200": {
-              "description": "Succès",
-              "schema": { "$ref": "#/definitions/FaqListResponse" }
-            },
-            "500": { "description": "Erreur serveur interne" }
+            "200": { "description": "Succès", "schema": { "$ref": "#/definitions/FaqListResponse" } }
           }
         }
       },
