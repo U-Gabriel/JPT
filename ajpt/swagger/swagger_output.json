@@ -596,7 +596,47 @@
             }
           ]
         }
+      },
+      "/tags": {
+        "get": {
+          "tags": [
+            "Tag"
+          ],
+          "summary": "Récupère la liste de tous les tags.",
+          "description": "Retourne l'ensemble des catégories disponibles pour les FAQ et les remarques.",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des tags récupérée avec succès.",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "example": "OK" },
+                  "message": { "type": "string", "example": null },
+                  "code": { "type": "integer", "example": 200 },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/Tag"
+                    }
+                  }
+                }
+              }
+            },
+            "204": {
+              "description": "Aucun tag trouvé."
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
       }
+      
     },
     "definitions": {
       "Connection": {
