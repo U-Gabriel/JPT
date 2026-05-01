@@ -699,6 +699,43 @@
             "500": { "description": "Erreur serveur interne" }
           }
         }
+      },
+      "/shop/catalog": {
+        "post": {
+          "tags": ["Shopping"],
+          "summary": "Récupère le catalogue des produits avec leurs images.",
+          "description": "Retourne la liste des produits actifs. Chaque produit contient un tableau d'objets 'assets' regroupant ses photos.",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_tag": { 
+                    "type": "integer", 
+                    "example": 1,
+                    "description": "Filtrer par catégorie" 
+                  },
+                  "title_search": { 
+                    "type": "string", 
+                    "example": "capteur",
+                    "description": "Recherche dans le titre de l'objet"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Catalogue récupéré avec succès.",
+              "schema": {
+                "$ref": "#/definitions/CatalogResponse"
+              }
+            }
+          }
+        }
       }
       
     },
@@ -1012,6 +1049,44 @@
             "data": {
               "type": "array",
               "items": { "$ref": "#/definitions/Faq" }
+            }
+          }
+        },
+        "definitions": {
+          "ObjectAsset": {
+            "type": "object",
+            "properties": {
+              "id_asset": { "type": "integer", "example": 10 },
+              "file_path": { "type": "string", "example": "https://lien-image.jpg" },
+              "is_main": { "type": "boolean", "example": true }
+            }
+          },
+          "Product": {
+            "type": "object",
+            "properties": {
+              "id_object": { "type": "integer", "example": 1 },
+              "title": { "type": "string", "example": "Capteur d'humidité V2" },
+              "description": { "type": "string", "example": "Un capteur précis pour vos plantes." },
+              "price": { "type": "number", "example": 29.99 },
+              "discount_price": { "type": "number", "example": 24.99 },
+              "stock_quantity": { "type": "integer", "example": 50 },
+              "sku": { "type": "string", "example": "CAPT-H-001" },
+              "brand": { "type": "string", "example": "JackPote" },
+              "assets": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/ObjectAsset" }
+              }
+            }
+          },
+          "CatalogResponse": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string", "example": "OK" },
+              "code": { "type": "integer", "example": 200 },
+              "data": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/Product" }
+              }
             }
           }
         }
