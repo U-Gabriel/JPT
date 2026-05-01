@@ -1052,44 +1052,43 @@
             }
           }
         },
-        "definitions": {
-          "ObjectAsset": {
-            "type": "object",
-            "properties": {
-              "id_asset": { "type": "integer", "example": 10 },
-              "file_path": { "type": "string", "example": "https://lien-image.jpg" },
-              "is_main": { "type": "boolean", "example": true }
+        "ObjectAsset": {
+          "type": "object",
+          "properties": {
+            "id_asset": { "type": "integer", "example": 10 },
+            "file_path": { "type": "string", "example": "https://lien-image.jpg" },
+            "is_main": { "type": "boolean", "example": true }
+          }
+        },
+        "Product": {
+          "type": "object",
+          "properties": {
+            "id_object": { "type": "integer", "example": 1 },
+            "title": { "type": "string", "example": "Capteur d'humidité V2" },
+            "description": { "type": "string", "example": "Un capteur précis pour vos plantes." },
+            "price": { "type": "number", "example": 29.99 },
+            "discount_price": { "type": "number", "example": 24.99 },
+            "stock_quantity": { "type": "integer", "example": 50 },
+            "sku": { "type": "string", "example": "CAPT-H-001" },
+            "brand": { "type": "string", "example": "JackPote" },
+            "assets": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/ObjectAsset" }
             }
-          },
-          "Product": {
-            "type": "object",
-            "properties": {
-              "id_object": { "type": "integer", "example": 1 },
-              "title": { "type": "string", "example": "Capteur d'humidité V2" },
-              "description": { "type": "string", "example": "Un capteur précis pour vos plantes." },
-              "price": { "type": "number", "example": 29.99 },
-              "discount_price": { "type": "number", "example": 24.99 },
-              "stock_quantity": { "type": "integer", "example": 50 },
-              "sku": { "type": "string", "example": "CAPT-H-001" },
-              "brand": { "type": "string", "example": "JackPote" },
-              "assets": {
-                "type": "array",
-                "items": { "$ref": "#/definitions/ObjectAsset" }
-              }
-            }
-          },
-          "CatalogResponse": {
-            "type": "object",
-            "properties": {
-              "status": { "type": "string", "example": "OK" },
-              "code": { "type": "integer", "example": 200 },
-              "data": {
-                "type": "array",
-                "items": { "$ref": "#/definitions/Product" }
-              }
+          }
+        },
+        "CatalogResponse": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "example": "OK" },
+            "code": { "type": "integer", "example": 200 },
+            "data": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Product" }
             }
           }
         }
+        
 
       
     }
