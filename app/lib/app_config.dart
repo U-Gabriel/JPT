@@ -1,4 +1,5 @@
 import 'package:app/models/plant_type.dart';
+import 'package:app/ui/pages/shopping_page.dart';
 
 class AppConfig {
   static const String url = "http://51.77.141.175";
@@ -38,6 +39,9 @@ class AppConfig {
   static String get tagsEndpoint => "$baseUrl/tags";
   static String get noticeCreateEndpoint => "$baseUrl/notice/create";
   static String get faqByTagEndpoint => "$baseUrl/faqs/tag";
+
+  //shopping
+  static String get ShoppingPageEndpoint => "$baseUrl/shop/catalog";
 
   // old function
   static String objectProfilesEndpoint(String personId) => "$baseUrl/person/$personId/object-profiles";

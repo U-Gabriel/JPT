@@ -8,7 +8,7 @@ class NoticeService {
     required int idPerson,
     required String title,
     required String content,
-    required int idObjectProfile,
+    int? idObjectProfile,
     required int idTag,
     required String token,
   }) async {

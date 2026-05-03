@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/nav_provider.dart';
 import '../../providers/auth_provider.dart';
 import 'my_plant_page.dart';
-import 'event_page.dart';
+import 'shopping_page.dart';
 import 'advise_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
   static const List<Widget> _pages = [
     AdvisePage(),
     MyPlantPage(),
-    EventPage(),
+    ShoppingPage(),
   ];
 
   @override

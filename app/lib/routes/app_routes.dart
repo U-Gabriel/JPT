@@ -6,8 +6,10 @@ import '../ui/pages/add_wifi_information_page.dart';
 import '../ui/pages/advise_page.dart';
 import '../ui/pages/auth_wrapper_redirection.dart';
 import '../ui/pages/buy_my_object_page.dart';
+import '../ui/pages/card_item_page.dart';
 import '../ui/pages/create_group_plant_page.dart';
-import '../ui/pages/event_page.dart';
+import '../ui/pages/shopping_details_page.dart';
+import '../ui/pages/shopping_page.dart';
 import '../ui/pages/forgot_password_page.dart';
 import '../ui/pages/get_code_email_page.dart';
 import '../ui/pages/group_plant_type_page.dart';
@@ -29,7 +31,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/advise': (_) => const AdvisePage(),
   '/plant': (_) => const MyPlantPage(),
   '/plant_login': (_) => const MyPlantPageLogin(),
-  '/event': (_) => const EventPage(),
+  '/event': (_) => const ShoppingPage(),
   '/profile': (_) => const ProfilePage(),
   '/login': (_) => const LoginPage(),
   '/forgot_password': (_) => const ForgotPasswordPage(),
@@ -77,6 +79,8 @@ final Map<String, WidgetBuilder> appRoutes = {
     );
   },
   '/notice_page': (_) => const NoticePage(),
+  '/shopping_details_page': (context) => const ShoppingDetailsPage(),
+  '/card_item_page': (context) => const CardItemPage(),
 
 
 
