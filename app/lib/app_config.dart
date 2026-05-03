@@ -42,6 +42,8 @@ class AppConfig {
 
   //shopping
   static String get ShoppingPageEndpoint => "$baseUrl/shop/catalog";
+  static String catalogDetails = "$baseUrl/shop/catalog/details";
+  static String cartCount = "$baseUrl/shop/cart/count";
 
   // old function
   static String objectProfilesEndpoint(String personId) => "$baseUrl/person/$personId/object-profiles";
