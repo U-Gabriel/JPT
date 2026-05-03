@@ -30,6 +30,7 @@ const GetAllProductsRequest = async (id_tag, title_search) => {
       WHERE obj.is_active = true
         AND ($1::int IS NULL OR obj.id_tag = $1)
         AND ($2::text IS NULL OR obj.title ILIKE $2)
+        AND is_active = true
       ORDER BY obj.created_at DESC;
     `,
     values: [tagValue, searchValue]
@@ -39,4 +40,43 @@ const GetAllProductsRequest = async (id_tag, title_search) => {
   return rows;
 };
 
-export { GetAllProductsRequest };
+const GetProductDetailsRequest = async (id_object) => {
+    const query = {
+        text: `
+            SELECT 
+                obj.id_object, 
+                obj.title, 
+                obj.short_description,
+                obj.description, 
+                obj.features,
+                obj.technical_details,
+                obj.warranty_info,
+                obj.installation_guide_url,
+                obj.price, 
+                obj.discount_price, 
+                obj.stock_quantity, 
+                obj.sku, 
+                obj.brand, 
+                obj.is_active, 
+                obj.created_at,
+                -- Récupération de toutes les photos liées
+                COALESCE(
+                    (SELECT json_agg(json_build_object(
+                        'id_asset', asset.id_asset,
+                        'file_path', asset.file_path,
+                        'is_main', asset.is_main_picture
+                    ) ORDER BY asset.is_main_picture DESC, asset.order_view ASC)
+                     FROM object_asset asset 
+                     WHERE asset.id_object = obj.id_object
+                    ), '[]'
+                ) as assets
+            FROM object obj
+            WHERE obj.id_object = $1 AND obj.is_active = true;
+        `,
+        values: [id_object]
+    };
+
+    const { rows } = await pool.query(query);
+    return rows.length > 0 ? rows[0] : null;
+};
+export { GetAllProductsRequest, GetProductDetailsRequest };

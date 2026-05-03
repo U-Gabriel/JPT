@@ -702,7 +702,7 @@
       },
       "/shop/catalog": {
         "post": {
-          "tags": ["Shopping"],
+          "tags": ["Shopping Public"],
           "summary": "Récupère le catalogue des produits avec leurs images.",
           "description": "Retourne la liste des produits actifs. Chaque produit contient un tableau d'objets 'assets' regroupant ses photos.",
           "parameters": [
@@ -734,6 +734,69 @@
                 "$ref": "#/definitions/CatalogResponse"
               }
             }
+          }
+        }
+      },
+      "/shop/catalog/details": {
+        "post": {
+          "tags": [
+            "Shopping Public"
+          ],
+          "summary": "Récupérer les détails complets d'un produit spécifique",
+          "description": "Retourne toutes les informations d'un objet (caractéristiques, prix, stock, garanties) ainsi que la liste de ses photos associées.",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Identifiant de l'objet à récupérer",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id_object"
+                ],
+                "properties": {
+                  "id_object": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "L'ID unique de l'objet en base de données"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Détails du produit récupérés avec succès",
+              "schema": {
+                "$ref": "#/definitions/ProductDetailsResponse"
+              }
+            },
+            "400": {
+              "description": "Requête invalide (id_object manquant)"
+            },
+            "404": {
+              "description": "Produit non trouvé ou inactif"
+            },
+            "500": {
+              "description": "Erreur serveur interne"
+            }
+          }
+        }
+      },
+      "/shop/cart/count": {
+        "post": {
+          "tags": ["Shopping Private"],
+          "summary": "Nombre d'articles dans le panier",
+          "description": "Nombre d'articles dans le panier",
+          "security": [{ "Bearer": [] }],
+          "parameters": [],
+          "responses": {
+            "200": { "description": "Succès" },
+            "401": { "description": "Token manquant ou invalide" }
           }
         }
       }
@@ -1087,8 +1150,38 @@
               "items": { "$ref": "#/definitions/Product" }
             }
           }
+        },
+        "ProductDetails": {
+          "type": "object",
+          "properties": {
+            "id_object": { "type": "integer" },
+            "title": { "type": "string" },
+            "short_description": { "type": "string" },
+            "description": { "type": "string" },
+            "features": { "type": "string", "description": "Liste des points forts" },
+            "technical_details": { "type": "string", "description": "Spécifications techniques" },
+            "warranty_info": { "type": "string" },
+            "installation_guide_url": { "type": "string" },
+            "price": { "type": "number" },
+            "discount_price": { "type": "number" },
+            "stock_quantity": { "type": "integer" },
+            "sku": { "type": "string" },
+            "brand": { "type": "string" },
+            "assets": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/ObjectAsset" }
+            }
+          }
+        },
+        "ProductDetailsResponse": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "example": "OK" },
+            "code": { "type": "integer", "example": 200 },
+            "data": { "$ref": "#/definitions/ProductDetails" }
+          }
         }
-        
+              
 
       
     }

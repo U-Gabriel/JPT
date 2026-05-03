@@ -1,4 +1,4 @@
-import { GetCatalog } from "../controllers/shopping_public.controller.mjs";
+import { GetCatalog, GetProductDetails } from "../controllers/shopping_public.controller.mjs";
 import express from "express";
 
 const routerShoppingPublic = express.Router();
@@ -9,6 +9,12 @@ const routerShoppingPublic = express.Router();
  */
 routerShoppingPublic.post("/shop/catalog", async (req, res) => {
     const response = await GetCatalog(req.body);
+    res.status(response.code).send(response);
+});
+
+
+routerShoppingPublic.post("/shop/catalog/details", async (req, res) => {
+    const response = await GetProductDetails(req.body);
     res.status(response.code).send(response);
 });
 

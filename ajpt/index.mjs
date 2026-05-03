@@ -15,6 +15,7 @@ import {routerNotice} from './routes/notice.router.mjs'
 import { routerTag } from './routes/tag.router.mjs'
 import { routerFaq } from './routes/faq.router.mjs'
 import { routerShoppingPublic } from './routes/shopping_public.router.mjs'
+import { routerShoppingPrivate } from './routes/shopping_private.router.mjs'
 
 const app = express()
 
@@ -53,6 +54,7 @@ app.use(routerPlantType)
 app.use(routerGroupPlantType)
 app.use(routerNotice)
 app.use(routerTag)
+app.use(routerShoppingPrivate)
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)
