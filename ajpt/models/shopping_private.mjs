@@ -52,6 +52,7 @@ const GetCartItemsRequest = async (id_person) => {
                 obj.description,
                 obj.price,
                 obj.discount_price,
+                obj.stock_quantity,
                 -- On récupère uniquement la photo principale
                 (SELECT file_path 
                  FROM object_asset 
