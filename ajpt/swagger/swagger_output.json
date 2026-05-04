@@ -799,6 +799,65 @@
             "401": { "description": "Token manquant ou invalide" }
           }
         }
+      },
+      "/shop/cart/add": {
+        "post": {
+          "tags": ["Shopping Private"],
+          "summary": "Ajouter un article au panier",
+          "security": [{ "Bearer": [] }],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "required": ["id_object", "object_quantity"],
+                "properties": {
+                  "id_object": { "type": "integer", "example": 1 },
+                  "object_quantity": { "type": "integer", "example": 2 }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Article ajouté avec succès" },
+            "400": { "description": "Données manquantes ou invalides" },
+            "401": { "description": "Token invalide" }
+          }
+        }
+      },
+      "/shop/cart/list": {
+        "get": {
+          "tags": ["Shopping Private"],
+          "summary": "Liste complète du panier",
+          "description": "Retourne tous les articles du panier avec leurs détails et l'image principale.",
+          "security": [{ "Bearer": [] }],
+          "responses": {
+            "200": {
+              "description": "Succès",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "example": "OK" },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id_object": { "type": "integer" },
+                        "cart_quantity": { "type": "integer" },
+                        "title": { "type": "string" },
+                        "description": { "type": "string" },
+                        "main_picture": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
       
     },

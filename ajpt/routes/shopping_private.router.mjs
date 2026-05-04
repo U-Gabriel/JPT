@@ -1,5 +1,5 @@
 import express from "express";
-import { GetCartItemCount } from "../controllers/shopping_private.controller.mjs";
+import { GetCartItemCount, AddToCart, GetCartItems } from "../controllers/shopping_private.controller.mjs";
 
 const routerShoppingPrivate = express.Router();
 
@@ -8,5 +8,7 @@ const routerShoppingPrivate = express.Router();
  * Privé : Nécessite un Token JWT (fournit le id_person)
  */
 routerShoppingPrivate.post("/shop/cart/count", GetCartItemCount);
+routerShoppingPrivate.post("/shop/cart/add", AddToCart);
+routerShoppingPrivate.get("/shop/cart/list", GetCartItems);
 
 export { routerShoppingPrivate };
