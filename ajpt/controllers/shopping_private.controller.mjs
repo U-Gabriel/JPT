@@ -1,4 +1,4 @@
-import { GetCartItemCountRequest, AddToCartRequest, GetCartItemsRequest } from "../models/shopping_private.mjs";
+import { GetCartItemCountRequest, AddToCartRequest, GetCartItemsRequest, DeleteCartItemRequest } from "../models/shopping_private.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 const GetCartItemCount = async (req, res) => {
@@ -71,4 +71,35 @@ const GetCartItems = async (req, res) => {
     }
 };
 
-export { GetCartItemCount, AddToCart, GetCartItems };
+const DeleteCartItem = async (req, res) => {
+    try {
+        const id_person = req.data?.id_person;
+        const { id_cart_item } = req.body;
+
+        if (!id_person) {
+            return res.status(401).send(new ResponseApi().InitUnauthorized("Non autorisé"));
+        }
+
+        if (!id_cart_item) {
+            return res.status(400).send(new ResponseApi().InitBadRequest("id_cart_item est requis"));
+        }
+
+        const isDeleted = await DeleteCartItemRequest(id_cart_item, id_person);
+
+        if (!isDeleted) {
+            return res.status(404).send(
+                new ResponseApi().InitNotFound("Article non trouvé ou accès refusé")
+            );
+        }
+
+        return res.status(200).send(
+            new ResponseApi().InitOK({ message: "Article supprimé du panier avec succès" })
+        );
+
+    } catch (e) {
+        console.error("Error in DeleteCartItem:", e);
+        return res.status(500).send(new ResponseApi().InitInternalServer(e));
+    }
+};
+
+export { GetCartItemCount, AddToCart, GetCartItems, DeleteCartItem };

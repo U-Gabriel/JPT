@@ -858,6 +858,32 @@
             }
           }
         }
+      },
+      "/shop/cart/delete": {
+        "post": {
+          "tags": ["Shopping Private"],
+          "summary": "Supprimer un article du panier",
+          "description": "Supprime définitivement une ligne du panier. Vérifie que l'article appartient bien à l'utilisateur connecté.",
+          "security": [{ "Bearer": [] }],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "required": ["id_cart_item"],
+                "properties": {
+                  "id_cart_item": { "type": "integer", "example": 105 }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Supprimé" },
+            "404": { "description": "Ligne non trouvée ou accès interdit" }
+          }
+        }
       }
       
     },

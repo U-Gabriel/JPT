@@ -70,5 +70,21 @@ const GetCartItemsRequest = async (id_person) => {
     return rows;
 };
 
+const DeleteCartItemRequest = async (id_cart_item, id_person) => {
+    const query = {
+        text: `
+            DELETE FROM "cart_item" 
+            WHERE id_cart_item = $1 AND id_person = $2
+            RETURNING id_cart_item;
+        `,
+        values: [id_cart_item, id_person]
+    };
 
-export { GetCartItemCountRequest,  AddToCartRequest, GetCartItemsRequest };
+    const { rows } = await pool.query(query);
+    
+    // Si rows est vide, c'est que l'ID n'existait pas ou n'appartenait pas à l'user
+    return rows.length > 0;
+};
+
+
+export { GetCartItemCountRequest,  AddToCartRequest, GetCartItemsRequest, DeleteCartItemRequest };
