@@ -46,6 +46,7 @@ const GetCartItemsRequest = async (id_person) => {
     const query = {
         text: `
             SELECT 
+                ci.id_cart_item,
                 ci.id_object,
                 ci.quantity as cart_quantity,
                 obj.title,
