@@ -14,6 +14,7 @@ class ProductHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
+      automaticallyImplyLeading: false,
       expandedHeight: MediaQuery.of(context).size.height * 0.45,
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(

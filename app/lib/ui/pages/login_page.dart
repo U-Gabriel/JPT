@@ -215,6 +215,21 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 10,
+            left: 20,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.9),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_back_ios_new, size: 18),
+              ),
+            ),
+          ),
         ],
       ),
     );

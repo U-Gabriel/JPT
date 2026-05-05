@@ -1,4 +1,5 @@
 import 'package:app/app_config.dart';
+import 'package:app/providers/cart_provider.dart';
 import 'package:app/providers/plant_provider_my_List.dart';
 import 'package:app/services/object_profile_service.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => NavProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: const RootApp(),
     ),

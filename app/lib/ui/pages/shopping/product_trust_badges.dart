@@ -8,7 +8,7 @@ class ProductTrustBadges extends StatelessWidget {
   Widget build(BuildContext context) {
     final badges = [
       (Icons.security_outlined, "Paiement\nSécurisé"),
-      (Icons.biotech_outlined, "Conception\Haute Précision"),
+      (Icons.biotech_outlined, "Conception\n Haute Précision"),
       (Icons.verified_outlined, "Satisfaction\nAssurée"),
     ];
 

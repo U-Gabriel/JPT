@@ -44,6 +44,9 @@ class AppConfig {
   static String get ShoppingPageEndpoint => "$baseUrl/shop/catalog";
   static String catalogDetails = "$baseUrl/shop/catalog/details";
   static String cartCount = "$baseUrl/shop/cart/count";
+  static String cartAdd= "$baseUrl/shop/cart/add";
+  static String get cartList => "$baseUrl/shop/cart/list";
+  static String get cartDelete => "$baseUrl/shop/cart/delete";
 
   // old function
   static String objectProfilesEndpoint(String personId) => "$baseUrl/person/$personId/object-profiles";

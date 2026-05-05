@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../app_config.dart';
+import '../models/cart_item.dart';
 
 class ShoppingService {
   Future<List<dynamic>> fetchCatalog({int? idTag, String? titleSearch}) async {
@@ -58,6 +59,69 @@ class ShoppingService {
       return null;
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<bool> addToCart({required int idObject, required int quantity, required String token}) async {
+    try {
+      final response = await http.post(
+        Uri.parse(AppConfig.cartAdd),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          "id_object": idObject,
+          "object_quantity": quantity,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        return decoded['status'] == "OK";
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<List<CartItem>> fetchCartList(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse(AppConfig.cartList),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        List list = data['data'] ?? [];
+        return list.map((item) => CartItem.fromJson(item)).toList();
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<bool> deleteCartItem(String token, int idCartItem) async {
+    try {
+      final response = await http.post(
+        Uri.parse(AppConfig.cartDelete),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"id_cart_item": idCartItem}),
+      );
+
+      final data = jsonDecode(response.body);
+      return data['status'] == "OK";
+    } catch (e) {
+      return false;
     }
   }
 
