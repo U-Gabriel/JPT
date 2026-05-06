@@ -198,6 +198,58 @@
           "responses": {}
         }
       },
+      "/person/address": {
+        "post": {
+          "tags": ["Personne"],
+          "summary": "Ajouter une nouvelle adresse",
+          "description": "Crée une adresse pour l'utilisateur connecté. Si 'is_default' est vrai, les autres adresses passent automatiquement à faux.",
+          "security": [
+            {
+              "Bearer": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Détails de l'adresse à créer",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/AddressInput"
+              }
+            }
+          ],
+          "responses": {
+            "201": { "description": "Adresse créée avec succès" },
+            "400": { "description": "Données manquantes ou invalides" },
+            "401": { "description": "Non authentifié" }
+          }
+        }
+      },
+      "/person/address/list": {
+        "get": {
+          "tags": ["Personne"],
+          "summary": "Lister les adresses du profil",
+          "description": "Récupère toutes les adresses de l'utilisateur, triées avec l'adresse par défaut en premier.",
+          "security": [
+            {
+              "Bearer": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des adresses récupérée",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/AddressOutput"
+                }
+              }
+            },
+            "401": { "description": "Non authentifié" }
+          }
+        }
+      },
       "/object_profile/create/init": {
         "post": {
           "tags": [
@@ -972,6 +1024,31 @@
             "example": "2023/01/01"
           }
         }
+      },
+      "AddressInput": {
+        "type": "object",
+        "required": ["address_line1", "postal_code", "city"],
+        "properties": {
+          "title": { "type": "string", "example": "Maison" },
+          "address_line1": { "type": "string", "example": "12 rue des Jardins" },
+          "address_line2": { "type": "string", "example": "Appartement 4" },
+          "postal_code": { "type": "string", "example": "34000" },
+          "city": { "type": "string", "example": "Montpellier" },
+          "country": { "type": "string", "example": "France" },
+          "is_default": { "type": "boolean", "example": true }
+        }
+      },
+      "AddressOutput": {
+        "allOf": [
+          { "$ref": "#/definitions/AddressInput" },
+          {
+            "type": "object",
+            "properties": {
+              "id_address": { "type": "integer", "example": 1 },
+              "id_person": { "type": "integer", "example": 19 }
+            }
+          }
+        ]
       },
       "ObjectProfileCreate": {
         "type": "object",
