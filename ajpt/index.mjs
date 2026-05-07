@@ -25,6 +25,12 @@ const app = express()
 config()
 const port = process.env.PORT
 
+
+// CORS
+app.use(cors());
+
+app.use(routerPaymentPublic)
+
 // Body parser
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
@@ -33,8 +39,7 @@ app.use(bodyParser.json({type: 'application/*+json'}))
 // Console
 app.use(morgan('dev'))
 
-// CORS
-app.use(cors());
+
 
 // Swagger
 const swagger = JSON.parse(file.readFileSync('./swagger/swagger_output.json', 'utf8'))
@@ -45,7 +50,6 @@ app.use(routerObject)
 app.use(routerFaq)
 app.use(routerTag)
 app.use(routerShoppingPublic)
-app.use(routerPaymentPublic)
 
 // Token JWT
 app.use(authToken)
