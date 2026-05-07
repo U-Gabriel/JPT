@@ -4,6 +4,7 @@ import 'package:app/providers/plant_provider_my_List.dart';
 import 'package:app/services/object_profile_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 
 import 'bloc/object_profile/object_profile_event.dart';
@@ -17,6 +18,11 @@ import 'bloc/object_profile_my_list/object_profile_my_list_bloc.dart';
 import 'bloc/object_profile_my_list/object_profile_my_list_event.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialisation de Stripe
+  Stripe.publishableKey = "pk_test_51TUCKxC9bnvlKMDc7XJj7xJx3yq5n58zT8pZcvP1Nei9a5J6dtyuKyd4VT0w4wsQPo6nTDlbths6PpzdyG95vauK003BI9WuK9";
+
   runApp(
     MultiProvider(
       providers: [

@@ -1,7 +1,7 @@
-import 'package:app/ui/pages/widget/popup/auth_required_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../models/cart_item.dart';
 import '../../../services/shopping_service.dart';
 import '../../../providers/auth_provider.dart';
@@ -26,38 +26,33 @@ class _CardItemPageState extends State<CardItemPage> {
     _checkAuthAndLoad();
   }
 
-  void _checkAuthAndLoad() async {
-    // 1. On récupère le provider sans écouter (read)
-    final auth = context.read<AuthProvider>();
+  // --- LOGIQUE ---
 
-    // 2. Vérification de sécurité sur le montage du widget
+  // Vérifie si au moins un des objets SÉLECTIONNÉS dépasse le stock
+  bool get _hasStockError {
+    return _cartItems.any((item) => item.isSelected && item.quantity > item.stock);
+  }
+
+  void _checkAuthAndLoad() async {
+    final auth = context.read<AuthProvider>();
     if (!mounted) return;
 
-    // 3. Gestion de l'absence d'authentification
     if (!auth.isAuthenticated || auth.accessToken == null) {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
       return;
     }
 
-    // 4. Appel sécurisé du chargement
     try {
-      // On passe directement le token récupéré de manière sûre
       _loadCart(auth.accessToken!);
     } catch (e) {
-      debugPrint("Erreur lors de l'initialisation du panier : $e");
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      debugPrint("Erreur initialisation panier : $e");
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  // On ajoute le paramètre String token
   void _loadCart(String token) async {
     try {
       final items = await _shopService.fetchCartList(token);
-
       if (mounted) {
         setState(() {
           _cartItems = items;
@@ -67,31 +62,18 @@ class _CardItemPageState extends State<CardItemPage> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Impossible de charger le panier")),
-        );
+        _showSnackBar("Impossible de charger le panier", Colors.red);
       }
     }
   }
 
-  // Suppression réelle via l'API
   void _removeItem(CartItem item) async {
     final token = context.read<AuthProvider>().accessToken!;
-
-    // On lance la requête de suppression
     bool success = await _shopService.deleteCartItem(token, item.idCartItem);
 
     if (success && mounted) {
-      setState(() {
-        _cartItems.removeWhere((i) => i.idCartItem == item.idCartItem);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Article supprimé du panier"), backgroundColor: Colors.green),
-      );
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erreur lors de la suppression"), backgroundColor: Colors.red),
-      );
+      setState(() => _cartItems.removeWhere((i) => i.idCartItem == item.idCartItem));
+      _showSnackBar("Article supprimé", AppT.ink);
     }
   }
 
@@ -100,6 +82,14 @@ class _CardItemPageState extends State<CardItemPage> {
         .where((item) => item.isSelected)
         .fold(0, (sum, item) => sum + (item.effectivePrice * item.quantity));
   }
+
+  void _showSnackBar(String message, Color bg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: bg, duration: const Duration(seconds: 2)),
+    );
+  }
+
+  // --- INTERFACE ---
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +105,7 @@ class _CardItemPageState extends State<CardItemPage> {
         elevation: 0,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppT.gold))
+          ? _buildShimmerList()
           : _cartItems.isEmpty
           ? _buildEmptyState()
           : Column(
@@ -136,21 +126,24 @@ class _CardItemPageState extends State<CardItemPage> {
   }
 
   Widget _buildStockGlobalAlert() {
-    bool hasIssue = _cartItems.any((item) => item.isStockIssue);
+    // On affiche l'alerte si un article du panier global a un souci de stock
+    bool hasIssue = _cartItems.any((item) => item.quantity > item.stock);
     if (!hasIssue) return const SizedBox.shrink();
 
     return Container(
       width: double.infinity,
       color: Colors.orange.shade50,
       padding: const EdgeInsets.all(12),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.bolt, color: Colors.orange, size: 18),
-          SizedBox(width: 8),
+          const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 20),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
-              "Stocks limités ! Finalisez vite votre commande.",
-              style: TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.w800),
+              _hasStockError
+                  ? "Certains articles sélectionnés dépassent le stock disponible. Ajustez les quantités pour continuer."
+                  : "Certains articles de votre panier sont presque épuisés.",
+              style: const TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.w800),
             ),
           ),
         ],
@@ -159,131 +152,130 @@ class _CardItemPageState extends State<CardItemPage> {
   }
 
   Widget _buildCartTile(CartItem item) {
+    bool isOverStock = item.quantity > item.stock;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: isOverStock ? Border.all(color: Colors.red.shade200, width: 1.5) : null,
         boxShadow: AppT.cardShadow,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(4, 12, 12, 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Checkbox(
-                    value: item.isSelected,
-                    activeColor: AppT.gold,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    onChanged: (val) => setState(() => item.isSelected = val ?? false),
-                  ),
-                  _buildProductImage(item.image),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 30),
-                          child: Text(
-                            item.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: AppT.ink),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 12, 12, 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Checkbox(
+                  value: item.isSelected,
+                  activeColor: AppT.gold,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  onChanged: (val) => setState(() => item.isSelected = val ?? false),
+                ),
+                _buildProductImage(item.image),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: AppT.ink),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 30),
+                        child: Text(
+                          item.description,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: AppT.muted, fontSize: 11),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (item.discountPrice != null && item.discountPrice! > 0)
+                                Text("${item.price.toStringAsFixed(2)}€",
+                                    style: const TextStyle(decoration: TextDecoration.lineThrough, color: AppT.muted, fontSize: 10)),
+                              Text("${item.effectivePrice.toStringAsFixed(2)}€",
+                                  style: const TextStyle(fontWeight: FontWeight.w900, color: AppT.gold, fontSize: 15)),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 30),
-                          child: Text(
-                            item.description,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: AppT.muted, fontSize: 11),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                isOverStock ? "Stock insuffisant (${item.stock})" : "${item.stock} en stock",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: isOverStock ? Colors.red : (item.stock < 5 ? Colors.orange : Colors.green),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              _buildQtyCounter(item),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          alignment: WrapAlignment.spaceBetween,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (item.discountPrice != null && item.discountPrice! > 0)
-                                  Text("${item.price.toStringAsFixed(2)}€",
-                                      style: const TextStyle(decoration: TextDecoration.lineThrough, color: AppT.muted, fontSize: 10)),
-                                Text("${item.effectivePrice.toStringAsFixed(2)}€",
-                                    style: const TextStyle(fontWeight: FontWeight.w900, color: AppT.gold, fontSize: 15)),
-                              ],
-                            ),
-                            _buildQtyCounter(item),
-                          ],
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Positioned(
-              top: 5,
-              right: 5,
-              child: IconButton(
-                onPressed: () => _removeItem(item), // Utilise maintenant l'objet item
-                icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-                constraints: const BoxConstraints(),
-                padding: const EdgeInsets.all(8),
-              ),
+          ),
+          Positioned(
+            top: 5,
+            right: 5,
+            child: IconButton(
+              onPressed: () => _removeItem(item),
+              icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildProductImage(String? imagePath) {
     return Container(
-      width: 60, height: 60, // Taille réduite pour plus de compatibilité
-      decoration: BoxDecoration(color: AppT.ivory, borderRadius: BorderRadius.circular(10)),
+      width: 65, height: 65,
+      decoration: BoxDecoration(color: AppT.ivory, borderRadius: BorderRadius.circular(12)),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         child: (imagePath != null && imagePath.isNotEmpty)
-            ? Image.network(
-          "${AppConfig.url}/$imagePath",
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => _buildFallbackIcon(),
-        )
+            ? Image.network("${AppConfig.url}/$imagePath", fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => _buildFallbackIcon())
             : _buildFallbackIcon(),
       ),
     );
   }
 
   Widget _buildFallbackIcon() {
-    return Center(
-      child: SvgPicture.asset(
-        'assets/logo/favicon_green.svg',
-        width: 25,
-        height: 25,
-        placeholderBuilder: (context) => const Icon(Icons.shopping_bag_outlined, size: 20),
-      ),
-    );
+    return Center(child: SvgPicture.asset('assets/logo/favicon_green.svg', width: 25));
   }
 
   Widget _buildQtyCounter(CartItem item) {
     return Container(
-      height: 28,
-      decoration: BoxDecoration(color: AppT.ivory, borderRadius: BorderRadius.circular(8)),
+      height: 30,
+      decoration: BoxDecoration(color: AppT.ivory, borderRadius: BorderRadius.circular(10)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           _qtyBtn(Icons.remove, item.quantity > 1 ? () => setState(() => item.quantity--) : null),
-          Text("${item.quantity}", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text("${item.quantity}", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+          ),
           _qtyBtn(Icons.add, () => setState(() => item.quantity++)),
         ],
       ),
@@ -291,20 +283,26 @@ class _CardItemPageState extends State<CardItemPage> {
   }
 
   Widget _qtyBtn(IconData icon, VoidCallback? action) {
-    return IconButton(
-      onPressed: action,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(minWidth: 28),
-      icon: Icon(icon, size: 12, color: action == null ? AppT.muted : AppT.ink),
+    return InkWell(
+      onTap: action,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: 30,
+        alignment: Alignment.center,
+        child: Icon(icon, size: 14, color: action == null ? Colors.grey.shade400 : AppT.ink),
+      ),
     );
   }
 
   Widget _buildCheckoutSection() {
+    final bool canOrder = !_hasStockError && _cartItems.any((i) => i.isSelected);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -2))],
       ),
       child: SafeArea(
         child: Column(
@@ -320,17 +318,22 @@ class _CardItemPageState extends State<CardItemPage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
+              // Si canOrder est faux, onPressed est null -> Le bouton devient grisé automatiquement
+              onPressed: canOrder ? () {
                 final selected = _cartItems.where((i) => i.isSelected).toList();
-                for (var i in selected) print("ID: ${i.id} | Qty: ${i.quantity}");
-              },
+                Navigator.pushNamed(context, '/order_adress_page', arguments: selected);
+              } : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppT.ink,
+                disabledBackgroundColor: Colors.grey.shade300,
                 foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 52),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                minimumSize: const Size(double.infinity, 54),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
-              child: const Text("VALIDER", style: TextStyle(fontWeight: FontWeight.w900)),
+              child: Text(
+                  _hasStockError ? "STOCK INSUFFISANT" : "VALIDER LA COMMANDE",
+                  style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)
+              ),
             ),
           ],
         ),
@@ -339,58 +342,92 @@ class _CardItemPageState extends State<CardItemPage> {
   }
 
   Widget _buildEmptyState() {
-    return const Center(child: Text("Panier vide", style: TextStyle(fontWeight: FontWeight.bold)));
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey.shade300),
+          const SizedBox(height: 16),
+          const Text("Votre panier est vide", style: TextStyle(fontWeight: FontWeight.bold, color: AppT.muted)),
+        ],
+      ),
+    );
   }
 
   Widget _buildLoginPlaceholder() {
     return Scaffold(
       backgroundColor: AppT.ivory,
-      // On ajoute une AppBar minimaliste juste pour le bouton retour
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppT.ink, size: 20),
-          onPressed: () => Navigator.maybePop(context), // Retourne à la page précédente
-        ),
-      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.account_circle_outlined, size: 80, color: AppT.gold),
+            const Icon(Icons.lock_outline, size: 80, color: AppT.gold),
             const SizedBox(height: 24),
-            const Text(
-                "Panier réservé aux membres",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppT.ink)
-            ),
+            const Text("Connectez-vous", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
             const SizedBox(height: 12),
-            Text(
-                "Connectez-vous pour retrouver vos articles et finaliser vos achats en toute sécurité.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: AppT.muted, fontSize: 14)
-            ),
-            const SizedBox(height: 40),
+            const Text("Retrouvez votre panier et finalisez vos achats en vous connectant.",
+                textAlign: TextAlign.center, style: TextStyle(color: AppT.muted)),
+            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/login'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppT.ink,
-                foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 54),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                elevation: 0,
               ),
-              child: const Text("SE CONNECTER", style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1)),
+              child: const Text("SE CONNECTER", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
-            const SizedBox(height: 16),
-            // Optionnel : un bouton texte pour revenir à l'accueil si le bouton du haut est trop discret
-            TextButton(
-              onPressed: () => Navigator.maybePop(context),
-              child: Text("Continuer mes achats", style: TextStyle(color: AppT.muted, fontWeight: FontWeight.w600)),
-            )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerList() {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+      itemCount: 4, // Nombre d'items fantômes à afficher
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) => Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          height: 100, // Taille approximative de tes tuiles
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 48), // Place du checkbox
+              Container(
+                width: 65, height: 65,
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(width: 120, height: 14, color: Colors.white),
+                    const SizedBox(height: 8),
+                    Container(width: 180, height: 10, color: Colors.white),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(width: 50, height: 15, color: Colors.white),
+                        Container(width: 80, height: 25, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10))),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
+          ),
         ),
       ),
     );

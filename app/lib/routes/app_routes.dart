@@ -8,6 +8,8 @@ import '../ui/pages/auth_wrapper_redirection.dart';
 import '../ui/pages/buy_my_object_page.dart';
 import '../ui/pages/card_item_page.dart';
 import '../ui/pages/create_group_plant_page.dart';
+import '../ui/pages/order_adress_page.dart';
+import '../ui/pages/order_payment.dart';
 import '../ui/pages/shopping_details_page.dart';
 import '../ui/pages/shopping_page.dart';
 import '../ui/pages/forgot_password_page.dart';
@@ -81,6 +83,8 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/notice_page': (_) => const NoticePage(),
   '/shopping_details_page': (context) => const ShoppingDetailsPage(),
   '/card_item_page': (context) => const CardItemPage(),
+  '/order_adress_page': (context) => const OrderAddressPage(),
+  '/order_payment_page': (context) => const OrderPaymentPage(),
 
 
 

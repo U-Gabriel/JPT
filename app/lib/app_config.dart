@@ -48,6 +48,12 @@ class AppConfig {
   static String get cartList => "$baseUrl/shop/cart/list";
   static String get cartDelete => "$baseUrl/shop/cart/delete";
 
+  //facturation shopping address
+  static String get addressEndpoint => "$baseUrl/person/address";
+  static String get addressListEndpoint => "$baseUrl/person/address/list";
+  static String get createPaymentIntentEndpoint => "$baseUrl/payment/create-intent";
+  static String get geoApiGouv => "https://api-adresse.data.gouv.fr/search/";
+
   // old function
   static String objectProfilesEndpoint(String personId) => "$baseUrl/person/$personId/object-profiles";
   static String updateObjectProfileEndpoint(String id) => "$baseUrl/api/object-profile/$id";
