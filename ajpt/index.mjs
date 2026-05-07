@@ -17,7 +17,8 @@ import { routerFaq } from './routes/faq.router.mjs'
 import { routerShoppingPublic } from './routes/shopping_public.router.mjs'
 import { routerShoppingPrivate } from './routes/shopping_private.router.mjs'
 import { routerPerson } from './routes/person_a.router.mjs'
-import { routerPayment } from './routes/payment.router.mjs'
+import { routerPaymentPrivate } from './routes/payment_private.router.mjs'
+import { routerPaymentPublic } from './routes/payment_public.router.mjs'
 
 const app = express()
 
@@ -44,6 +45,7 @@ app.use(routerObject)
 app.use(routerFaq)
 app.use(routerTag)
 app.use(routerShoppingPublic)
+app.use(routerPaymentPublic)
 
 // Token JWT
 app.use(authToken)
@@ -58,7 +60,7 @@ app.use(routerNotice)
 app.use(routerTag)
 app.use(routerShoppingPrivate)
 app.use(routerPerson)
-app.use(routerPayment)
+app.use(routerPaymentPrivate)
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)

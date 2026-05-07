@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { UpdateCartAndGetTotal, FinalizeOrder } from "../models/payment.mjs";
+import { UpdateCartAndGetTotal } from "../models/payment_private.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -59,39 +59,4 @@ const CreatePaymentIntent = async (req, res) => {
     }
 };
 
-const StripeWebhook = async (req, res) => {
-    const sig = req.headers['stripe-signature'];
-    let event;
-
-    try {
-        // Validation de l'origine Stripe (Crucial pour la sécurité)
-        event = stripe.webhooks.constructEvent(
-            req.body, 
-            sig, 
-            process.env.STRIPE_WEBHOOK_SECRET
-        );
-    } catch (err) {
-        console.error(`Webhook Signature Error: ${err.message}`);
-        return res.status(400).send(`Webhook Error`);
-    }
-
-    // On n'écoute que le succès du paiement
-    if (event.type === 'payment_intent.succeeded') {
-        const paymentIntent = event.data.object;
-        const id_person = paymentIntent.metadata.id_person;
-
-        try {
-            await FinalizeOrder(paymentIntent.id, id_person);
-            console.log(`✅ Commande finalisée pour l'utilisateur ${id_person}`);
-        } catch (err) {
-            console.error(`❌ Erreur BDD Webhook: ${err.message}`);
-            // On renvoie une 500 pour que Stripe réessaie plus tard (Retry logic)
-            return res.status(500).send("Erreur interne");
-        }
-    }
-
-    // Réponse 200 obligatoire pour Stripe
-    res.json({ received: true });
-};
-
-export { CreatePaymentIntent, StripeWebhook };
+export { CreatePaymentIntent };
