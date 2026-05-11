@@ -39,6 +39,7 @@ const StripeWebhook = async (req, res) => {
 
             // 3. Envoyer le mail de confirmation
             if (userMail) {
+                console.log("Tentative d'envoi de mail à :", user_mail);
                 await sendOrderConfirmationMail(userMail, {
                     payment_ref: paymentIntent.id,
                     amount: paymentIntent.amount /100
