@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { FinalizeOrder } from "../models/payment_public.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 import { sendOrderConfirmationMail } from "../templates/send_order_confirmation_mail_template.mjs";
+import transporter from '../services/mail_service.mjs';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
