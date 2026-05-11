@@ -35,7 +35,7 @@ const StripeWebhook = async (req, res) => {
             // AJOUT DE id_address_delivery DANS L'APPEL
             await FinalizeOrder(paymentIntent.id, id_person, id_address_delivery, paymentIntent.amount);
 
-            const userMail = paymentIntent.receipt_email || paymentIntent.metadata.mail; 
+            const userMail = req.data?.mail || paymentIntent.metadata.mail;
 
             // 3. Envoyer le mail de confirmation
             if (userMail) {

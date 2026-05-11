@@ -20,7 +20,7 @@ const CreatePaymentIntent = async (req, res) => {
         const paymentIntentPlaceholder = await stripe.paymentIntents.create({
             amount: 100, // Montant temporaire (sera mis à jour juste après)
             currency: 'eur',
-            metadata: { id_person, id_address_delivery, mail: user_mail },
+            metadata: { id_person, id_address_delivery },
             automatic_payment_methods: { enabled: true },
         });
 
