@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { FinalizeOrder } from "../models/payment_public.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
+import { sendOrderConfirmationMail } from "../templates/send_order_confirmation_mail_template.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -32,7 +33,18 @@ const StripeWebhook = async (req, res) => {
 
         try {
             // AJOUT DE id_address_delivery DANS L'APPEL
-            await FinalizeOrder(paymentIntent.id, id_person, id_address_delivery);
+            await FinalizeOrder(paymentIntent.id, id_person, id_address_delivery, paymentIntent.amount);
+
+            const userMail = paymentIntent.receipt_email || paymentIntent.metadata.mail; 
+
+            // 3. Envoyer le mail de confirmation
+            if (userMail) {
+                await sendOrderConfirmationMail(userMail, {
+                    payment_ref: paymentIntent.id,
+                    amount: paymentIntent.amount /100
+                });
+            }
+
             console.log(`✅ Commande finalisée pour l'utilisateur ${id_person} à l'adresse ${id_address_delivery}`);
         } catch (err) {
             console.error(`❌ Erreur BDD Webhook: ${err.message}`);

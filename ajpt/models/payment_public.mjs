@@ -1,7 +1,7 @@
 import e from "express";
 import { pool } from "../middlewares/postgres.mjs";
 
-const FinalizeOrder = async (payment_intent_id, id_person, id_address_delivery) => {
+const FinalizeOrder = async (payment_intent_id, id_person, id_address_delivery, payment_intent_amount) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
@@ -19,6 +19,11 @@ const FinalizeOrder = async (payment_intent_id, id_person, id_address_delivery) 
 
         let totalPrice = cartRes.rows.reduce((sum, i) => sum + (i.unit_price * i.quantity), 0);
         if (totalPrice < 50) totalPrice += 8.90;
+
+        const serverTotalCentimes = Math.round(totalPrice * 100);
+        if (serverTotalCentimes !== payment_intent_amount) {
+            throw new Error("Discordance de prix : Fraude possible ou erreur de calcul.");
+        }
 
         // 2. Création de la commande
         const orderRes = await client.query(
