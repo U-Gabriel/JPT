@@ -63,9 +63,7 @@ export const sendOrderConfirmationMail  = (orderDetails) => {
               <p style="font-size:28px; font-weight:800; color:#ffffff; letter-spacing:6px; text-transform:uppercase; margin:0;">
                 GDOME
               </p>
-              <p style="font-size:12px; color:#888888; letter-spacing:3px; margin-top:6px; text-transform:uppercase;">
-                Premium Streetwear
-              </p>
+              
             </td>
           </tr>
 
@@ -98,7 +96,6 @@ export const sendOrderConfirmationMail  = (orderDetails) => {
                 Merci pour votre confiance&nbsp;!
               </h1>
               <p style="font-size:15px; line-height:1.7; color:#666666; margin-bottom:32px;">
-                Bonjour,<br><br>
                 Votre commande a bien été reçue et votre paiement est validé.
                 Nos équipes préparent déjà vos articles avec le plus grand soin.
               </p>
@@ -249,17 +246,6 @@ export const sendOrderConfirmationMail  = (orderDetails) => {
 
         </table>
         <!-- Fin conteneur -->
-
-        <!-- Espace bas -->
-        <table width="600" cellpadding="0" cellspacing="0" role="presentation">
-          <tr>
-            <td style="padding:24px; text-align:center;">
-              <p style="font-size:11px; color:#aaaaaa;">
-                Référence complète&nbsp;: ${orderDetails.payment_ref}
-              </p>
-            </td>
-          </tr>
-        </table>
 
       </td>
     </tr>
