@@ -13,6 +13,8 @@ class Person {
     last_connexion
 }
 
+const columns = "id_person, pseudo, mail, firstname, surname, id_role, is_verified";
+
 /**
  * Ajoute une nouvelle personne si elle n'éxiste pas
  * @param person La nouvelle personne à ajouter
@@ -60,7 +62,7 @@ const Add = (person) => {
  * Cherche un utilisateur par son mail uniquement
  */
 const GetByMail = (mail) => {
-    return pool.query('SELECT * FROM person WHERE mail = $1', [mail])
+    return pool.query('SELECT ${columns} FROM person WHERE mail = $1', [mail])
         .then(res => res.rows.length > 0 ? res.rows[0] : null);
 };
 
@@ -175,7 +177,7 @@ const FinalizeAccount = (body) => {
 const GetByPseudoOrMail = (person) => {
     return new Promise((resolve, reject) => {
         const request = {
-            text: 'SELECT * FROM person WHERE pseudo = $1 OR mail = $2',
+            text: `SELECT ${columns} FROM person WHERE pseudo = $1 OR mail = $2`,
             values: [person.pseudo, person.mail],
         }
         pool.query(request, (error, result) => {
@@ -202,7 +204,7 @@ const GetByIdAndPassword = (person) => {
     return new Promise((resolve, reject) => {
         const request = {
             // Utilisation des backticks pour éviter le conflit avec 'sha256' et 'hex'
-            text: `SELECT * FROM person 
+            text: `SELECT ${columns} FROM person 
                    WHERE (pseudo = $1 OR mail = $1) 
                    AND password = encode(digest($2, 'sha256'), 'hex')`,
             values: [person.pseudo, person.password],

@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { UpdateCartAndGetTotal } from "../models/payment_private.mjs";
+import { UpdateCartAndGetTotal, GetUserMailById } from "../models/payment_private.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -9,6 +9,13 @@ const CreatePaymentIntent = async (req, res) => {
         const id_person = req.data?.id_person;
         const user_mail = req.data?.mail;
         const { items, id_address_delivery } = req.body;
+
+        if (!id_person) return res.status(401).send(new ResponseApi().InitUnauthorized());
+
+        // RÉCUPÉRATION DU MAIL VIA LE MODÈLE ✅
+        if (!user_mail) {
+            user_mail = await GetUserMailById(id_person);
+        }
 
         if (!id_person) return res.status(401).send(new ResponseApi().InitUnauthorized());
         if (!items || items.length === 0) {

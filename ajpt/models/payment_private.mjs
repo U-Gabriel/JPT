@@ -50,4 +50,13 @@ const UpdateCartAndGetTotal = async (id_person, items, payment_intent_id) => {
     }
 };
 
-export { UpdateCartAndGetTotal };
+/**
+ * Récupère le mail d'une personne par son ID
+ */
+const GetUserMailById = async (id_person) => {
+    const res = await pool.query('SELECT mail FROM person WHERE id_person = $1', [id_person]);
+    return res.rows.length > 0 ? res.rows[0].mail : null;
+};
+
+
+export { UpdateCartAndGetTotal, GetUserMailById };
