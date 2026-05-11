@@ -35,17 +35,17 @@ const StripeWebhook = async (req, res) => {
             // Étape B : MAIL
             if (userEmail) {
 
-                const mailOptions = {
-                        from: process.env.EMAIL_USER,
-                        to: userEmail,
-                        subject: 'Commande confirmée - GDOME',
-                        html: sendOrderConfirmationMail(userEmail, {
-                                payment_ref: paymentIntent.id,
-                                amount: paymentIntent.amount / 100
-                            })
-                };
+                const { subject, html } = sendOrderConfirmationMail({
+                    payment_ref: paymentIntent.id,
+                    amount: paymentIntent.amount / 100
+                });
 
-                await transporter.sendMail(mailOptions);
+                await transporter.sendMail({
+                    from: `"GDOME Support" <${process.env.EMAIL_USER}>`,
+                    to: userEmail,
+                    subject,
+                    html
+                });
 
                 console.log("✅ Mail envoyé avec succès");
             } else {
