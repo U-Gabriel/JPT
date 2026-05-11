@@ -7,48 +7,46 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 
 const StripeWebhook = async (req, res) => {
-    console.log("--- DEBUG WEBHOOK ---");
-    console.log("Type du Body:", typeof req.body);
-    console.log("Est-ce un Buffer?:", Buffer.isBuffer(req.body));
     const sig = req.headers['stripe-signature'];
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent(
-            req.body, 
-            sig, 
-            process.env.STRIPE_WEBHOOK_SECRET
-        );
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
-        console.error(`Webhook Signature Error: ${err.message}`);
         return res.status(400).send(`Webhook Error`);
     }
 
     if (event.type === 'payment_intent.succeeded') {
         const paymentIntent = event.data.object;
         
-        // RECUPERATION DES DEUX INFOS DEPUIS LES METADATA
+        // On récupère tout proprement
         const id_person = paymentIntent.metadata.id_person;
         const id_address_delivery = paymentIntent.metadata.id_address_delivery;
+        const userEmail = paymentIntent.metadata.mail; // On l'appelle userEmail ici
 
         try {
-            // AJOUT DE id_address_delivery DANS L'APPEL
+            console.log(`--- Traitement Commande ${paymentIntent.id} ---`);
+
+            // Étape A : BDD
             await FinalizeOrder(paymentIntent.id, id_person, id_address_delivery, paymentIntent.amount);
+            console.log("✅ BDD mise à jour (FinalizeOrder)");
 
-            const userMail = paymentIntent.metadata.mail;
-
-            // 3. Envoyer le mail de confirmation
-            if (userMail) {
-                console.log("Tentative d'envoi de mail à :", user_mail);
-                await sendOrderConfirmationMail(userMail, {
+            // Étape B : MAIL
+            if (userEmail) {
+                console.log(`📧 Tentative envoi mail à : ${userEmail}`);
+                await sendOrderConfirmationMail(userEmail, {
                     payment_ref: paymentIntent.id,
-                    amount: paymentIntent.amount /100
+                    amount: paymentIntent.amount / 100
                 });
+                console.log("✅ Mail envoyé avec succès");
+            } else {
+                console.warn("⚠️ Attention : Aucun mail dans les metadata");
             }
 
-            console.log(`✅ Commande finalisée pour l'utilisateur ${id_person} à l'adresse ${id_address_delivery}`);
         } catch (err) {
-            console.error(`❌ Erreur BDD Webhook: ${err.message}`);
+            // Ici on log l'erreur RÉELLE pour comprendre la 500
+            console.error(`❌ Erreur interne Webhook pour ${paymentIntent.id}:`, err.message);
+            // On renvoie quand même une 500 pour que Stripe sache qu'il doit réessayer
             return res.status(500).send("Erreur interne");
         }
     }
