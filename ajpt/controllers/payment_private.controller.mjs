@@ -7,6 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const CreatePaymentIntent = async (req, res) => {
     try {
         const id_person = req.data?.id_person;
+        const user_mail = req.data?.mail;
         const { items, id_address_delivery } = req.body;
 
         if (!id_person) return res.status(401).send(new ResponseApi().InitUnauthorized());
@@ -20,7 +21,7 @@ const CreatePaymentIntent = async (req, res) => {
         const paymentIntentPlaceholder = await stripe.paymentIntents.create({
             amount: 100, // Montant temporaire (sera mis à jour juste après)
             currency: 'eur',
-            metadata: { id_person, id_address_delivery },
+            metadata: { id_person, id_address_delivery, mail: user_mail },
             automatic_payment_methods: { enabled: true },
         });
 
