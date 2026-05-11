@@ -34,11 +34,19 @@ const StripeWebhook = async (req, res) => {
 
             // Étape B : MAIL
             if (userEmail) {
-                console.log(`📧 Tentative envoi mail à : ${userEmail}`);
-                await sendOrderConfirmationMail(userEmail, {
-                    payment_ref: paymentIntent.id,
-                    amount: paymentIntent.amount / 100
-                });
+
+                const mailOptions = {
+                        from: process.env.EMAIL_USER,
+                        to: userEmail,
+                        subject: 'Commande confirmée - GDOME',
+                        html: sendOrderConfirmationMail(userEmail, {
+                                payment_ref: paymentIntent.id,
+                                amount: paymentIntent.amount / 100
+                            })
+                };
+
+                await transporter.sendMail(mailOptions);
+
                 console.log("✅ Mail envoyé avec succès");
             } else {
                 console.warn("⚠️ Attention : Aucun mail dans les metadata");
