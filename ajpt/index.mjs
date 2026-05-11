@@ -25,7 +25,8 @@ const app = express()
 config()
 const port = process.env.PORT
 
-
+// Console
+app.use(morgan('dev'))
 // CORS
 app.use(cors());
 
@@ -36,8 +37,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(bodyParser.json({type: 'application/*+json'}))
 
-// Console
-app.use(morgan('dev'))
+
 
 
 
