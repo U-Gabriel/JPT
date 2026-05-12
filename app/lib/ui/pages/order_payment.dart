@@ -29,7 +29,7 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
 
     // 2. Calcul des prix locaux (pour affichage seulement, l'API recalculera tout)
     double totalProducts = items.fold(0, (sum, item) => sum + (item.effectivePrice * item.quantity));
-    double shipping = (totalProducts > 50) ? 0.00 : 0.50; // On suit ta logique Backend
+    double shipping = (totalProducts > 50) ? 0.00 : 8.90; // On suit ta logique Backend
     double totalOrder = totalProducts + shipping;
 
     return Scaffold(
@@ -52,30 +52,89 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
             const StepProgressBar(percent: 0.75),
             const SizedBox(height: 24),
 
-            _buildHeader("ADRESSE DE LIVRAISON"),
+            // --- SECTION ADRESSE ---
+            _buildHeader("LIVRAISON À"),
             const SizedBox(height: 12),
             _buildAddressPreview(address),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
 
+            _buildHeader("VOTRE COMMANDE"),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: AppT.cardShadow,
+              ),
+              child: Column(
+                children: [
+                  // 1. Liste minimaliste des articles (plus petite, style "reçu")
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: items.map((item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            Text("${item.quantity}x", style: TextStyle(color: AppT.gold, fontWeight: FontWeight.bold, fontSize: 12)),
+                            const SizedBox(width: 8),
+                            Expanded(child: Text(item.title, style: const TextStyle(fontSize: 12, color: AppT.muted))),
+                            Text("${(item.effectivePrice * item.quantity).toStringAsFixed(2)}€", style: const TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                      )).toList(),
+                    ),
+                  ),
 
-            _buildHeader("DÉTAILS DU PAIEMENT"),
-            const SizedBox(height: 16),
-            _buildPriceDetail("Sous-total", "${totalProducts.toStringAsFixed(2)}€"),
-            _buildPriceDetail("Frais de port", shipping == 0 ? "Gratuit" : "${shipping.toStringAsFixed(2)}€"),
-            const Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: Divider()),
-            _buildPriceDetail("Total à régler", "${totalOrder.toStringAsFixed(2)}€", isTotal: true),
+                  // 2. La ligne de séparation en pointillés (très pro pour un paiement)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: List.generate(30, (index) => Expanded(
+                        child: Container(
+                          color: index % 2 == 0 ? Colors.transparent : AppT.ivory,
+                          height: 2,
+                        ),
+                      )),
+                    ),
+                  ),
 
-            const SizedBox(height: 100),
+                  // 3. Les calculs financiers
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        _buildPriceRow("Sous-total", "${totalProducts.toStringAsFixed(2)}€"),
+                        const SizedBox(height: 8),
+                        _buildPriceRow("Livraison", shipping == 0 ? "Offerte" : "${shipping.toStringAsFixed(2)}€",
+                            color: shipping == 0 ? Colors.green : AppT.ink),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("TOTAL", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                            Text("${totalOrder.toStringAsFixed(2)}€",
+                                style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: AppT.gold)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 120), // Espace pour le bouton du bas
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomAction(totalOrder, items, address.idAddress ?? 0),
+      bottomNavigationBar: _buildBottomAction(totalOrder, items, address),
     );
   }
 
   // --- LOGIQUE DE PAIEMENT ---
-  Future<void> _handlePayment(List<CartItem> items, int addressId) async {
+  Future<void> _handlePayment(List<CartItem> items, AddressPerson address, double totalOrder) async {
     if (_isProcessing) return;
 
     setState(() => _isProcessing = true);
@@ -85,7 +144,7 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
       final token = context.read<AuthProvider>().accessToken!;
 
       // 1. Appel API pour récupérer le clientSecret
-      final paymentData = await _personService.createPaymentIntent(token, items, addressId);
+      final paymentData = await _personService.createPaymentIntent(token, items, address.idAddress ?? 0);
 
       if (paymentData == null) throw Exception("Impossible d'initialiser le paiement.");
 
@@ -106,10 +165,15 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
 
       // 4. Succès
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Paiement validé !"), backgroundColor: Colors.green),
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/order_validation_page',
+              (route) => false,
+          arguments: {
+            'items': items,
+            'address': address,
+            'total': totalOrder,
+          },
         );
-        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
       }
 
     } catch (e) {
@@ -128,6 +192,65 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
   }
 
   // --- WIDGETS DE COMPOSANTS ---
+
+  // Widget pour chaque article du panier
+  Widget _buildCartItemRow(CartItem item) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        children: [
+          // Badge quantité stylisé
+          Container(
+            height: 40, width: 40,
+            decoration: BoxDecoration(color: AppT.ivory, borderRadius: BorderRadius.circular(10)),
+            child: Center(
+              child: Text("x${item.quantity}", style: const TextStyle(fontWeight: FontWeight.w900, color: AppT.gold)),
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Titre de l'article
+          Expanded(
+            child: Text(
+              item.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+          ),
+          // Prix unitaire
+          Text(
+            "${(item.effectivePrice * item.quantity).toStringAsFixed(2)}€",
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
+// Version améliorée de ton _buildPriceDetail
+  Widget _buildPriceDetail(String label, String value, {bool isTotal = false, bool isMuted = false, Color? valueColor}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: isTotal ? 16 : 13,
+            fontWeight: isTotal ? FontWeight.w900 : FontWeight.w500,
+            color: isMuted ? AppT.muted : AppT.ink,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: isTotal ? 20 : 14,
+            fontWeight: FontWeight.w900,
+            color: valueColor ?? (isTotal ? AppT.gold : AppT.ink),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildHeader(String title) {
     return Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1, color: AppT.ink));
@@ -155,25 +278,13 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
     );
   }
 
-
-
-  Widget _buildPriceDetail(String label, String value, {bool isTotal = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(fontSize: isTotal ? 16 : 14, fontWeight: isTotal ? FontWeight.w900 : FontWeight.normal)),
-        Text(value, style: TextStyle(fontSize: isTotal ? 18 : 14, fontWeight: FontWeight.w900, color: isTotal ? AppT.gold : AppT.ink)),
-      ],
-    );
-  }
-
-  Widget _buildBottomAction(double total, List<CartItem> items, int addressId) {
+  Widget _buildBottomAction(double total, List<CartItem> items, AddressPerson address) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       child: SafeArea(
         child: ElevatedButton(
-          onPressed: _isProcessing ? null : () => _handlePayment(items, addressId),
+          onPressed: _isProcessing ? null : () => _handlePayment(items, address, total),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppT.ink, foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 56),
@@ -184,6 +295,29 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
               : Text("CONFIRMER ET PAYER ${total.toStringAsFixed(2)}€", style: const TextStyle(fontWeight: FontWeight.w900)),
         ),
       ),
+    );
+  }
+  Widget _buildPriceRow(String label, String value, {Color color = AppT.ink, bool isBold = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: AppT.muted, // On met le libellé un peu plus discret
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w900, // On garde le chiffre bien lisible
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 }

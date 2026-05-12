@@ -10,6 +10,7 @@ import '../ui/pages/card_item_page.dart';
 import '../ui/pages/create_group_plant_page.dart';
 import '../ui/pages/order_adress_page.dart';
 import '../ui/pages/order_payment.dart';
+import '../ui/pages/order_validation_page.dart';
 import '../ui/pages/shopping_details_page.dart';
 import '../ui/pages/shopping_page.dart';
 import '../ui/pages/forgot_password_page.dart';
@@ -85,6 +86,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/card_item_page': (context) => const CardItemPage(),
   '/order_adress_page': (context) => const OrderAddressPage(),
   '/order_payment_page': (context) => const OrderPaymentPage(),
+  '/order_validation_page': (context) => const OrderValidationPage(),
 
 
 

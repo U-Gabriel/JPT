@@ -37,7 +37,7 @@ class _NoticePageState extends State<NoticePage> {
     final objService = ObjectProfileService();
 
     try {
-      final fetchedObjects = await objService.fetchObjectProfilesList(auth.userId!, auth.accessToken!);
+      final fetchedObjects = await objService.fetchObjectProfilesList(auth.accessToken!);
       final fetchedTags = await TagService().fetchTags(auth.accessToken!);
 
       setState(() {

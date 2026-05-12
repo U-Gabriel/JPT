@@ -8,6 +8,7 @@ import 'plant_type.dart';
 class ObjectProfile {
   final int idObjectProfile;
   final String title;
+  final String pathPicture;
   final String description;
   final String? advise;
   final String? recipe;
@@ -36,6 +37,7 @@ class ObjectProfile {
   ObjectProfile({
     required this.idObjectProfile,
     required this.title,
+    required this.pathPicture,
     required this.description,
     this.advise,
     this.recipe,
@@ -68,6 +70,7 @@ class ObjectProfile {
       return ObjectProfile(
         idObjectProfile: parseInt(json['id_object_profile']) ?? 0,
         title: json['title'] ?? '',
+        pathPicture: json['path_picture'] ?? '',
         description: json['description'] ?? '',
         advise: json['advise'],
         recipe: json['recipe'], //A voir
@@ -116,6 +119,7 @@ class ObjectProfile {
   ObjectProfile copyWith({
     int? idObjectProfile,
     String? title,
+    String? path_picture,
     String? description,
     String? advise,
     String? recipe,
@@ -143,6 +147,7 @@ class ObjectProfile {
     return ObjectProfile(
       idObjectProfile: idObjectProfile ?? this.idObjectProfile,
       title: title ?? this.title,
+      pathPicture: path_picture ?? this.pathPicture,
       description: description ?? this.description,
       advise: advise ?? this.advise,
       recipe: recipe ?? this.recipe,

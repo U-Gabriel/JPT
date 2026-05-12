@@ -308,7 +308,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
       buttonText = canProceed ? "VALIDER CETTE ADRESSE" : "REMPLIR LES CHAMPS";
     } else {
       canProceed = _selectedAddress != null;
-      buttonText = canProceed ? "PAYER ${total.toStringAsFixed(2)}€" : "CHOISIR UNE ADRESSE";
+      buttonText = canProceed ? "CONFIRMER ${total.toStringAsFixed(2)}€" : "CHOISIR UNE ADRESSE";
     }
 
     return Container(

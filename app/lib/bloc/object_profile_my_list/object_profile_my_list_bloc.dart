@@ -40,7 +40,6 @@ class ObjectProfileMyListBloc extends Bloc<ObjectProfileMyListEvent, ObjectProfi
   Future<void> _onLoad(LoadProfilesMyList event, Emitter<ObjectProfileMyListState> emit) async {
     try {
       final profiles = await service.fetchObjectProfilesList(
-        personId.toString(),
         token,
       );
       if (!listEquals(profiles, _currentProfiles)) {

@@ -63,8 +63,6 @@ class _CartBadgeWidgetState extends State<CartBadgeWidget> {
           clipBehavior: Clip.none,
           children: [
             const Icon(Icons.shopping_basket_outlined, color: Colors.white, size: 28),
-            // On affiche le badge si le count est > 0
-            if (cartCount > 0)
               Positioned(
                 top: -8,
                 right: -8,

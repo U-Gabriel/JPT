@@ -6,6 +6,7 @@ import '../../../models/cart_item.dart';
 import '../../../services/shopping_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../app_config.dart';
+import '../../providers/cart_provider.dart';
 import '../utils/app_theme_tokens.dart';
 
 class CardItemPage extends StatefulWidget {
@@ -73,6 +74,9 @@ class _CardItemPageState extends State<CardItemPage> {
 
     if (success && mounted) {
       setState(() => _cartItems.removeWhere((i) => i.idCartItem == item.idCartItem));
+
+      context.read<CartProvider>().loadCartCount(token);
+
       _showSnackBar("Article supprimé", AppT.ink);
     }
   }
@@ -271,12 +275,22 @@ class _CardItemPageState extends State<CardItemPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _qtyBtn(Icons.remove, item.quantity > 1 ? () => setState(() => item.quantity--) : null),
+          // Bouton MOINS
+          _qtyBtn(Icons.remove, item.quantity > 1 ? () {
+            setState(() => item.quantity--); // Maj locale de la page
+            context.read<CartProvider>().increment(-1); // Maj du badge global
+          } : null),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text("${item.quantity}", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
           ),
-          _qtyBtn(Icons.add, () => setState(() => item.quantity++)),
+
+          // Bouton PLUS
+          _qtyBtn(Icons.add, () {
+            setState(() => item.quantity++); // Maj locale de la page
+            context.read<CartProvider>().increment(1); // Maj du badge global
+          }),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../models/object_profile.dart';
 import 'package:app/app_config.dart';
 import '../../plant_detail_page.dart';
+import '../tools/ui_utils.dart';
 
 class PlantItemMyListWidget extends StatelessWidget {
   final ObjectProfile plant;
@@ -29,7 +30,7 @@ class PlantItemMyListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pathPicture = plant.plantType.pathPicture;
+    final pathPicture = plant.pathPicture;
     final stateColor = getStateColor(context, plant.state);
 
     return Padding(
@@ -70,16 +71,11 @@ class PlantItemMyListWidget extends StatelessWidget {
                     width: 75,
                     height: 75,
                     color: Colors.grey.shade200,
-                    child: pathPicture != null
-                        ? Image.network(
-                      Uri.parse(AppConfig.baseUrlDataset)
-                          .resolve(pathPicture)
-                          .toString(),
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.error),
-                    )
-                        : const Icon(Icons.image_not_supported),
+                    child: ImageHelper.buildPlantImage(
+                      path: plant.pathPicture,
+                      width: 75,
+                      height: 75,
+                    ),
                   ),
                 ),
 

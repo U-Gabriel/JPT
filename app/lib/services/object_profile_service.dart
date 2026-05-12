@@ -43,18 +43,15 @@ class ObjectProfileService {
   }
 
 
-  Future<List<ObjectProfile>> fetchObjectProfilesList(String personId, String token) async {
+  Future<List<ObjectProfile>> fetchObjectProfilesList(String token) async {
     final url = Uri.parse(AppConfig.objectProfilesEndpointList());
 
-    final response = await http.post(
+    final response = await http.get(
       url,
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        "id_person": int.tryParse(personId) ?? 0,
-      }),
+      }
     );
 
     if (response.statusCode == 200) {
@@ -69,18 +66,15 @@ class ObjectProfileService {
     }
   }
 
-  Future<List<ObjectProfile>> fetchObjectProfilesListFavoris(String personId, String token) async {
+  Future<List<ObjectProfile>> fetchObjectProfilesListFavoris(String token) async {
     final url = Uri.parse(AppConfig.objectProfilesEndpointListFavoris());
 
-    final response = await http.post(
+    final response = await http.get(
       url,
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        "id_person": int.tryParse(personId) ?? 0,
-      }),
+      }
     );
 
     if (response.statusCode == 200) {
