@@ -281,28 +281,63 @@
         }
       },
       "/object_profile/resume/byperson": {
-        "post": {
+        "get": {
           "tags": [
             "Object Profile"
           ],
-          "description": "lister le résumé des object_profiles.",
-          "consumes": [
-            "application/json"
-          ],
+          "summary": "Résumé des profils d'objets par personne",
+          "description": "Récupère la liste des objets activés appartenant à l'utilisateur connecté via son token (Bearer).",
           "produces": [
             "application/json"
           ],
-          "parameters": [
-            {
-              "name": "File",
-              "in": "body",
-              "description": "Listes object_profiles summary",
+          "responses": {
+            "200": {
+              "description": "Liste des profils d'objets récupérée avec succès",
               "schema": {
-                "$ref": "#/definitions/ObjectProfileSummary"
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "example": "OK" },
+                  "message": { "type": "string", "nullable": true, "example": null },
+                  "code": { "type": "integer", "example": 200 },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id_object_profile": { "type": "integer", "example": 2 },
+                        "title": { "type": "string", "example": "Ma Plante Salon" },
+                        "is_automatic": { "type": "boolean", "example": false },
+                        "is_water": { "type": "boolean", "example": true },
+                        "state": { "type": "integer", "example": 5 },
+                        "plant_type": {
+                          "type": "object",
+                          "properties": {
+                            "id_plant_type": { "type": "integer", "example": 1 },
+                            "title": { "type": "string", "example": "Lavande" },
+                            "path_picture": { "type": "string", "example": "dataset/plants/lavande_ref.png" },
+                            "avatar": {
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "title": { "type": "string", "example": "Lavande Heureuse" },
+                                "path_picture": { "type": "string", "example": "dataset/avatar/Lavande/Lavande5.png" }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
+            },
+            "401": {
+              "description": "Non autorisé - Token absent ou invalide"
+            },
+            "500": {
+              "description": "Erreur interne du serveur"
             }
-          ],
-          "responses": {},
+          },
           "security": [
             {
               "Bearer": []
@@ -311,28 +346,62 @@
         }
       },
       "/object_profile/resume/favoris/byperson": {
-        "post": {
+        "get": {
           "tags": [
             "Object Profile"
           ],
-          "description": "lister le résumé des favoris des object_profiles.",
-          "consumes": [
-            "application/json"
-          ],
+          "summary": "Résumé des profils favoris",
+          "description": "Récupère la liste des objets marqués comme favoris appartenant à l'utilisateur connecté via son token.",
           "produces": [
             "application/json"
           ],
-          "parameters": [
-            {
-              "name": "op",
-              "in": "body",
-              "description": "Listes object_profiles summary",
+          "responses": {
+            "200": {
+              "description": "Liste des favoris récupérée avec succès",
               "schema": {
-                "$ref": "#/definitions/ObjectProfileSummary"
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "example": "OK" },
+                  "code": { "type": "integer", "example": 200 },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id_object_profile": { "type": "integer", "example": 3 },
+                        "title": { "type": "string", "example": "Ma Plante Préférée" },
+                        "is_automatic": { "type": "boolean", "example": false },
+                        "is_water": { "type": "boolean", "example": false },
+                        "state": { "type": "integer", "example": 1 },
+                        "path_picture": { "type": "string", "example": "uploads/ma_plante.jpg" },
+                        "plant_type": {
+                          "type": "object",
+                          "properties": {
+                            "id_plant_type": { "type": "integer", "example": 1 },
+                            "title": { "type": "string", "example": "Lavande" },
+                            "avatar": {
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "title": { "type": "string", "example": "Lavande Heureuse" },
+                                "path_picture": { "type": "string", "example": "dataset/avatar/Lavande/Lavande0.png" }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
+            },
+            "401": {
+              "description": "Non autorisé - Token manquant ou invalide"
+            },
+            "500": {
+              "description": "Erreur interne du serveur"
             }
-          ],
-          "responses": {},
+          },
           "security": [
             {
               "Bearer": []

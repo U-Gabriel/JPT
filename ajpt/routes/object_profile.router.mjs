@@ -10,15 +10,10 @@ routerObjectProfile.post("/object_profile/create/init", async (req, res) => {
     res.status(response.code).send(response)
 });
 
-routerObjectProfile.post("/object_profile/resume/byperson", async (req, res) => {
-    const response = await GetObjectProfileResumeByPerson(req.body)
-    res.status(response.code).send(response)
-});
 
-routerObjectProfile.post("/object_profile/resume/favoris/byperson", async (req, res) => {
-    const response = await GetObjectProfileResumeFavorisByPerson(req.body)
-    res.status(response.code).send(response)
-});
+routerObjectProfile.get("/object_profile/resume/byperson", GetObjectProfileResumeByPerson);
+
+routerObjectProfile.get("/object_profile/resume/favoris/byperson", GetObjectProfileResumeFavorisByPerson);
 
 
 routerObjectProfile.patch("/object_profile/update/byobjectprofile", async (req, res) => {

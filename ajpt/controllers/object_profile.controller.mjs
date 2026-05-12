@@ -39,26 +39,27 @@ const CreateRequestObjectProfile = (body) => {
  * @returns {Promise<unknown>}
  * @constructor
  */
-const GetObjectProfileResumeByPerson = (op) => {
-    return new Promise((resolve) => {
-        if (!op) {
-            resolve(new ResponseApi().InitMissingParameters());
-        } else {
-            GetRequestObjectProfileResumeByPerson(op)
-                .then((data) => {
-                    resolve(new ResponseApi().InitOK(data));
-                    
-                })
-                .catch((e) => {
-                    if (e.code === '23503') {
-                        resolve(new ResponseApi().InitBadRequest(e.message));
-                        return;
-                    }
-                    console.error(e);
-                    resolve(new ResponseApi().InitInternalServer(e.message));
-                });
+const GetObjectProfileResumeByPerson = async (req, res) => {
+    try {
+        // 1. On extrait l'ID (Vérifie si c'est req.data ou req.user selon ton middleware)
+        const id_person = req.data?.id_person; 
+
+        // 2. Si l'ID est absent, on s'arrête ici avec une 401 ou 400
+        if (!id_person) {
+            console.error("ID Person manquant dans le token");
+            return res.status(401).send(new ResponseApi().InitUnauthorized("Token invalide ou id_person manquant"));
         }
-    });
+
+        // 3. On passe l'ID à la requête SQL
+        const data = await GetRequestObjectProfileResumeByPerson(id_person);
+
+        return res.status(200).send(
+            new ResponseApi().InitOK(data)
+        );
+    } catch (e) {
+        console.error("Erreur SQL:", e.message);
+        return res.status(500).send(new ResponseApi().InitInternalServer(e.message));
+    }
 };
 
 /**
@@ -66,26 +67,24 @@ const GetObjectProfileResumeByPerson = (op) => {
  * @returns {Promise<unknown>}
  * @constructor
  */
-const GetObjectProfileResumeFavorisByPerson = (op) => {
-    return new Promise((resolve) => {
-        if (!op) {
-            resolve(new ResponseApi().InitMissingParameters());
-        } else {
-            GetRequestObjectProfileResumeFavorisByPerson(op)
-                .then((data) => {
-                    resolve(new ResponseApi().InitOK(data));
-                    
-                })
-                .catch((e) => {
-                    if (e.code === '23503') {
-                        resolve(new ResponseApi().InitBadRequest(e.message));
-                        return;
-                    }
-                    console.error(e);
-                    resolve(new ResponseApi().InitInternalServer(e.message));
-                });
+const GetObjectProfileResumeFavorisByPerson = async (req, res) => {
+    try {
+        const id_person = req.data?.id_person;
+
+        if (!id_person) {
+            return res.status(401).send(new ResponseApi().InitUnauthorized("Non autorisé"));
         }
-    });
+
+        // On passe directement l'ID (sans accolades)
+        const data = await GetRequestObjectProfileResumeFavorisByPerson(id_person);
+
+        return res.status(200).send(
+            new ResponseApi().InitOK(data)
+        );
+    } catch (e) {
+        console.error("Error in GetObjectProfileResumeFavorisByPerson:", e);
+        return res.status(500).send(new ResponseApi().InitInternalServer(e.message));
+    }
 };
 
 /**

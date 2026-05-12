@@ -89,7 +89,7 @@ const createObjectProfile = async (body) => {
 };
 
 
-const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
+const GetRequestObjectProfileResumeByPerson = async ( id_person ) => {
     if (!id_person) throw new Error("id_person is required");
 
     const query = `
@@ -99,6 +99,7 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
                 op.is_automatic,
                 op.is_water,
                 op.state_plant,
+                op.path_picture AS plant_path_picture,
                 pt.id_plant_type AS id_plant_type,
                 pt.title AS plant_title,
                 a.title AS avatar_title,
@@ -136,10 +137,10 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
         is_automatic: row.is_automatic,
         is_water: row.is_water,
         state: row.state_plant,
+        path_picture: row.plant_path_picture,
         plant_type: {
             id_plant_type: row.id_plant_type,
             title: row.plant_title,
-            path_picture: row.path_picture,
             avatar: row.avatar_title ? {
                 title: row.avatar_title,
                 path_picture: row.path_picture
@@ -149,7 +150,7 @@ const GetRequestObjectProfileResumeByPerson = async ({ id_person }) => {
 };
 
 
-const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
+const GetRequestObjectProfileResumeFavorisByPerson = async ( id_person ) => {
     if (!id_person) throw new Error("id_person is required");
 
     const query = `
@@ -159,6 +160,7 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
             op.is_automatic,
             op.is_water,
             op.state_plant,
+            op.path_picture AS op_path_picture,
             pt.id_plant_type AS id_plant_type,
             pt.title AS plant_title,
             a.title AS avatar_title,
@@ -198,10 +200,10 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ({ id_person }) => {
         is_automatic: row.is_automatic,
         is_water: row.is_water,
         state: row.state_plant,
+        path_picture: row.op_path_picture,
         plant_type: {
             id_plant_type: row.id_plant_type,
             title: row.plant_title,
-            path_picture: row.path_picture,
             avatar: row.avatar_title ? {
                 title: row.avatar_title,
                 path_picture: row.path_picture
@@ -259,6 +261,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
             op.*, -- Toutes les infos de object_profile
             op.modify_op,
             op.title AS op_title,
+            op.path_picture AS op_path_picture,
             -- Infos du groupe (Cibles)
             gpt.temperature_sensor_extern AS target_temp,
             gpt.humidity_air_sensor AS target_hum_air,
@@ -337,6 +340,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
     return {
         id_object_profile: row.id_object_profile,
         title: row.op_title,
+        path_picture: row.op_path_picture,
         description: row.description,
         advise: row.advise,
         state: row.state_plant, // Ton score de santé 1-4
