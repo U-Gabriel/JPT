@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../models/plant_type.dart';
 import '../../../services/plant_service.dart';
 import '../../../app_config.dart';
@@ -104,13 +106,13 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
   // --- WIDGETS DE CONSTRUCTION ---
 
   Widget _buildImageHeader(PlantType plant) {
+    // Si la liste d'avatars est nulle ou vide, on affiche directement l'image de secours
     if (plant.avatars == null || plant.avatars!.isEmpty) {
-      return Container(color: Colors.green[200]);
+      return _buildFallbackImage();
     }
 
     return Stack(
       children: [
-        // 1. Le défilement des images
         PageView.builder(
           controller: _pageController,
           itemCount: plant.avatars!.length,
@@ -123,12 +125,29 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
             final url = Uri.parse(AppConfig.baseUrlDataset)
                 .resolve(plant.avatars![index].pathPicture)
                 .toString();
-            return Image.network(url, fit: BoxFit.cover);
+
+            return Image.network(
+              url,
+              fit: BoxFit.cover,
+              // --- PENDANT LE CHARGEMENT (SHIMMER) ---
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(color: Colors.white),
+                );
+              },
+              // --- EN CAS D'ERREUR (VOTRE LOGO SVG) ---
+              errorBuilder: (context, error, stackTrace) {
+                return _buildFallbackImage();
+              },
+            );
           },
         ),
 
-        // 2. Les petites bulles (Indicateurs)
-        if (plant.avatars!.length > 1) // On ne les affiche que s'il y a plusieurs images
+        // Les bulles indicatrices (restent inchangées)
+        if (plant.avatars!.length > 1)
           Positioned(
             bottom: 20,
             left: 0,
@@ -137,28 +156,39 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 plant.avatars!.length,
-                    (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  height: 8,
-                  width: _currentPage == index ? 20 : 8, // La bulle active est plus large
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 2,
-                      )
-                    ],
-                  ),
-                ),
+                    (index) => _buildBulletIndicator(index),
               ),
             ),
           ),
       ],
+    );
+  }
+
+// Petit helper pour construire l'image de secours proprement
+  Widget _buildFallbackImage() {
+    return Container(
+      color: Colors.green[50], // Fond léger pour que le logo ressorte
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/logo/favicon_green.svg',
+          width: 80, // Taille ajustée pour le header
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+
+// Helper pour les bulles (pour nettoyer le code)
+  Widget _buildBulletIndicator(int index) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      height: 8,
+      width: _currentPage == index ? 20 : 8,
+      decoration: BoxDecoration(
+        color: _currentPage == index ? Colors.white : Colors.white.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10),
+      ),
     );
   }
 

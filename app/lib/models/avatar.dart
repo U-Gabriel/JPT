@@ -20,7 +20,7 @@ class Avatar {
       idAvatar: json['id_avatar'] ?? 0,
       title: json['title'] ?? '',
       description: json['description'] ?? '',
-      pathPicture: json['path_picture'] ?? '',
+      pathPicture: json['path_picture'] ?? json['picture_path'] ?? '',
       evolution: json['evolution'],
       state: json['state'] ?? 0,
     );
