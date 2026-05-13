@@ -50,7 +50,6 @@ app.use(routerObject)
 app.use(routerFaq)
 app.use(routerTag)
 app.use(routerShoppingPublic)
-app.use(routerAvatar)
 
 // Token JWT
 app.use(authToken)
@@ -65,7 +64,7 @@ app.use(routerNotice)
 app.use(routerShoppingPrivate)
 app.use(routerPerson)
 app.use(routerPaymentPrivate)
-
+app.use(routerAvatar)
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)
