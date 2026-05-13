@@ -61,9 +61,14 @@ const createObjectProfile = async (body) => {
         is_favorite,
         is_light,
         is_working,
-        is_automatic
+        is_automatic,
+        path_picture
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, (SELECT picture_path 
+         FROM avatar 
+         WHERE state = 0
+         ORDER BY RANDOM() 
+         LIMIT 1))
       RETURNING id_object_profile;
     `,
     values: [
@@ -212,29 +217,26 @@ const GetRequestObjectProfileResumeFavorisByPerson = async ( id_person ) => {
     }));
 };
 
-const updateObjectProfile = async (body) => {
-    const { id_object_profile, id_person, ...fields } = body;
-
-    if (!id_object_profile) {
-        throw new Error("id_object_profile is required");
-    }
-    if (!id_person) {
-        throw new Error("id_person is required");
-    }
-    if (Object.keys(fields).length === 0) {
-        throw new Error("No fields to update");
-    }
-
+const updateObjectProfile = async (id_object_profile, id_person, fields) => {
+    
+    // Construction dynamique des clauses SET
+    // On commence l'indexation à 1 pour les paramètres $1, $2, etc.
     const setClauses = Object.keys(fields).map(
         (key, index) => `${key} = $${index + 1}`
     );
+    
     const values = Object.values(fields);
+    
+    // On ajoute les IDs à la fin des valeurs pour le WHERE
+    const profileIdx = values.length + 1;
+    const personIdx = values.length + 2;
 
     const query = {
         text: `
             UPDATE object_profile
             SET ${setClauses.join(", ")}
-            WHERE id_object_profile = $${values.length + 1} AND id_person = $${values.length + 2}
+            WHERE id_object_profile = $${profileIdx} 
+              AND id_person = $${personIdx}
             RETURNING *;
         `,
         values: [...values, id_object_profile, id_person],
@@ -243,9 +245,8 @@ const updateObjectProfile = async (body) => {
     const { rows } = await pool.query(query);
 
     if (rows.length === 0) {
-        // ON LANCE UNE ERREUR SPÉCIFIQUE
-        const error = new Error("NOT_FOUND");
-        throw error;
+        // Si aucune ligne n'est modifiée, soit l'ID n'existe pas, soit il n'appartient pas à l'user
+        throw new Error("NOT_FOUND");
     }
 
     return rows[0];

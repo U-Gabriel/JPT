@@ -6,31 +6,33 @@ import {ResponseApi} from "../models/response-api.mjs";
  * @returns {Promise<unknown>}
  * @constructor
  */
-const CreateRequestObjectProfile = (body) => {
-  return new Promise((resolve) => {
-    if (!body) {
-      resolve(new ResponseApi().InitMissingParameters());
-    } else {
-      createObjectProfile(body)
-        .then((data) => {
-          resolve(new ResponseApi().InitOK(data));
-        })
-        .catch((e) => {
-          if (e.code === "23503") {
-            // Foreign key violation
-            resolve(new ResponseApi().InitBadRequest(e.message));
-            return;
-          }
-          if (e.code === "23505") {
-            // Unique violation (au cas où tu ajoutes une contrainte unique plus tard)
-            resolve(new ResponseApi().InitBadRequest(e.message));
-            return;
-          }
-          console.error(e);
-          resolve(new ResponseApi().InitInternalServer(e.message));
-        });
+const CreateRequestObjectProfile = async (req, res) => {
+    try {
+        // 1. Extraction de l'ID depuis le token (injecté par ton middleware)
+        const id_person = req.data?.id_person;
+
+        if (!id_person) {
+            return res.status(401).send(new ResponseApi().InitUnauthorized("Utilisateur non identifié"));
+        }
+
+        // 2. On combine l'ID du token avec les données du formulaire (titre, type de plante, etc.)
+        const profileData = {
+            ...req.body,
+            id_person: id_person
+        };
+
+        // 3. Appel de la fonction de création
+        const response = await createObjectProfile(profileData);
+
+        return res.status(200).send(new ResponseApi().InitOK(response));
+
+    } catch (e) {
+        if (e.code === "23503") {
+            return res.status(400).send(new ResponseApi().InitBadRequest("Erreur de référence (ID plante ou objet invalide)"));
+        }
+        console.error("Erreur création profil:", e);
+        return res.status(500).send(new ResponseApi().InitInternalServer(e.message));
     }
-  });
 };
 
 
@@ -93,40 +95,34 @@ const GetObjectProfileResumeFavorisByPerson = async (req, res) => {
  * @returns {Promise<unknown>}
  * @constructor
  */
-const UpdateObjectProfileController = (op) => {
-    return new Promise((resolve) => {
-        // Vérifie que body, id_object_profile et id_person sont présents
-        if (!op || !op.id_object_profile || !op.id_person) {
-            resolve(new ResponseApi().InitMissingParameters());
-            return;
+const UpdateObjectProfileController = async (req, res) => {
+    try {
+        const id_person = req.data?.id_person;
+        const { id_object_profile, id_person: discardedPerson, ...updateFields } = req.body;
+
+        // Vérification des paramètres essentiels
+        if (!id_person) {
+            return res.status(401).send(new ResponseApi().InitUnauthorized("Non autorisé"));
+        }
+        if (!id_object_profile) {
+            return res.status(400).send(new ResponseApi().InitMissingParameters("id_object_profile est requis"));
+        }
+        if (Object.keys(updateFields).length === 0) {
+            return res.status(400).send(new ResponseApi().InitBadRequest("Aucun champ à modifier"));
         }
 
-        // Appelle la fonction update avec le body complet
-        updateObjectProfile(op)
-            .then((data) => {
-                // Vérifie que le profil appartient bien à l'utilisateur
-                if (data.id_person !== op.id_person) {
-                    resolve(new ResponseApi().InitBadRequest(
-                        "You cannot update this ObjectProfile because it does not belong to you."
-                    ));
-                    return;
-                }
+        // Appel du modèle en passant séparément l'ID du profil, l'ID du proprio et les champs
+        const updatedData = await updateObjectProfile(id_object_profile, id_person, updateFields);
 
-                resolve(new ResponseApi().InitOK(data));
-            })
-            .catch((e) => {
-                if (e.message === "NOT_FOUND") {
-                    // C'est ce 404 qui fera dire "-1" à l'ESP32
-                    return resolve(new ResponseApi().InitNotFound("Profil inexistant"));
-                }
-                if (e.code === "23503") {
-                    resolve(new ResponseApi().InitBadRequest(e.message));
-                    return;
-                }
-                console.error(e);
-                resolve(new ResponseApi().InitInternalServer(e.message));
-            });
-    });
+        return res.status(200).send(new ResponseApi().InitOK(updatedData));
+
+    } catch (e) {
+        if (e.message === "NOT_FOUND") {
+            return res.status(404).send(new ResponseApi().InitNotFound("Profil inexistant ou accès refusé"));
+        }
+        console.error("Erreur UpdateObjectProfile:", e);
+        return res.status(500).send(new ResponseApi().InitInternalServer(e.message));
+    }
 };
 
 /**

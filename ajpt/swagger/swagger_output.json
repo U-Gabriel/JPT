@@ -250,6 +250,52 @@
           }
         }
       },
+      "/avatar/get/list/state/null": {
+        "get": {
+          "tags": [
+            "Avatar"
+          ],
+          "summary": "Récupérer les avatars génériques",
+          "description": "Renvoie la liste de tous les avatars qui ne sont pas liés à un type de plante spécifique (id_plant_type est NULL).",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des avatars récupérée avec succès",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "example": "OK" },
+                  "code": { "type": "integer", "example": 200 },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id_avatar": { "type": "integer", "example": 1 },
+                        "title": { "type": "string", "example": "Avatar Standard" },
+                        "description": { "type": "string", "example": "Image par défaut pour tout type de plante" },
+                        "path_picture": { "type": "string", "example": "uploads/avatars/default.png" },
+                        "evolution": { "type": "integer", "example": 0 },
+                        "state": { "type": "integer", "example": 1 }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Erreur interne du serveur"
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
       "/object_profile/create/init": {
         "post": {
           "tags": [

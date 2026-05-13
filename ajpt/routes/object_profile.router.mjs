@@ -5,21 +5,16 @@ import express from "express"
 
 const routerObjectProfile = express.Router()
 
-routerObjectProfile.post("/object_profile/create/init", async (req, res) => {
-    const response = await CreateRequestObjectProfile(req.body)
-    res.status(response.code).send(response)
-});
+// Assure-toi que le middleware (ex: authToken) est présent avant le contrôleur
+routerObjectProfile.post("/object_profile/create/init", CreateRequestObjectProfile);
 
 
 routerObjectProfile.get("/object_profile/resume/byperson", GetObjectProfileResumeByPerson);
 
 routerObjectProfile.get("/object_profile/resume/favoris/byperson", GetObjectProfileResumeFavorisByPerson);
 
+routerObjectProfile.patch("/object_profile/update/byobjectprofile", UpdateObjectProfileController);
 
-routerObjectProfile.patch("/object_profile/update/byobjectprofile", async (req, res) => {
-    const response = await UpdateObjectProfileController(req.body)
-    res.status(response.code).send(response)
-});
 
 routerObjectProfile.post("/object_profile/detail/byop", async (req, res) => {
     const response = await GetRequestObjectProfiledetailsByOPController(req.body)
