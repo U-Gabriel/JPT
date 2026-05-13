@@ -31,6 +31,8 @@ app.use(morgan('dev'))
 // CORS
 app.use(cors());
 
+app.use('/dataset', express.static('/var/www/html/dataset'));
+
 app.use(routerPaymentPublic)
 
 // Body parser

@@ -41,4 +41,23 @@ const GetRequestAvatarsWithoutPlant = async () => {
     }));
 };
 
-export {GetRequestAvatarsWithoutPlant}
+const UpdatePicturePathModel = async (id_profile, id_person, path) => {
+    const query = {
+        text: `
+            UPDATE object_profile 
+            SET path_picture = $1 
+            WHERE id_object_profile = $2 AND id_person = $3
+            RETURNING id_object_profile;
+        `,
+        values: [path, id_profile, id_person]
+    };
+
+    const { rows } = await pool.query(query);
+
+    if (rows.length === 0) {
+        throw new Error("NOT_FOUND");
+    }
+    return rows[0];
+};
+
+export {GetRequestAvatarsWithoutPlant, UpdatePicturePathModel}
