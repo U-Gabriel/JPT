@@ -27,6 +27,7 @@ import '../ui/pages/login_page.dart';
 import '../ui/pages/reset_password_page.dart';
 import '../ui/pages/signup_page.dart';
 import '../ui/pages/signup_validation_page.dart';
+import '../ui/pages/change_op_pp_page.dart';
 
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -87,6 +88,13 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/order_adress_page': (context) => const OrderAddressPage(),
   '/order_payment_page': (context) => const OrderPaymentPage(),
   '/order_validation_page': (context) => const OrderValidationPage(),
+  '/change_op_pp_page': (context) {
+    final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return ChangeOpPpPage(
+      objectProfileId: args['objectProfileId'] as int,
+      currentPath: args['currentPath'] as String,
+    );
+  },
 
 
 

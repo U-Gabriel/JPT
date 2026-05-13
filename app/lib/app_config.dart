@@ -25,6 +25,7 @@ class AppConfig {
   static String objectProfilesEndpointList() => "$baseUrl/object_profile/resume/byperson";
   static String objectProfilesEndpointListFavoris() => "$baseUrl/object_profile/resume/favoris/byperson";
   static String objectProfilesEndpointDetails() => "$baseUrl/object_profile/detail/byop";
+  static String get avatarListEndpoint => "$baseUrl/avatar/get/list/state/null";
   static String objectProfileEndpointUpdate() => "$baseUrl/object_profile/update/byobjectprofile";
   static String objectProfilesEndpointDelete() => "$baseUrl/object_profile/delete/byobjectprofile";
 

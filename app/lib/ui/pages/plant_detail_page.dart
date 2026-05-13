@@ -1,4 +1,5 @@
 import 'package:app/ui/pages/widget/popup/delete_confirm_dialog.dart';
+import 'package:app/ui/pages/widget/tools/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart'; // AJOUT DE L'IMPORT
@@ -90,10 +91,7 @@ class PlantDetailPage extends StatelessWidget {
                 }
 
                 final plant = snapshot.data!;
-                final details = plant.plantDetails;
-                final imageUrl = details.imagePath != null
-                    ? Uri.parse(AppConfig.baseUrlDataset).resolve(details.imagePath!).toString()
-                    : null;
+
 
                 return CustomScrollView(
                   physics: const BouncingScrollPhysics(),
@@ -160,12 +158,11 @@ class PlantDetailPage extends StatelessWidget {
                                 shadows: [Shadow(blurRadius: 10, color: Colors.black)]
                             )
                         ),
+                        // Dans PlantDetailPage, à l'intérieur du Stack du FlexibleSpaceBar
                         background: Stack(
                           fit: StackFit.expand,
                           children: [
-                            imageUrl != null
-                                ? Image.network(imageUrl, fit: BoxFit.cover)
-                                : Container(color: Colors.green),
+                            ImageHelper.buildPlantImage(path: plant.pathPicture),
                             const DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
@@ -173,6 +170,25 @@ class PlantDetailPage extends StatelessWidget {
                                   end: Alignment.topCenter,
                                   colors: [Colors.black54, Colors.transparent],
                                 ),
+                              ),
+                            ),
+                            // BOUTON DE MODIFICATION
+                            Positioned(
+                              bottom: 10,
+                              right: 10,
+                              child: FloatingActionButton.small(
+                                backgroundColor: Colors.white.withOpacity(0.8),
+                                child: const Icon(Icons.edit, color: Colors.green),
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/change_op_pp_page',
+                                    arguments: {
+                                      'objectProfileId': plant.idObjectProfile,
+                                      'currentPath': plant.pathPicture,
+                                    },
+                                  );
+                                },
                               ),
                             ),
                           ],

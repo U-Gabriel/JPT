@@ -132,7 +132,7 @@ class _AddNameMyObjectPageState extends State<AddNameMyObjectPage> {
                             BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 5, offset: const Offset(0, 3))
                           ],
                           image: DecorationImage(
-                            image: NetworkImage(Uri.parse(AppConfig.baseUrlDataset).resolve(avatar.picturePath).toString()),
+                            image: NetworkImage(Uri.parse(AppConfig.baseUrlDataset).resolve(avatar.pathPicture).toString()),
                             fit: BoxFit.cover,
                           ),
                         ),

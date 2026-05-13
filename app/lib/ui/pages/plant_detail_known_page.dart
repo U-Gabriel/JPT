@@ -121,7 +121,7 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
           },
           itemBuilder: (context, index) {
             final url = Uri.parse(AppConfig.baseUrlDataset)
-                .resolve(plant.avatars![index].picturePath)
+                .resolve(plant.avatars![index].pathPicture)
                 .toString();
             return Image.network(url, fit: BoxFit.cover);
           },
