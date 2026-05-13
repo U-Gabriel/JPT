@@ -41,9 +41,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.json({type: 'application/*+json'}))
 
 
-
-
-
 // Swagger
 const swagger = JSON.parse(file.readFileSync('./swagger/swagger_output.json', 'utf8'))
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swagger, {swaggerOptions: {persistAuthorization: true}}))
@@ -53,6 +50,7 @@ app.use(routerObject)
 app.use(routerFaq)
 app.use(routerTag)
 app.use(routerShoppingPublic)
+app.use(routerAvatar)
 
 // Token JWT
 app.use(authToken)
@@ -64,11 +62,10 @@ app.use(routerObjectProfile)
 app.use(routerPlantType)
 app.use(routerGroupPlantType)
 app.use(routerNotice)
-app.use(routerTag)
 app.use(routerShoppingPrivate)
 app.use(routerPerson)
 app.use(routerPaymentPrivate)
-app.use(routerAvatar)
+
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)
