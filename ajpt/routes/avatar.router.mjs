@@ -18,24 +18,10 @@ if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir); 
-    },
-    filename: (req, file, cb) => {
-        // Sécurité : on s'assure que l'id est bien présent
-        const id = req.body.id_object_profile;
-        if (!id) {
-            return cb(new Error("id_object_profile est manquant dans le body"));
-        }
-        const extension = path.extname(file.originalname);
-        cb(null, `${id}${extension}`);
-    }
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 } // Limite à 5MB par exemple
+    limits: { fileSize: 10 * 1024 * 1024 } // On peut accepter plus gros car on va réduire
 });
 
 routerAvatar.post("/avatar/upload/object_profile", upload.single("picture"), UploadObjectProfilePicture);

@@ -296,6 +296,34 @@
           ]
         }
       },
+      "/avatar/upload/object_profile": {
+        "post": {
+          "tags": ["Avatar"],
+          "summary": "Upload une image de profil pour un objet",
+          "consumes": ["multipart/form-data"],
+          "parameters": [
+            {
+              "name": "id_object_profile",
+              "in": "formData",
+              "description": "ID du profil de l'objet",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "picture",
+              "in": "formData",
+              "description": "Fichier image à uploader (JPG, PNG)",
+              "required": true,
+              "type": "file"
+            }
+          ],
+          "responses": {
+            "200": { "description": "Image téléchargée avec succès" },
+            "401": { "description": "Non autorisé" },
+            "404": { "description": "Profil non trouvé" }
+          }
+        }
+      },
       "/object_profile/create/init": {
         "post": {
           "tags": [
