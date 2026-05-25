@@ -152,10 +152,11 @@ const GetRequestObjectProfiledetailsByOPController = (op) => {
     });
 };
 
-const DeleteObjectProfileController = (body) => {
+const DeleteObjectProfileController = (req) => {
     return new Promise(async (resolve) => {
         // Destructuring pour être sûr de ce qu'on teste
-        const { id_object_profile, id_person } = body || {};
+        const id_person = req.data?.id_person;
+        const { id_object_profile } = req.body || {};
 
         if (!id_object_profile || !id_person) {
             return resolve(new ResponseApi().InitMissingParameters());

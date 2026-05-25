@@ -390,8 +390,10 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
 const DeleteObjectProfile = async ({ id_object_profile, id_person }) => {
   const client = await pool.connect();
   try {
-    // 1. On vérifie l'existence et l'état
+    // On commence la transaction DIRECTEMENT ici
+    await client.query('BEGIN');
 
+    // 1. On vérifie l'existence et l'état
     const checkRes = await client.query(
       `SELECT is_automatic, 
        (modify_op >= NOW() - INTERVAL '24 hours') as is_stable
@@ -401,28 +403,26 @@ const DeleteObjectProfile = async ({ id_object_profile, id_person }) => {
     );
 
     if (checkRes.rows.length === 0) {
-      return { status: 404, message: "Profil introuvable." };
+      await client.query('ROLLBACK'); // Toujours rollback avant de quitter
+      return { status: 404, message: "Profil introuvable ou accès refusé." };
     }
 
     const { is_automatic, is_stable } = checkRes.rows[0];
 
     // 2. Logique de blocage Sécurisée
     if (is_automatic && is_stable) {
+      await client.query('ROLLBACK');
       return { status: 403, message: "BLOCK_AUTO" };
     }
 
     const successCode = (is_automatic && !is_stable) ? 202 : 200;
 
-    await client.query('BEGIN');
-
     // 3. Suppression dans l'ordre des contraintes
-    // Supprimer d'abord la table de liaison
     await client.query(
       `DELETE FROM lnk_person_op_group WHERE id_object_profile = $1`, 
       [id_object_profile]
     );
 
-    // Enfin, supprimer le profil lui-même
     await client.query(
       `DELETE FROM object_profile WHERE id_object_profile = $1 AND id_person = $2`, 
       [id_object_profile, id_person]
