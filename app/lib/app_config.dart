@@ -7,6 +7,9 @@ class AppConfig {
   static const String url_dataset = "http://51.77.141.175";
   static const String port = "3000";
 
+  static const int defaultPlantId = 5;
+  static const String defaultPlantTitle = "Joker";
+
   static String get baseUrl => "$url:$port";
   static String get baseUrlS => url_s;
   static String get baseUrlDataset => url_dataset;

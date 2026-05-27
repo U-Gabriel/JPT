@@ -27,6 +27,14 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        title: const Text(
+          'Nouvel objet',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -170,10 +178,21 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
             // 5. Bouton "Je ne trouve pas ma plante"
             TextButton(
               onPressed: () {
-                // Action si la plante n'existe pas
+                Navigator.pushNamed(
+                  context,
+                  '/add_name_my_object',
+                  arguments: {
+                    'id': AppConfig.defaultPlantId,
+                    'title': AppConfig.defaultPlantTitle,
+                  },
+                );
               },
-              child: const Text("Je ne trouve pas ma plante",
-                  style: TextStyle(color: Colors.grey, decoration: TextDecoration.underline)
+              child: const Text(
+                "Je ne trouve pas ma plante",
+                style: TextStyle(
+                  color: Colors.grey,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
 
