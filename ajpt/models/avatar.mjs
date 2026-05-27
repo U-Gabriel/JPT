@@ -24,8 +24,8 @@ const GetRequestAvatarsWithoutPlant = async () => {
             evolution_number,
             state
         FROM avatar
-        WHERE id_plant_type IS NULL
-        ORDER BY evolution_number ASC, title ASC;
+        WHERE evolution_number = 0
+        ORDER BY title ASC;
     `;
 
     const { rows } = await pool.query(query);
