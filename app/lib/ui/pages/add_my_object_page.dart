@@ -175,23 +175,74 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
               },
             ),
 
-            // 5. Bouton "Je ne trouve pas ma plante"
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/add_name_my_object',
-                  arguments: {
-                    'id': AppConfig.defaultPlantId,
-                    'title': AppConfig.defaultPlantTitle,
-                  },
-                );
-              },
-              child: const Text(
-                "Je ne trouve pas ma plante",
-                style: TextStyle(
-                  color: Colors.grey,
-                  decoration: TextDecoration.underline,
+            // 5. Section Boutons d'alternatives (Version Verticale & Design Pro)
+            const SizedBox(height: 20),
+
+            // Premier bouton : Je ne trouve pas ma plante
+            SizedBox(
+              width: double.infinity,
+              height: 48, // Bouton plus grand et plus cliquable
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/add_name_my_object',
+                    arguments: {
+                      'id': AppConfig.defaultPlantId,
+                      'title': AppConfig.defaultPlantTitle,
+                    },
+                  );
+                },
+                icon: const Icon(Icons.help_outline, size: 18, color: Colors.grey),
+                label: const Text(
+                  "Je ne trouve pas ma plante",
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.grey[300]!),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12), // Espace entre les deux gros boutons
+
+            // Deuxième bouton : Usage hors-végétal
+            SizedBox(
+              width: double.infinity,
+              height: 48, // Même taille pour une belle harmonie visuelle
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/add_name_spe_my_object',
+                    arguments: {
+                      'id': AppConfig.defaultPlantId,
+                      'title': "Objet connecté",
+                    },
+                  );
+                },
+                icon: const Icon(Icons.devices_other, size: 18, color: Colors.green),
+                label: const Text(
+                  "Objet différent d'un pot",
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.green,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.green.withOpacity(0.05),
+                  side: BorderSide(color: Colors.green.withOpacity(0.2)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
