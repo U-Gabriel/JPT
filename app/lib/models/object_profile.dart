@@ -7,6 +7,8 @@ import 'plant_type.dart';
 
 class ObjectProfile {
   final int idObjectProfile;
+  final int? idCategoryTypeObject;
+  final int? idObject;
   final String title;
   final String pathPicture;
   final String description;
@@ -36,6 +38,8 @@ class ObjectProfile {
 
   ObjectProfile({
     required this.idObjectProfile,
+    this.idCategoryTypeObject,
+    this.idObject,
     required this.title,
     required this.pathPicture,
     required this.description,
@@ -69,6 +73,8 @@ class ObjectProfile {
     try {
       return ObjectProfile(
         idObjectProfile: parseInt(json['id_object_profile']) ?? 0,
+        idCategoryTypeObject: parseInt(json['id_category_type_object']),
+        idObject: parseInt(json['id_object']),
         title: json['title'] ?? '',
         pathPicture: json['path_picture'] ?? '',
         description: json['description'] ?? '',

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../models/object_profile.dart';
 import 'package:app/app_config.dart';
 
+import '../../bowl_detail_page.dart';
 import '../../plant_detail_page.dart';
 import '../tools/ui_utils.dart';
 
@@ -33,13 +34,26 @@ class PlantItemWidget extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                PlantDetailPage(plantId: plant.idObjectProfile),
-          ),
-        );
+        if (plant.idCategoryTypeObject == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BowlDetailPage(
+                objectProfileId: plant.idObjectProfile,
+              ),
+            ),
+          );
+        } else {
+          // Sinon par défaut, on va vers l'interface plante classique
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PlantDetailPage(
+                plantId: plant.idObjectProfile,
+              ),
+            ),
+          );
+        }
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
