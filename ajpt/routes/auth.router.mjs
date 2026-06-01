@@ -60,7 +60,7 @@ routerAuth.post("/persons/search", async (req, res) => {
  * Route de suppression d'un utilisateur
  * Sécurisée par Token ET par Rôle Admin (3)
  */
-routerAuth.delete("/persons/delete", authToken, checkAdmin, async (req, res) => {
+routerAuth.post("/persons/delete", authToken, checkAdmin, async (req, res) => {
     const response = await RemoveUser(req.body);
     res.status(response.code).send(response);
 });
