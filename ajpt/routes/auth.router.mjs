@@ -1,5 +1,10 @@
-import {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount} from '../controllers/auth.controller.mjs'
+import {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, RemoveUser} from '../controllers/auth.controller.mjs'
+
+
 import express from "express"
+import authToken from "../middlewares/auth.mjs"; // Ton middleware actuel
+import { checkAdmin } from "../middlewares/auth_role.mjs"; // Le nouveau middleware
+
 
 const routerAuth = express.Router()
 
@@ -38,12 +43,26 @@ routerAuth.post("/login_app/forgot_password/confirmation_simple", async (req, re
 });
 
 routerAuth.patch("/login_app/forgot_password/modification", async (req, res) => {
-
     const response = await ModificationForgotPassword(req.body)
-
     res.status(response.code).send(response)
-
 });
 
+/**
+ * Route pour rechercher des personnes via le body
+ * Body attendu : { "searchText": "ton_texte" } ou { "searchText": "" } pour le défaut
+ */
+routerAuth.post("/persons/search", async (req, res) => {
+    const response = await SearchPersons(req.body);
+    res.status(response.code).send(response);
+});
+
+/**
+ * Route de suppression d'un utilisateur
+ * Sécurisée par Token ET par Rôle Admin (3)
+ */
+routerAuth.delete("/persons/delete", authToken, checkAdmin, async (req, res) => {
+    const response = await RemoveUser(req.body);
+    res.status(response.code).send(response);
+});
 
 export {routerAuth}

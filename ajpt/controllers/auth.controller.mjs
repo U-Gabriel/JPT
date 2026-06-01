@@ -1,4 +1,4 @@
-import {Add, GetByIdAndPassword, GetByIdAndPasswordVerified, GenerateToken, ModifyLastConnexion, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount} from '../models/person.mjs'
+import {Add, GetByIdAndPassword, GetByIdAndPasswordVerified, GenerateToken, ModifyLastConnexion, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, DeletePersonById} from '../models/person.mjs'
 import { getForgotEmailHtml } from "../templates/forgot_mail_template.mjs";
 import { getRegisterEmailHtml } from "../templates/register_mail_template.mjs";
 import { getAlreadyRegisteredEmailHtml } from "../templates/already_registered_mail_template.mjs";
@@ -283,4 +283,47 @@ const ModificationForgotPassword = async (body) => {
     }
 };
 
-export {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount}
+
+/**
+ * Contrôleur pour l'outil de recherche de personnes
+ * On ajoute = {} pour éviter le crash si le body est absent !
+ */
+const SearchPersons = async (body = {}) => {
+    // Si body est indéfini, il prendra {} et searchText vaudra simplement undefined (sans crash !)
+    const { searchText } = body;
+
+    try {
+        const persons = await SearchPersonsByText(searchText);
+        return new ResponseApi().InitOK(persons);
+    } catch (error) {
+        console.error("Erreur lors de la recherche de personnes :", error);
+        return new ResponseApi().InitInternalServer("Une erreur est survenue lors de la recherche.");
+    }
+};
+
+/**
+ * Contrôleur de suppression d'un utilisateur (Réservé Admin)
+ */
+const RemoveUser = async (body = {}) => {
+    const { id_person_to_delete } = body;
+
+    if (!id_person_to_delete) {
+        return new ResponseApi().InitMissingParameters();
+    }
+
+    try {
+        const isDeleted = await DeletePersonById(id_person_to_delete);
+        
+        if (!isDeleted) {
+            return new ResponseApi().InitBadRequest("L'utilisateur spécifié n'existe pas.");
+        }
+
+        return new ResponseApi().InitOK({ message: "Utilisateur supprimé avec succès." });
+    } catch (error) {
+        console.error("Erreur lors de la suppression de l'utilisateur :", error);
+        return new ResponseApi().InitInternalServer("Une erreur technique est survenue.");
+    }
+};
+
+
+export {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, RemoveUser}

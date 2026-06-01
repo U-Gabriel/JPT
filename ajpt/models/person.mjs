@@ -11,6 +11,7 @@ class Person {
     id_role
     password
     last_connexion
+    is_verified
 }
 
 const columns = "id_person, pseudo, mail, firstname, surname, id_role, is_verified";
@@ -62,7 +63,7 @@ const Add = (person) => {
  * Cherche un utilisateur par son mail uniquement
  */
 const GetByMail = (mail) => {
-    return pool.query('SELECT ${columns} FROM person WHERE mail = $1', [mail])
+    return pool.query(`SELECT ${columns} FROM person WHERE mail = $1`, [mail])
         .then(res => res.rows.length > 0 ? res.rows[0] : null);
 };
 
@@ -82,10 +83,11 @@ const CheckPseudoAvailability = (pseudo, excludeId) => {
 // Fonction pour un nouvel utilisateur
 const insertNewPerson = (person) => {
     person.id_role = person.id_role ?? 1;
+    person.is_verified = person.is_verified ?? false;
     const request = {
         text: `INSERT INTO person(pseudo, password, mail, firstname, surname, number_phone, id_role, last_connexion, is_verified) 
-               VALUES ($1, encode(digest($2, 'sha256'), 'hex'), $3, $4, $5, $6, $7, $8, FALSE) RETURNING *`,
-        values: [person.pseudo, person.password, person.mail, person.firstname, person.surname, person.number_phone, person.id_role, person.last_connexion],
+               VALUES ($1, encode(digest($2, 'sha256'), 'hex'), $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+        values: [person.pseudo, person.password, person.mail, person.firstname, person.surname, person.number_phone, person.id_role, person.last_connexion, person.is_verified],
     };
     return pool.query(request).then(res => res.rows[0]);
 };
@@ -388,4 +390,40 @@ const UpdatePasswordWithCode = (mail, code, newPassword) => {
     });
 };
 
-export {Person, Add, GetByIdAndPassword, GetByIdAndPasswordVerified, ModifyLastConnexion, GenerateToken, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount}
+/**
+ * Recherche les personnes par pseudo ou mail (partiel ou complet)
+ * Retourne les 200 premiers résultats triés par id_role décroissant
+ * @param {string|null} searchText - Le texte à chercher dans pseudo ou mail
+ */
+const SearchPersonsByText = async (searchText) => {
+    let queryText = `SELECT ${columns} FROM person`;
+    const queryParams = [];
+
+    // Si un texte est fourni, on applique le filtre de recherche
+    if (searchText && searchText.trim() !== "") {
+        queryText += ` WHERE pseudo ILIKE $1 OR mail ILIKE $1`;
+        queryParams.push(`%${searchText.trim()}%`); // Permet de chercher n'importe où dans la chaîne
+    }
+
+    // Tri par ordre décroissant de rôle, puis limite par défaut aux 200 premiers
+    queryText += ` ORDER BY id_role DESC LIMIT 200`;
+
+    const { rows } = await pool.query(queryText, queryParams);
+    return rows;
+};
+
+/**
+ * Supprime définitivement un utilisateur par son ID
+ * @param {number} id_person 
+ */
+const DeletePersonById = async (id_person) => {
+    if (!id_person) throw new Error("id_person is required");
+    
+    const query = `DELETE FROM person WHERE id_person = $1 RETURNING id_person`;
+    const { rows } = await pool.query(query, [id_person]);
+    
+    return rows.length > 0; // Retourne true si un utilisateur a été supprimé, sinon false
+};
+
+
+export {Person, Add, GetByIdAndPassword, GetByIdAndPasswordVerified, ModifyLastConnexion, GenerateToken, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, DeletePersonById}
