@@ -130,7 +130,8 @@ const CreateObjectWithAssets = async (o, assets = []) => {
 
 
 /**
- * Récupère toutes les catégories avec les objets et le titre du tag associé
+ * Récupère toutes les catégories avec les objets, le nom du tag,
+ * et la liste complète des assets (images) associés à chaque objet.
  */
 const GetCategoriesWithObjects = async () => {
     const query = `
@@ -163,13 +164,24 @@ const GetCategoriesWithObjects = async () => {
                         'features', o.features,
                         'technical_details', o.technical_details,
                         'warranty_info', o.warranty_info,
-                        'installation_guide_url', o.installation_guide_url
+                        'installation_guide_url', o.installation_guide_url,
+                        'images', (
+                            SELECT COALESCE(json_agg(
+                                json_build_object(
+                                    'id_asset', oa.id_asset,
+                                    'file_path', oa.file_path,
+                                    'is_main_picture', oa.is_main_picture
+                                ) ORDER BY oa.order_view ASC
+                            ), '[]'::json)
+                            FROM object_asset oa
+                            WHERE oa.id_object = o.id_object
+                        )
                     ) ORDER BY o.title ASC
                 ) FILTER (WHERE o.id_object IS NOT NULL), '[]'::json
             ) AS objects
         FROM category_type c
         LEFT JOIN object o ON c.id_category_type = o.id_category_type
-        LEFT JOIN tag t ON o.id_tag = t.id_tag  -- 🟢 Jointure vers la table des tags
+        LEFT JOIN tag t ON o.id_tag = t.id_tag
         GROUP BY c.id_category_type
         ORDER BY c.title ASC;
     `;
