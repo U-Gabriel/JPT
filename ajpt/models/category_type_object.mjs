@@ -130,7 +130,7 @@ const CreateObjectWithAssets = async (o, assets = []) => {
 
 
 /**
- * Récupère toutes les catégories avec la liste complète des objets associés imbriqués
+ * Récupère toutes les catégories avec les objets et le titre du tag associé
  */
 const GetCategoriesWithObjects = async () => {
     const query = `
@@ -158,7 +158,7 @@ const GetCategoriesWithObjects = async () => {
                         'is_active', o.is_active,
                         'discount_price', o.discount_price,
                         'created_at', o.created_at,
-                        'id_tag', o.id_tag,
+                        'tag_name', t.title,
                         'short_description', o.short_description,
                         'features', o.features,
                         'technical_details', o.technical_details,
@@ -169,6 +169,7 @@ const GetCategoriesWithObjects = async () => {
             ) AS objects
         FROM category_type c
         LEFT JOIN object o ON c.id_category_type = o.id_category_type
+        LEFT JOIN tag t ON o.id_tag = t.id_tag  -- 🟢 Jointure vers la table des tags
         GROUP BY c.id_category_type
         ORDER BY c.title ASC;
     `;
