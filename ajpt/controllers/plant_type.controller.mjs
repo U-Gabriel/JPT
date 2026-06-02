@@ -22,7 +22,7 @@ const AddPlant = async (req, res) => {
         const avatars = req.files.map((file, index) => ({
             title: `Avatar ${index + 1}`,
             description: "Image de plante",
-            picture_path: `/dataset/data_plant/${file.filename}`
+            picture_path: `dataset/data_plant/${file.filename}`
         }));
 
         // 4. Appel du modèle
