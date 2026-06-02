@@ -1,7 +1,14 @@
-import { GetPlantTypeSearchByTitle, GetPlantTypeDescription} from "../controllers/plant_type.controller.mjs";
+import { AddPlant, GetPlantTypeSearchByTitle, GetPlantTypeDescription} from "../controllers/plant_type.controller.mjs";
+import { uploadPlant } from "../middlewares/upload_plant.mjs";
 import express from "express"
 
 const routerPlantType = express.Router()
+
+routerPlantType.post(
+    "/plants/create",
+    uploadPlant.array('images', 10), // Intercepte les images
+    AddPlant
+);
 
 routerPlantType.post("/plant_type/search/bytitle", async (req, res) => {
     const response = await GetPlantTypeSearchByTitle(req.body)
