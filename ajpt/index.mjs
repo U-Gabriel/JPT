@@ -20,6 +20,7 @@ import { routerPerson } from './routes/person_a.router.mjs'
 import { routerPaymentPrivate } from './routes/payment_private.router.mjs'
 import { routerPaymentPublic } from './routes/payment_public.router.mjs'
 import { routerAvatar } from './routes/avatar.router.mjs'
+import { routerCategoryObject } from './routes/category_type_object.router.mjs'
 
 const app = express()
 
@@ -65,6 +66,7 @@ app.use(routerShoppingPrivate)
 app.use(routerPerson)
 app.use(routerPaymentPrivate)
 app.use(routerAvatar)
+app.use(routerCategoryObject)
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)

@@ -3,7 +3,7 @@ import {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgo
 
 import express from "express"
 import authToken from "../middlewares/auth.mjs"; // Ton middleware actuel
-import { checkAdmin } from "../middlewares/auth_role.mjs"; // Le nouveau middleware
+import { checkRoles } from "../middlewares/auth_role.mjs"; // Le nouveau middleware
 
 
 const routerAuth = express.Router()
@@ -60,7 +60,7 @@ routerAuth.post("/persons/search", async (req, res) => {
  * Route de suppression d'un utilisateur
  * Sécurisée par Token ET par Rôle Admin (3)
  */
-routerAuth.post("/persons/delete", authToken, checkAdmin, async (req, res) => {
+routerAuth.post("/persons/delete", authToken, checkRoles([3]), async (req, res) => {
     const response = await RemoveUser(req.body);
     res.status(response.code).send(response);
 });
