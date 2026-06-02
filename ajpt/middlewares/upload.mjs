@@ -29,19 +29,19 @@ const storage = multer.diskStorage({
 
 // Filtre pour accepter uniquement les images (Version Blindée)
 const fileFilter = (req, file, cb) => {
-    // 1. On accepte les extensions courantes (gère minuscules et majuscules)
-    const allowedExtensions = /jpeg|jpg|png|gif|webp/i;
+    // Ajout de svg dans les extensions
+    const allowedExtensions = /jpeg|jpg|png|gif|webp|svg/i;
     const extName = path.extname(file.originalname).toLowerCase();
     const isExtAllowed = allowedExtensions.test(extName);
 
-    // 2. On accepte les types MIME d'images standards
-    const allowedMimeTypes = /^image\/(jpeg|jpg|png|gif|webp|x-png|pjpeg)$/i;
+    // Ajout de svg+xml dans les types MIME
+    const allowedMimeTypes = /^image\/(jpeg|jpg|png|gif|webp|x-png|pjpeg|svg\+xml)$/i;
     const isMimeAllowed = allowedMimeTypes.test(file.mimetype);
 
     if (isExtAllowed || isMimeAllowed) {
         return cb(null, true);
     } else {
-        cb(new Error(`Format non supporté (${file.mimetype}). Uniquement JPG, PNG, WEBP, GIF.`));
+        cb(new Error(`Format non supporté (${file.mimetype}). Uniquement JPG, PNG, WEBP, GIF, SVG.`));
     }
 };
 
