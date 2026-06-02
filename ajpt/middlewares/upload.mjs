@@ -5,9 +5,15 @@ import fs from 'fs';
 // Configuration du dossier de stockage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dir = './public/dataset/object';
+        // 🛠️ FIX PROTOCOLE VPS PRODUCTION VS LOCAL
+        // Si on est sur Linux/VPS, on force le dossier absolu /var/www/html/...
+        // Sinon (sur ton Windows en local), on garde le dossier relatif de ton projet
+        const isLinux = process.platform === 'linux';
+        const dir = isLinux 
+            ? '/var/www/html/dataset/object' 
+            : './dataset/object';
         
-        // Si le dossier n'existe pas sur le serveur, on le crée automatiquement
+        // Si le dossier n'existe pas, on le crée automatiquement
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }
