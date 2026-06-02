@@ -14,7 +14,7 @@ const routerCategoryObject = express.Router();
 routerCategoryObject.post(
     "/categories/create", 
     authToken, 
-    checkRoles([3, 7]),
+    checkRoles([2, 3, 7]),
     async (req, res) => {
         const response = await AddCategoryType(req.body);
         res.status(response.code).send(response);
@@ -28,7 +28,7 @@ routerCategoryObject.post(
 routerCategoryObject.post(
     "/objects/create",
     authToken,
-    checkRoles([3, 7]),
+    checkRoles([2, 3, 7]),
     upload.array('images', 10), // Intercepte les fichiers du champ "images"
     async (req, res) => {
         // req.body contiendra tous les champs textes de l'objet
