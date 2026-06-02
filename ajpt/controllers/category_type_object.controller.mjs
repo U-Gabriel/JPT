@@ -41,8 +41,14 @@ const AddObject = async (body = {}, files = []) => {
             };
         });
 
+        const bodySanitized = {
+            ...body,
+            is_available: body.is_available === 'true' || body.is_available === true,
+            is_active: body.is_active === 'true' || body.is_active === true,
+        };
+
         // 2. On passe les données textuelles ET les chemins d'images générés au modèle
-        const fullNewProduct = await CreateObjectWithAssets(body, assets);
+        const fullNewProduct = await CreateObjectWithAssets(bodySanitized, assets);
         
         return new ResponseApi().InitCreated("Objet et fichiers stockés avec succès.", fullNewProduct);
     } catch (error) {
