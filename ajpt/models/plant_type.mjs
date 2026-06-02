@@ -89,6 +89,53 @@ const CreatePlantWithDetails = async (plantData, groupData, avatars = []) => {
     }
 };
 
+/**
+ * Récupère toutes les plantes avec l'intégralité des champs 
+ * de plant_type, group_plant_type et les avatars (state = 1)
+ */
+const GetAllPlants = async () => {
+    const query = `
+        SELECT 
+            pt.*,
+            json_build_object(
+                'id_group_plant_type', gpt.id_group_plant_type,
+                'title', gpt.title,
+                'description', gpt.description,
+                'conductivity_electrique_fertility_sensor', gpt.conductivity_electrique_fertility_sensor,
+                'temperature_sensor_ground', gpt.temperature_sensor_ground,
+                'temperature_sensor_extern', gpt.temperature_sensor_extern,
+                'humidity_air_sensor', gpt.humidity_air_sensor,
+                'humidity_ground_sensor', gpt.humidity_ground_sensor,
+                'exposition_time_uv', gpt.exposition_time_uv,
+                'is_active', gpt.is_active,
+                'is_standard', gpt.is_standard,
+                'watering_time', gpt.watering_time,
+                'prority_plant', gpt.prority_plant,
+                'last_date_arrosage', gpt.last_date_arrosage,
+                'watering_period_open', gpt.watering_period_open
+            ) AS group_info,
+            COALESCE(
+                json_agg(
+                    json_build_object(
+                        'id_avatar', a.id_avatar,
+                        'title', a.title,
+                        'description', a.description,
+                        'picture_path', a.picture_path,
+                        'evolution_number', a.evolution_number,
+                        'state', a.state
+                    ) ORDER BY a.evolution_number ASC
+                ) FILTER (WHERE a.id_avatar IS NOT NULL AND a.state = 1), '[]'::json
+            ) AS avatars
+        FROM plant_type pt
+        LEFT JOIN group_plant_type gpt ON pt.id_plant_type = gpt.id_plant_type AND gpt.is_standard = true
+        LEFT JOIN avatar a ON pt.id_plant_type = a.id_plant_type
+        GROUP BY pt.id_plant_type, gpt.id_group_plant_type
+        ORDER BY pt.title ASC;
+    `;
+    const { rows } = await pool.query(query);
+    return rows;
+};
+
 const GetRequestPlantTypeSearchByTitle = async ({ title }) => {
     if (!title) throw new Error("title is required");
 
@@ -199,4 +246,4 @@ const GetRequestPlantTypeDescription = async ({ id }) => {
 
 
 
-export {PlantType, CreatePlantWithDetails, GetRequestPlantTypeSearchByTitle, GetRequestPlantTypeDescription}
+export {PlantType, CreatePlantWithDetails, GetAllPlants, GetRequestPlantTypeSearchByTitle, GetRequestPlantTypeDescription}

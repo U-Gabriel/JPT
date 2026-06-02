@@ -1,4 +1,4 @@
-import {CreatePlantWithDetails, GetRequestPlantTypeSearchByTitle, GetRequestPlantTypeDescription} from "../models/plant_type.mjs";
+import {CreatePlantWithDetails, GetAllPlants, GetRequestPlantTypeSearchByTitle, GetRequestPlantTypeDescription} from "../models/plant_type.mjs";
 import {ResponseApi} from "../models/response-api.mjs";
 
 
@@ -38,6 +38,16 @@ const AddPlant = async (req, res) => {
         
         console.error("Erreur création plante:", e);
         res.status(500).json({ status: "KO", message: "Erreur lors de la création en base de données" });
+    }
+};
+
+const GetAllPlantsController = async (req, res) => {
+    try {
+        const plants = await GetAllPlants();
+        res.status(200).json({ status: "OK", data: plants });
+    } catch (e) {
+        console.error("Erreur récupération plantes:", e);
+        res.status(500).json({ status: "KO", message: "Erreur serveur" });
     }
 };
 
@@ -95,5 +105,4 @@ const GetPlantTypeDescription = (id) => {
     });
 };
 
-
-export {GetPlantTypeSearchByTitle, GetPlantTypeDescription, AddPlant}
+export {GetPlantTypeSearchByTitle, GetPlantTypeDescription, AddPlant, GetAllPlantsController}
