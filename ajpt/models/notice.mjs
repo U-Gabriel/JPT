@@ -53,7 +53,7 @@ const CountUserNotices = async (id_person) => {
 const GetAllNoticesRequest = async () => {
     const query = `
         SELECT 
-            n.title, n.content, n.status, n.created_at, n.is_public,
+            n.id_notice, n.title, n.content, n.status, n.created_at, n.is_public,
             p.pseudo AS author_pseudo,
             op.title AS object_profile_title,
             o.title AS object_title,
