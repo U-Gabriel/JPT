@@ -1,4 +1,4 @@
-import {CreatePlantWithDetails, GetAllPlants, GetRequestPlantTypeSearchByTitle, GetRequestPlantTypeDescription} from "../models/plant_type.mjs";
+import {CreatePlantWithDetails, GetAllPlants, GetRequestPlantTypeSearchByTitle, GetRequestPlantTypeDescription, DeletePlantAndDependencies} from "../models/plant_type.mjs";
 import {ResponseApi} from "../models/response-api.mjs";
 
 
@@ -105,4 +105,23 @@ const GetPlantTypeDescription = (id) => {
     });
 };
 
-export {GetPlantTypeSearchByTitle, GetPlantTypeDescription, AddPlant, GetAllPlantsController}
+const DeletePlantController = async (req, res) => {
+    try {
+        const { id_plant_type } = req.body;
+        // req.data.id_person est injecté par ton middleware d'authentification
+        const id_person = req.data.id_person; 
+
+        if (!id_plant_type) {
+            return res.status(400).json({ status: "KO", message: "ID de plante requis" });
+        }
+
+        await DeletePlantAndDependencies(id_plant_type);
+        
+        res.status(200).json({ status: "OK", message: "Plante et dépendances supprimées avec succès" });
+    } catch (e) {
+        console.error("Erreur suppression:", e);
+        res.status(500).json({ status: "KO", message: e.message });
+    }
+};
+
+export {GetPlantTypeSearchByTitle, GetPlantTypeDescription, AddPlant, GetAllPlantsController, DeletePlantController}

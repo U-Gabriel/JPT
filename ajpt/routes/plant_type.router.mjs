@@ -1,4 +1,4 @@
-import { AddPlant, GetAllPlantsController, GetPlantTypeSearchByTitle, GetPlantTypeDescription} from "../controllers/plant_type.controller.mjs";
+import { AddPlant, GetAllPlantsController, GetPlantTypeSearchByTitle, GetPlantTypeDescription, DeletePlantController} from "../controllers/plant_type.controller.mjs";
 import { uploadPlant } from "../middlewares/upload_plant.mjs";
 import { checkRoles } from "../middlewares/auth_role.mjs";
 import express from "express"
@@ -24,6 +24,6 @@ routerPlantType.post("/plant_type/description/byid", async (req, res) => {
     res.status(response.code).send(response)
 });
 
-
+routerPlantType.post("/plants/delete", checkRoles([2, 3]), DeletePlantController);
 
 export {routerPlantType}

@@ -1,4 +1,6 @@
 import {pool} from "../middlewares/postgres.mjs"
+import fs from 'fs';
+import path from 'path';
 
 class PlantType {
     id_plant_type
@@ -244,6 +246,68 @@ const GetRequestPlantTypeDescription = async ({ id }) => {
     };
 };
 
+/**
+ * Supprime une plante et toutes ses dépendances (Avatar, Group, Profiles)
+ */
 
 
-export {PlantType, CreatePlantWithDetails, GetAllPlants, GetRequestPlantTypeSearchByTitle, GetRequestPlantTypeDescription}
+const DeletePlantAndDependencies = async (id_plant_type) => {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        // 1. Récupération des chemins des images avant suppression
+        const avatarRes = await client.query(
+            'SELECT picture_path FROM avatar WHERE id_plant_type = $1', 
+            [id_plant_type]
+        );
+
+        // 2. Suppression des entrées en base
+        await client.query('DELETE FROM avatar WHERE id_plant_type = $1', [id_plant_type]);
+        await client.query('DELETE FROM group_plant_type WHERE id_plant_type = $1', [id_plant_type]);
+        await client.query('UPDATE object_profile SET id_plant_type = 5 WHERE id_plant_type = $1', [id_plant_type]);
+
+        const result = await client.query('DELETE FROM plant_type WHERE id_plant_type = $1', [id_plant_type]);
+        
+        if (result.rowCount === 0) throw new Error("Plante non trouvée");
+
+        // 3. Suppression PHYSIQUE des fichiers sur le serveur
+        for (const row of avatarRes.rows) {
+            // 1. On normalise le chemin (remplace \ par /)
+            let filePath = row.picture_path.replace(/\\/g, '/');
+            
+            // 2. On enlève le slash initial s'il existe pour éviter le double slash
+            if (filePath.startsWith('/')) {
+                filePath = filePath.substring(1);
+            }
+
+            // 3. Construction du chemin absolu pour Linux
+            const absolutePath = process.platform === 'linux' 
+                ? `/var/www/html/${filePath}` 
+                : path.resolve(filePath);
+
+            console.log("Tentative de suppression sur le chemin corrigé :", absolutePath);
+
+            try {
+                if (fs.existsSync(absolutePath)) {
+                    fs.unlinkSync(absolutePath);
+                    console.log("✅ Succès : Fichier supprimé.");
+                } else {
+                    console.log("❌ Erreur : Le fichier n'existe pas physiquement à :", absolutePath);
+                }
+            } catch (err) {
+                console.error("❌ Erreur système lors de l'unlink :", err);
+            }
+        }
+
+        await client.query('COMMIT');
+        return true;
+    } catch (e) {
+        await client.query('ROLLBACK');
+        throw e;
+    } finally {
+        client.release();
+    }
+};
+
+export {PlantType, CreatePlantWithDetails, GetAllPlants, GetRequestPlantTypeSearchByTitle, GetRequestPlantTypeDescription, DeletePlantAndDependencies}
