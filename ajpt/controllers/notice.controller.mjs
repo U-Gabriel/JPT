@@ -1,4 +1,4 @@
-import { CreateNoticeRequest, CountUserNotices } from "../models/notice.mjs";
+import { CreateNoticeRequest, CountUserNotices, GetAllNoticesRequest, UpdateNoticeStatusRequest } from "../models/notice.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 /**
@@ -38,4 +38,38 @@ const CreateNotice = async (body) => {
     }
 };
 
-export { CreateNotice };
+/**
+ * Récupération de toutes les remarques
+ */
+const GetAllNotices = async () => {
+    try {
+        const data = await GetAllNoticesRequest();
+        return new ResponseApi().InitOKResponse("Liste des remarques récupérée.", data);
+    } catch (e) {
+        console.error("Error in GetAllNotices:", e);
+        return new ResponseApi().InitInternalServer("Erreur lors de la récupération des remarques.");
+    }
+};
+
+const UpdateNoticeStatus = async (body) => {
+    try {
+        const { id_notice, status } = body;
+
+        if (!id_notice || !status) {
+            return new ResponseApi().InitMissingParameters();
+        }
+
+        const result = await UpdateNoticeStatusRequest(id_notice, status);
+        
+        if (result.action === 'deleted') {
+            return new ResponseApi().InitOK("Notice résolue et supprimée.", null);
+        } else {
+            return new ResponseApi().InitOK("Status de la notice mis à jour.", result.data);
+        }
+    } catch (e) {
+        console.error("Error in UpdateNoticeStatus:", e);
+        return new ResponseApi().InitInternalServer(e);
+    }
+};
+
+export { CreateNotice, GetAllNotices, UpdateNoticeStatus };

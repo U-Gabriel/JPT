@@ -71,4 +71,12 @@ ResponseApi.prototype.InitUnauthorized = function(message) {
     return this
 }
 
+ResponseApi.prototype.InitOKResponse = function(message, data) {
+    this.status = "OK"
+    this.message = message
+    this.data = data
+    this.code = 200
+    return this
+}
+
 export {ResponseApi}
