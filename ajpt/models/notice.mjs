@@ -63,7 +63,7 @@ const GetAllNoticesRequest = async () => {
         LEFT JOIN object_profile op ON n.id_object_profile = op.id_object_profile
         LEFT JOIN object o ON op.id_object = o.id_object
         LEFT JOIN tag t ON n.id_tag = t.id_tag
-        WHERE n.status <> 'CLOSED'
+        WHERE n.status <> 'CLOSED' AND n.status <> 'RESOLVED'
         ORDER BY n.created_at DESC;
     `;
     const { rows } = await pool.query(query);
