@@ -1,5 +1,5 @@
 import express from "express";
-import {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList } from "../controllers/category_type_object.controller.mjs";
+import {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList } from "../controllers/category_type_object.controller.mjs";
 import authToken from "../middlewares/auth.mjs";
 import { upload } from "../middlewares/upload.mjs";
 import { checkRoles } from "../middlewares/auth_role.mjs"; // Middleware pour vérifier les rôles
@@ -53,6 +53,15 @@ routerCategoryObject.get("/categories/catalog", async (req, res) => {
  */
 routerCategoryObject.get("/categories/lookup", async (req, res) => {
     const response = await GetCategoriesList();
+    res.status(response.code).send(response);
+});
+
+/**
+ * Route : Liste simplifiée des objets (ID et Titre uniquement)
+ * GET /objects/lookup
+ */
+routerCategoryObject.get("/objects/lookup", authToken, checkRoles([2, 3]), async (req, res) => {
+    const response = await GetObjectsList();
     res.status(response.code).send(response);
 });
 

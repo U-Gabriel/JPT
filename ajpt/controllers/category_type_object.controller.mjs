@@ -1,4 +1,4 @@
-import {CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight } from "../models/category_type_object.mjs";
+import {CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight } from "../models/category_type_object.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 
@@ -87,4 +87,14 @@ const GetCategoriesList = async () => {
     }
 };
 
-export {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList };
+const GetObjectsList = async () => {
+    try {
+        const data = await GetObjectsLightweight();
+        return new ResponseApi().InitOK(data);
+    } catch (error) {
+        console.error("Erreur contrôleur GetObjectsList :", error);
+        return new ResponseApi().InitInternalServer("Impossible de récupérer la liste des objets.");
+    }
+};
+
+export {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList };

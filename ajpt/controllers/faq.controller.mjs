@@ -1,5 +1,38 @@
-import { GetFaqsByTagsRequest, GetFaqsByObjectRequest } from "../models/faq.mjs";
+import {CreateFaqRequest, GetAllFaqsCompleteRequest, GetFaqsByTagsRequest, GetFaqsByObjectRequest, DeleteFaqRequest } from "../models/faq.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
+
+const CreateFaq = async (body) => {
+    try {
+        const { question, answer, id_tag, id_object, order_view } = body;
+
+        // Validation stricte
+        if (!question || !answer) {
+            return new ResponseApi().InitMissingParameters();
+        }
+
+        const data = await CreateFaqRequest(question, answer, id_tag, id_object, order_view);
+        
+        return new ResponseApi().InitCreated("FAQ créée avec succès.", data);
+    } catch (e) {
+        console.error("Error in CreateFaq:", e);
+        return new ResponseApi().InitInternalServer(e);
+    }
+};
+
+const GetAllFaqsComplete = async () => {
+    try {
+        const data = await GetAllFaqsCompleteRequest();
+        
+        if (data && data.length > 0) {
+            return new ResponseApi().InitOKResponse("Liste complète des FAQ récupérée.", data);
+        } else {
+            return new ResponseApi().InitNoContent();
+        }
+    } catch (e) {
+        console.error("Error in GetAllFaqsComplete:", e);
+        return new ResponseApi().InitInternalServer(e);
+    }
+};
 
 const GetFaqsByTags = async (body) => {
     try {
@@ -43,4 +76,25 @@ const GetFaqsByObject = async (body) => {
     }
 };
 
-export { GetFaqsByTags, GetFaqsByObject };
+const DeleteFaq = async (body) => {
+    try {
+        const { id_faq } = body;
+
+        if (!id_faq) {
+            return new ResponseApi().InitMissingParameters();
+        }
+
+        const success = await DeleteFaqRequest(id_faq);
+        
+        if (success) {
+            return new ResponseApi().InitOK("FAQ supprimée avec succès.", null);
+        } else {
+            return new ResponseApi().InitBadRequest("FAQ non trouvée.");
+        }
+    } catch (e) {
+        console.error("Error in DeleteFaq:", e);
+        return new ResponseApi().InitInternalServer(e);
+    }
+};
+
+export { CreateFaq, GetAllFaqsComplete, GetFaqsByTags, GetFaqsByObject, DeleteFaq };

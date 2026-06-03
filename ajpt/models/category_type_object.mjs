@@ -205,4 +205,18 @@ const GetCategoriesLightweight = async () => {
     return rows;
 };
 
-export { CategoryType, ObjectProduct, CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight };
+/**
+ * Récupère uniquement les ID et Titres de tous les objets
+ */
+const GetObjectsLightweight = async () => {
+    const query = `
+        SELECT id_object, title 
+        FROM object 
+        WHERE is_active = true 
+        ORDER BY title ASC;
+    `;
+    const { rows } = await pool.query(query);
+    return rows;
+};
+
+export { CategoryType, ObjectProduct, CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight };
