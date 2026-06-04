@@ -60,7 +60,7 @@ routerCategoryObject.get("/categories/lookup", async (req, res) => {
  * Route : Liste simplifiée des objets (ID et Titre uniquement)
  * GET /objects/lookup
  */
-routerCategoryObject.get("/objects/lookup", authToken, checkRoles([2, 3]), async (req, res) => {
+routerCategoryObject.get("/objects/lookup", authToken, checkRoles([2, 3, 4, 5]), async (req, res) => {
     const response = await GetObjectsList();
     res.status(response.code).send(response);
 });
