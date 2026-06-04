@@ -1,4 +1,4 @@
-import {Add, GetByIdAndPassword, GetByIdAndPasswordVerified, GenerateToken, ModifyLastConnexion, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, DeletePersonById} from '../models/person.mjs'
+import {Add, GetByIdAndPassword, GetByIdAndPasswordVerified, GenerateToken, ModifyLastConnexion, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, GetProfileById, DeletePersonById} from '../models/person.mjs'
 import { getForgotEmailHtml } from "../templates/forgot_mail_template.mjs";
 import { getRegisterEmailHtml } from "../templates/register_mail_template.mjs";
 import { getAlreadyRegisteredEmailHtml } from "../templates/already_registered_mail_template.mjs";
@@ -302,6 +302,22 @@ const SearchPersons = async (body = {}) => {
 };
 
 /**
+ * Récupère le profil de la personne connectée
+ */
+const GetMyProfile = async (id_person) => {
+    try {
+        const user = await GetProfileById(id_person);
+        if (!user) {
+            return new ResponseApi().InitBadRequest("Utilisateur non trouvé.");
+        }
+        return new ResponseApi().InitOK(user);
+    } catch (error) {
+        console.error("Erreur GetMyProfile :", error);
+        return new ResponseApi().InitInternalServer("Erreur lors de la récupération du profil.");
+    }
+};
+
+/**
  * Contrôleur de suppression d'un utilisateur (Réservé Admin)
  */
 const RemoveUser = async (body = {}) => {
@@ -326,4 +342,4 @@ const RemoveUser = async (body = {}) => {
 };
 
 
-export {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, RemoveUser}
+export {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, GetMyProfile, RemoveUser}

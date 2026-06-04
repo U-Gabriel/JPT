@@ -1,4 +1,4 @@
-import {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, RemoveUser} from '../controllers/auth.controller.mjs'
+import {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, GetMyProfile, RemoveUser} from '../controllers/auth.controller.mjs'
 
 
 import express from "express"
@@ -53,6 +53,17 @@ routerAuth.patch("/login_app/forgot_password/modification", async (req, res) => 
  */
 routerAuth.post("/persons/search", async (req, res) => {
     const response = await SearchPersons(req.body);
+    res.status(response.code).send(response);
+});
+
+/**
+ * Route : Récupération du profil
+ * GET /me
+ * Sécurisée par authToken (qui injecte req.user.id_person)
+ */
+routerAuth.get("/persons/me", authToken, async (req, res) => {
+    // req.user est injecté par ton middleware d'authentification
+    const response = await GetMyProfile(req.data.id_person);
     res.status(response.code).send(response);
 });
 

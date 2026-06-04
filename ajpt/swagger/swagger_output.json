@@ -198,6 +198,27 @@
           "responses": {}
         }
       },
+      "/persons/me": {
+        "get": {
+          "tags": ["Personne"],
+          "summary": "Récupérer mon profil",
+          "description": "Récupère toutes les informations de l'utilisateur connecté via son token JWT.",
+          "security": [
+            {
+              "Bearer": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Profil récupéré avec succès",
+              "schema": {
+                "$ref": "#/definitions/PersonResponse"
+              }
+            },
+            "401": { "description": "Non autorisé" }
+          }
+        }
+      },
       "/person/address": {
         "post": {
           "tags": ["Personne"],

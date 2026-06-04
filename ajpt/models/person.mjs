@@ -391,6 +391,19 @@ const UpdatePasswordWithCode = (mail, code, newPassword) => {
 };
 
 /**
+ * Récupère le profil complet d'une personne par son ID
+ */
+const GetProfileById = async (id_person) => {
+    const query = {
+        text: `SELECT id_person, pseudo, mail, firstname, surname, number_phone, id_role, last_connexion, is_verified 
+               FROM person WHERE id_person = $1`,
+        values: [id_person]
+    };
+    const { rows } = await pool.query(query);
+    return rows.length > 0 ? rows[0] : null;
+};
+
+/**
  * Recherche les personnes par pseudo ou mail (partiel ou complet)
  * Retourne les 200 premiers résultats triés par id_role décroissant
  * @param {string|null} searchText - Le texte à chercher dans pseudo ou mail
@@ -426,4 +439,4 @@ const DeletePersonById = async (id_person) => {
 };
 
 
-export {Person, Add, GetByIdAndPassword, GetByIdAndPasswordVerified, ModifyLastConnexion, GenerateToken, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, DeletePersonById}
+export {Person, Add, GetByIdAndPassword, GetByIdAndPasswordVerified, ModifyLastConnexion, GenerateToken, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, GetProfileById, DeletePersonById}
