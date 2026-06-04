@@ -1,4 +1,4 @@
-import {CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight } from "../models/category_type_object.mjs";
+import {CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight, IncrementObjectStock } from "../models/category_type_object.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 
@@ -97,4 +97,26 @@ const GetObjectsList = async () => {
     }
 };
 
-export {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList };
+const UpdateObjectStock = async (body) => {
+    const { id_object, quantity_add } = body;
+
+    // Validation
+    if (!id_object || quantity_add === undefined) {
+        return new ResponseApi().InitMissingParameters();
+    }
+
+    try {
+        const updatedObject = await IncrementObjectStock(id_object, parseInt(quantity_add));
+        
+        if (updatedObject) {
+            return new ResponseApi().InitOK("Stock mis à jour avec succès.", updatedObject);
+        } else {
+            return new ResponseApi().InitBadRequest("Objet introuvable.");
+        }
+    } catch (error) {
+        console.error("Erreur contrôleur UpdateObjectStock :", error);
+        return new ResponseApi().InitInternalServer("Une erreur est survenue lors de la mise à jour du stock.");
+    }
+};
+
+export {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList, UpdateObjectStock };

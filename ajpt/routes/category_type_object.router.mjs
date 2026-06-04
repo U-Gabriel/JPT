@@ -1,5 +1,5 @@
 import express from "express";
-import {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList } from "../controllers/category_type_object.controller.mjs";
+import {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList, UpdateObjectStock } from "../controllers/category_type_object.controller.mjs";
 import authToken from "../middlewares/auth.mjs";
 import { upload } from "../middlewares/upload.mjs";
 import { checkRoles } from "../middlewares/auth_role.mjs"; // Middleware pour vérifier les rôles
@@ -64,5 +64,19 @@ routerCategoryObject.get("/objects/lookup", authToken, checkRoles([2, 3]), async
     const response = await GetObjectsList();
     res.status(response.code).send(response);
 });
+
+/**
+ * Route : Ajout de stock (Incrémentation)
+ * POST /objects/add-stock
+ */
+routerCategoryObject.post(
+    "/objects/add-stock",
+    authToken,
+    checkRoles([2, 3, 4, 5]),
+    async (req, res) => {
+        const response = await UpdateObjectStock(req.body);
+        res.status(response.code).send(response);
+    }
+);
 
 export { routerCategoryObject };

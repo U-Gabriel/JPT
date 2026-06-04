@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { UpdateCartAndGetTotal, GetUserMailById } from "../models/payment_private.mjs";
+import { UpdateCartAndGetTotal, GetUserMailById, GetAllOrdersCompleteRequest, GetOrdersByStatusRequest, UpdateOrderStatusRequest } from "../models/payment_private.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -67,4 +67,69 @@ const CreatePaymentIntent = async (req, res) => {
     }
 };
 
-export { CreatePaymentIntent };
+const GetAllOrders = async () => {
+    try {
+        const data = await GetAllOrdersCompleteRequest();
+        if (data.length > 0) {
+            return new ResponseApi().InitOK(data);
+        } else {
+            return new ResponseApi().InitNoContent();
+        }
+    } catch (e) {
+        console.error("Error in GetAllOrders:", e);
+        return new ResponseApi().InitInternalServer(e);
+    }
+};
+
+const GetOrdersByStatus = async (body) => {
+    const { status } = body;
+
+    // Contrôle du body
+    if (!status) {
+        return new ResponseApi().InitMissingParameters();
+    }
+
+    // Validation des statuts autorisés pour éviter les injections inutiles
+    const allowedStatuses = ['PAID', 'LOADING', 'SENDING', 'CLOSED'];
+    if (!allowedStatuses.includes(status)) {
+        return new ResponseApi().InitBadRequest("Statut invalide.");
+    }
+
+    try {
+        const data = await GetOrdersByStatusRequest(status);
+        return new ResponseApi().InitOK(data);
+    } catch (e) {
+        console.error(`Error in GetOrdersByStatus (${status}):`, e);
+        return new ResponseApi().InitInternalServer(e);
+    }
+};
+
+const UpdateOrderStatus = async (body) => {
+    const { id_order, status } = body;
+
+    // 1. Validation des paramètres
+    if (!id_order || !status) {
+        return new ResponseApi().InitMissingParameters();
+    }
+
+    // 2. Liste des statuts autorisés (règle métier)
+    const allowedStatuses = ['PAID', 'LOADING', 'SENDING', 'CLOSED'];
+    if (!allowedStatuses.includes(status)) {
+        return new ResponseApi().InitBadRequest("Statut invalide.");
+    }
+
+    try {
+        const updatedOrder = await UpdateOrderStatusRequest(id_order, status);
+        
+        if (updatedOrder) {
+            return new ResponseApi().InitOK("Statut mis à jour avec succès.", updatedOrder);
+        } else {
+            return new ResponseApi().InitBadRequest("Commande non trouvée.");
+        }
+    } catch (e) {
+        console.error("Error in UpdateOrderStatus:", e);
+        return new ResponseApi().InitInternalServer(e);
+    }
+};
+
+export { CreatePaymentIntent, GetAllOrders, GetOrdersByStatus, UpdateOrderStatus };

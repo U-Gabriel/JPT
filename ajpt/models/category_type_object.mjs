@@ -219,4 +219,20 @@ const GetObjectsLightweight = async () => {
     return rows;
 };
 
-export { CategoryType, ObjectProduct, CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight };
+/**
+ * Incrémente le stock d'un objet existant
+ * @param {number} id_object 
+ * @param {number} quantityToAdd 
+ */
+const IncrementObjectStock = async (id_object, quantityToAdd) => {
+    const query = `
+        UPDATE object 
+        SET stock_quantity = stock_quantity + $1 
+        WHERE id_object = $2
+        RETURNING id_object, title, stock_quantity;
+    `;
+    const { rows } = await pool.query(query, [quantityToAdd, id_object]);
+    return rows[0];
+};
+
+export { CategoryType, ObjectProduct, CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight, IncrementObjectStock };
