@@ -345,6 +345,62 @@
           }
         }
       },
+
+      "/categories/my_catalog": {
+        "get": {
+          "tags": ["Category & Object Profile"],
+          "summary": "Récupérer mes catégories et profils d'objets",
+          "description": "Récupère la liste des catégories de l'utilisateur avec les profils d'objets associés.",
+          "produces": ["application/json"],
+          "security": [
+            {
+              "Bearer": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des catégories et objets récupérée avec succès",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id_category_type": { "type": "integer" },
+                    "category_title": { "type": "string" },
+                    "objects": { "type": "array", "items": { "type": "object" } }
+                  }
+                }
+              }
+            },
+            "401": { "description": "Non autorisé" },
+            "500": { "description": "Erreur serveur interne" }
+          }
+        }
+      },
+      "/categories/my_favorites": {
+        "get": {
+          "tags": ["Category & Object Profile"],
+          "summary": "Récupérer mes favoris classés par catégorie",
+          "description": "Récupère uniquement les objets marqués comme favoris, regroupés par catégorie.",
+          "produces": ["application/json"],
+          "security": [
+            {
+              "Bearer": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des favoris récupérée avec succès",
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/CategoryProfileObject" }
+              }
+            },
+            "401": { "description": "Non autorisé" }
+          }
+        }
+      },
+      
       "/object_profile/create/init": {
         "post": {
           "tags": [

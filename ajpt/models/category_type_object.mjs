@@ -219,6 +219,64 @@ const GetObjectsLightweight = async () => {
     return rows;
 };
 
+// Ajoute cette fonction dans models/category_type_object.mjs
+const GetUserCategoriesWithProfiles = async (id_person) => {
+    const query = `
+        SELECT 
+            c.id_category_type,
+            c.title AS category_title,
+            COALESCE(
+                json_agg(
+                    json_build_object(
+                        'id_object_profile', op.id_object_profile,
+                        'title', op.title,
+                        'state_plant', op.state_plant,
+                        'path_picture', op.path_picture
+                    ) ORDER BY op.title ASC
+                ) FILTER (WHERE op.id_object_profile IS NOT NULL), '[]'::json
+            ) AS objects
+        FROM category_type c
+        JOIN object o ON c.id_category_type = o.id_category_type
+        JOIN object_profile op ON o.id_object = op.id_object
+        WHERE op.id_person = $1 AND op.activate = 1
+        GROUP BY c.id_category_type, c.title
+        ORDER BY c.title ASC;
+    `;
+
+    const { rows } = await pool.query(query, [id_person]);
+    return rows;
+};
+
+const GetUserFavoriteCategoriesWithProfiles = async (id_person) => {
+    const query = `
+        SELECT 
+            c.id_category_type,
+            c.title AS category_title,
+            COALESCE(
+                json_agg(
+                    json_build_object(
+                        'id_object_profile', op.id_object_profile,
+                        'title', op.title,
+                        'state_plant', op.state_plant,
+                        'path_picture', op.path_picture
+                    ) ORDER BY op.title ASC
+                ) FILTER (WHERE op.id_object_profile IS NOT NULL), '[]'::json
+            ) AS objects
+        FROM category_type c
+        JOIN object o ON c.id_category_type = o.id_category_type
+        JOIN object_profile op ON o.id_object = op.id_object
+        WHERE op.id_person = $1 
+          AND op.activate = 1 
+          AND op.is_favorite = true
+        GROUP BY c.id_category_type, c.title
+        HAVING count(op.id_object_profile) > 0
+        ORDER BY c.title ASC;
+    `;
+
+    const { rows } = await pool.query(query, [id_person]);
+    return rows;
+};
+
 /**
  * Incrémente le stock d'un objet existant
  * @param {number} id_object 
@@ -235,4 +293,4 @@ const IncrementObjectStock = async (id_object, quantityToAdd) => {
     return rows[0];
 };
 
-export { CategoryType, ObjectProduct, CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight, IncrementObjectStock };
+export { CategoryType, ObjectProduct, CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight, GetUserCategoriesWithProfiles, GetUserFavoriteCategoriesWithProfiles, IncrementObjectStock };

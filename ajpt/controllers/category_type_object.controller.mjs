@@ -1,4 +1,4 @@
-import {CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight, IncrementObjectStock } from "../models/category_type_object.mjs";
+import {CreateCategoryType, CreateObjectWithAssets, GetCategoriesWithObjects, GetCategoriesLightweight, GetObjectsLightweight, GetUserCategoriesWithProfiles, GetUserFavoriteCategoriesWithProfiles, IncrementObjectStock } from "../models/category_type_object.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 
@@ -97,6 +97,31 @@ const GetObjectsList = async () => {
     }
 };
 
+
+const GetMyCategoriesAndProfiles = async (req, res) => {
+    try {
+        const data = await GetUserCategoriesWithProfiles(req.data.id_person);
+        // On utilise res.send() pour envoyer le résultat
+        res.status(200).send(new ResponseApi().InitOK(data));
+    } catch (error) {
+        console.error("Erreur GetMyCategoriesAndProfiles :", error);
+        // On utilise res.status().send() ici aussi
+        res.status(500).send(new ResponseApi().InitInternalServer("Erreur lors de la récupération de vos objets."));
+    }
+};
+
+const GetMyFavoriteCategoriesAndProfiles = async (req, res) => {
+    try {
+        const data = await GetUserFavoriteCategoriesWithProfiles(req.data.id_person);
+        res.status(200).send(new ResponseApi().InitOK(data));
+    } catch (error) {
+        // AJOUTE CETTE LIGNE :
+        console.error("DÉTAIL ERREUR SQL :", error.message); 
+        res.status(500).send(new ResponseApi().InitInternalServer("Erreur lors de la récupération des favoris."));
+    }
+};
+
+
 const UpdateObjectStock = async (body) => {
     const { id_object, quantity_add } = body;
 
@@ -119,4 +144,4 @@ const UpdateObjectStock = async (body) => {
     }
 };
 
-export {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList, UpdateObjectStock };
+export {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList, GetMyCategoriesAndProfiles, GetMyFavoriteCategoriesAndProfiles, UpdateObjectStock };

@@ -1,5 +1,5 @@
 import express from "express";
-import {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList, UpdateObjectStock } from "../controllers/category_type_object.controller.mjs";
+import {AddCategoryType, AddObject, GetAllCategoriesWithProducts, GetCategoriesList, GetObjectsList, GetMyCategoriesAndProfiles, GetMyFavoriteCategoriesAndProfiles, UpdateObjectStock } from "../controllers/category_type_object.controller.mjs";
 import authToken from "../middlewares/auth.mjs";
 import { upload } from "../middlewares/upload.mjs";
 import { checkRoles } from "../middlewares/auth_role.mjs"; // Middleware pour vérifier les rôles
@@ -64,6 +64,18 @@ routerCategoryObject.get("/objects/lookup", authToken, checkRoles([2, 3, 4, 5]),
     const response = await GetObjectsList();
     res.status(response.code).send(response);
 });
+
+routerCategoryObject.get(
+    "/categories/my_catalog", 
+    authToken, 
+    GetMyCategoriesAndProfiles
+);
+
+routerCategoryObject.get(
+    "/categories/my_favorites", 
+    authToken, 
+    GetMyFavoriteCategoriesAndProfiles
+);
 
 /**
  * Route : Ajout de stock (Incrémentation)
