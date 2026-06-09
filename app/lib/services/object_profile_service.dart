@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../models/category_catalog.dart';
 import '../models/object_profile.dart';
 import 'package:app/app_config.dart';
 
@@ -186,6 +187,46 @@ class ObjectProfileService {
     }
   }
 
+  Future<List<CategoryCatalog>> fetchCategoryCatalog(String token) async {
+    final url = Uri.parse(AppConfig.categoryCatalogEndpoint);
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      List<dynamic> data = decoded["data"] ?? [];
+      return data.map((json) => CategoryCatalog.fromJson(json)).toList();
+    } else {
+      throw Exception('Erreur catalogue: ${response.statusCode}');
+    }
+  }
+
+
+  Future<List<CategoryCatalog>> fetchCategoryFavorites(String token) async {
+    final url = Uri.parse(AppConfig.categoryFavoritesEndpoint);
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      List<dynamic> data = decoded["data"] ?? [];
+      return data.map((json) => CategoryCatalog.fromJson(json)).toList();
+    } else {
+      throw Exception('Erreur favoris catalogue: ${response.statusCode}');
+    }
+  }
 
 
 }

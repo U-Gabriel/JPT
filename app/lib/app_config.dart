@@ -24,6 +24,11 @@ class AppConfig {
   static String get requestPasswordResetEndpoint => "$baseUrl/auth/request-password-reset";
   static String get resetPasswordEndpoint => "$baseUrl/auth/user/reset_password";
 
+  //profile
+  static String get profileEndpoint => "$baseUrl/persons/me";
+  static String get categoryCatalogEndpoint => "$baseUrl/categories/my_catalog";
+  static String get categoryFavoritesEndpoint => "$baseUrl/categories/my_favorites";
+
   static String objectProfilesEndpointCreate() => "$baseUrl/object_profile/create/init";
   static String objectProfilesEndpointList() => "$baseUrl/object_profile/resume/byperson";
   static String objectProfilesEndpointListFavoris() => "$baseUrl/object_profile/resume/favoris/byperson";

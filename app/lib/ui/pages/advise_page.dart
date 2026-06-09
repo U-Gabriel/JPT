@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart'; // N'oublie pas l'import
+import 'package:shimmer/shimmer.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/faq_service.dart';
 
 class AdvisePage extends StatefulWidget {
-  const AdvisePage({super.key});
+  final bool hideNotice;
+
+  const AdvisePage({
+    super.key,
+    this.hideNotice = false,
+  });
 
   @override
   State<AdvisePage> createState() => _AdvisePageState();
@@ -55,62 +60,76 @@ class _AdvisePageState extends State<AdvisePage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBFBFD),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (authProvider.isLoggedIn) _buildNoticeSection(context),
+      // 🌟 AJOUT DE L'APPBAR DYNAMIQUE ICI
+      appBar: widget.hideNotice
+          ? AppBar(
+        title: const Text(
+          "Centre d'aide",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        backgroundColor: const Color(0xFFFBFBFD),
+        foregroundColor: const Color(0xFF1D1D1F),
+        elevation: 0,
+        centerTitle: true,
+      )
+          : null, // Pas d'app bar si c'est la page principale avec la notice
+      body: SingleChildScrollView( // 💡 Retrait du SafeArea global pour éviter la bande moche du haut
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (authProvider.isLoggedIn && !widget.hideNotice) _buildNoticeSection(context),
 
+            // On affiche le gros titre textuel uniquement si l'AppBar n'est pas là
+            if (!widget.hideNotice)
               const Padding(
-                padding: EdgeInsets.fromLTRB(22, 10, 22, 5),
+                padding: EdgeInsets.fromLTRB(22, 20, 22, 5),
                 child: Text(
                   "FAQ Centre d'aide",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF1D1D1F)),
                 ),
               ),
 
-              const Padding(
-                padding: EdgeInsets.fromLTRB(22, 20, 22, 12),
-                child: Text(
-                  "Catégories",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey),
-                ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(22, 20, 22, 12),
+              child: Text(
+                "Catégories",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey),
               ),
+            ),
 
-              // --- SHIMMER POUR LES TAGS ---
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18),
-                child: _isLoadingTags
-                    ? _buildTagShimmer()
-                    : Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: _tags.map((tag) => _buildTagCard(tag)).toList(),
-                ),
+            // --- SHIMMER POUR LES TAGS ---
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: _isLoadingTags
+                  ? _buildTagShimmer()
+                  : Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: _tags.map((tag) => _buildTagCard(tag)).toList(),
               ),
+            ),
 
-              const SizedBox(height: 30),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildSearchBar(),
-              ),
-              const SizedBox(height: 30),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildSearchBar(),
+            ),
+            const SizedBox(height: 30),
 
-              // --- SHIMMER POUR LES FAQS ---
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _isLoadingFaqs
-                    ? _buildFaqShimmer()
-                    : _faqs.isEmpty
-                    ? _buildEmptyState()
-                    : Column(
-                  children: _faqs.map((faq) => _buildFaqCard(faq)).toList(),
-                ),
+            // --- SHIMMER POUR LES FAQS ---
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _isLoadingFaqs
+                  ? _buildFaqShimmer()
+                  : _faqs.isEmpty
+                  ? _buildEmptyState()
+                  : Column(
+                children: _faqs.map((faq) => _buildFaqCard(faq)).toList(),
               ),
-              const SizedBox(height: 50),
-            ],
-          ),
+            ),
+            const SizedBox(height: 50),
+          ],
         ),
       ),
     );
@@ -154,8 +173,6 @@ class _AdvisePageState extends State<AdvisePage> {
       ),
     );
   }
-
-  // ... (Garde tes widgets _buildSearchBar, _buildTagCard, _buildFaqCard, _buildNoticeSection tels quels)
 
   Widget _buildSearchBar() {
     return Container(

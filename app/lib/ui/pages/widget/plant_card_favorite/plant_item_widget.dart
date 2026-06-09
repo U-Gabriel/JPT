@@ -1,4 +1,5 @@
 import 'package:app/ui/pages/widget/plant_card_favorite/plant_control_switches_widget.dart';
+import 'package:app/ui/pages/widget/tools/redirection_object_profile_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../models/object_profile.dart';
@@ -34,26 +35,11 @@ class PlantItemWidget extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () {
-        if (plant.idCategoryTypeObject == 2) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BowlDetailPage(
-                objectProfileId: plant.idObjectProfile,
-              ),
-            ),
-          );
-        } else {
-          // Sinon par défaut, on va vers l'interface plante classique
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PlantDetailPage(
-                plantId: plant.idObjectProfile,
-              ),
-            ),
-          );
-        }
+        RedirectionObjectProfileDetailsPage.navigateToDetail(
+          context,
+          plant.idCategoryTypeObject ?? 1,
+          plant.idObjectProfile,
+        );
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

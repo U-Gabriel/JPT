@@ -1,4 +1,5 @@
 import 'package:app/ui/pages/add_my_object_page.dart';
+import 'package:app/ui/profile/my_object_profile_page.dart';
 import 'package:flutter/material.dart';
 import '../ui/pages/add_connect_my_object_page.dart';
 import '../ui/pages/add_name_my_object_page.dart';
@@ -29,6 +30,7 @@ import '../ui/pages/reset_password_page.dart';
 import '../ui/pages/signup_page.dart';
 import '../ui/pages/signup_validation_page.dart';
 import '../ui/pages/change_op_pp_page.dart';
+import '../ui/profile/my_favorites_catalog_page.dart';
 
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -37,7 +39,12 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/plant': (_) => const MyPlantPage(),
   '/plant_login': (_) => const MyPlantPageLogin(),
   '/event': (_) => const ShoppingPage(),
+  //profile
   '/profile': (_) => const ProfilePage(),
+  '/my_objects_catalog': (_) => const MyObjectProfilePage(),
+  '/my_favorites_catalog': (_) => const MyFavoritesCatalogPage(),
+  '/profile_faq': (_) => const AdvisePage(hideNotice: true),
+
   '/login': (_) => const LoginPage(),
   '/forgot_password': (_) => const ForgotPasswordPage(),
   '/signup': (_) => const SignupPage(),

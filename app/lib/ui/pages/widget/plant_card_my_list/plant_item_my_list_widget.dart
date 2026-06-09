@@ -1,3 +1,4 @@
+import 'package:app/ui/pages/widget/tools/redirection_object_profile_details_page.dart';
 import 'package:flutter/material.dart';
 import '../../../../models/object_profile.dart';
 import 'package:app/app_config.dart';
@@ -40,27 +41,11 @@ class PlantItemMyListWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         onTap: () {
           // --- LOGIQUE DE REDIRECTION DYNAMIQUE ---
-          if (plant.idCategoryTypeObject == 2) {
-            // Si c'est une gamelle (Bowl)
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BowlDetailPage(
-                  objectProfileId: plant.idObjectProfile,
-                ),
-              ),
-            );
-          } else {
-            // Sinon par défaut, c'est une plante
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PlantDetailPage(
-                  plantId: plant.idObjectProfile,
-                ),
-              ),
-            );
-          }
+          RedirectionObjectProfileDetailsPage.navigateToDetail(
+            context,
+            plant.idCategoryTypeObject ?? 1,
+            plant.idObjectProfile,
+          );
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
