@@ -937,7 +937,7 @@
               }
             },
             "204": {
-              "description": "Aucun tag de niveau 1 trouvé."
+              "description": "Aucun tag trouvé."
             }
           },
           "security": [
@@ -1600,6 +1600,27 @@
             "status": { "type": "string", "example": "OK" },
             "code": { "type": "integer", "example": 200 },
             "data": { "$ref": "#/definitions/ProductDetails" }
+          }
+        },
+         "Tag": {
+          "type": "object",
+          "properties": {
+            "id_tag": {
+              "type": "int",
+              "example": "19"
+            },
+            "title": {
+              "type": "string",
+              "example": "Capteur d'humidité"
+            },
+            "color_code": {
+              "type": "string",
+              "example": "#2ecc71"
+            },
+            "description": {
+              "type": "string",
+              "example": "Un capteur précis pour vos plantes."
+            }
           }
         }
               
