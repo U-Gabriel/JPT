@@ -21,7 +21,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialisation de Stripe
-  Stripe.publishableKey = "pk_test_51TUCKxC9bnvlKMDc7XJj7xJx3yq5n58zT8pZcvP1Nei9a5J6dtyuKyd4VT0w4wsQPo6nTDlbths6PpzdyG95vauK003BI9WuK9";
+  Stripe.publishableKey = "pk_live_51TUCKxC9bnvlKMDcxWFcmDuo0FfvsekqWLcXjiubsL3RbYaDdU6jB1DdImjzbdontIGd97u7ZJY1J0ZcHZR1Sr6Y00XnD4EgvB";
 
   runApp(
     MultiProvider(

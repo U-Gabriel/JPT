@@ -38,7 +38,7 @@ const UpdateCartAndGetTotal = async (id_person, items, payment_intent_id) => {
             totalAmount += (product.discount_price || product.price) * item.quantity;
         }
 
-        totalAmount += (totalAmount < 50) ? 8.90 : 0;
+        //totalAmount += (totalAmount < 50) ? 8.90 : 0;
 
         await client.query('COMMIT');
         return totalAmount;

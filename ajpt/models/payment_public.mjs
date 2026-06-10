@@ -18,7 +18,7 @@ const FinalizeOrder = async (payment_intent_id, id_person, id_address_delivery, 
         if (cartRes.rows.length === 0) throw new Error("Déjà traité.");
 
         let totalPrice = cartRes.rows.reduce((sum, i) => sum + (i.unit_price * i.quantity), 0);
-        if (totalPrice < 50) totalPrice += 8.90;
+        //if (totalPrice < 50) totalPrice += 8.90;
 
         const serverTotalCentimes = Math.round(totalPrice * 100);
         if (serverTotalCentimes !== payment_intent_amount) {
