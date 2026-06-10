@@ -23,6 +23,15 @@ const GetAllTagRequest = async () => {
   return rows; // Retourne un tableau d'objets
 };
 
+const GetLvlOneTagRequest = async () => {
+  const query = {
+    text: `SELECT id_tag, title, color_code, description FROM tag WHERE lvl_page = 1 ORDER BY title ASC;`
+  };
+
+  const { rows } = await pool.query(query);
+  return rows; // Retourne un tableau d'objets
+};
+
 const DeleteTagRequest = async (id_tag) => {
   const client = await pool.connect();
   try {
@@ -46,4 +55,4 @@ const DeleteTagRequest = async (id_tag) => {
   }
 };
 
-export {CreateTagRequest, GetAllTagRequest, DeleteTagRequest };
+export {CreateTagRequest, GetAllTagRequest, GetLvlOneTagRequest, DeleteTagRequest };

@@ -1,4 +1,4 @@
-import {CreateTag, GetAllTag, DeleteTag } from "../controllers/tag.controller.mjs";
+import {CreateTag, GetAllTag, GetLvlOneTag, DeleteTag } from "../controllers/tag.controller.mjs";
 import authToken from "../middlewares/auth.mjs";
 import { checkRoles } from "../middlewares/auth_role.mjs";
 import express from "express";
@@ -15,6 +15,12 @@ routerTag.get("/tags", async (req, res) => {
     const response = await GetAllTag();
     res.status(response.code).send(response);
 });
+
+routerTag.get("/tags/lvl/1", async (req, res) => {
+    const response = await GetLvlOneTag();
+    res.status(response.code).send(response);
+});
+
 
 routerTag.post("/tag/delete", authToken, checkRoles([2, 3]), async (req, res) => {
     const response = await DeleteTag(req.body);

@@ -1,4 +1,4 @@
-import {CreateTagRequest, GetAllTagRequest, DeleteTagRequest } from "../models/tag.mjs";
+import {CreateTagRequest, GetAllTagRequest, GetLvlOneTagRequest, DeleteTagRequest } from "../models/tag.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 const CreateTag = async (body) => {
@@ -35,6 +35,22 @@ const GetAllTag = async () => {
     }
 };
 
+
+const GetLvlOneTag = async () => {
+    try {
+        const data = await GetLvlOneTagRequest();
+        
+        if (data && data.length > 0) {
+            
+            return new ResponseApi().InitOK(data);
+        } else {
+            return new ResponseApi().InitNoContent();
+        }
+    } catch (e) {
+        return new ResponseApi().InitInternalServer(e);
+    }
+};
+
 const DeleteTag = async (body) => {
     try {
         const { id_tag } = body;
@@ -58,4 +74,4 @@ const DeleteTag = async (body) => {
 };
 
 
-export {CreateTag, GetAllTag, DeleteTag };
+export {CreateTag, GetAllTag, GetLvlOneTag, DeleteTag };

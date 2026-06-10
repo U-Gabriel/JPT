@@ -908,6 +908,45 @@
           ]
         }
       },
+      "/tags/lvl/1": {
+        "get": {
+          "tags": [
+            "Tag"
+          ],
+          "summary": "Récupère la liste de tous les tags de niveau 1.",
+          "description": "Retourne l'ensemble des catégories de tags de niveau 1 disponibles pour les FAQ et les remarques.",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des tags de niveau 1 récupérée avec succès.",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "example": "OK" },
+                  "message": { "type": "string", "example": null },
+                  "code": { "type": "integer", "example": 200 },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/Tag"
+                    }
+                  }
+                }
+              }
+            },
+            "204": {
+              "description": "Aucun tag de niveau 1 trouvé."
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
       "/faqs/tag": {
         "post": {
           "tags": ["FAQ"],
