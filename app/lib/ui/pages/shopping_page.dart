@@ -37,7 +37,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
     final authProvider = context.read<AuthProvider>();
     final token = authProvider.accessToken ?? "";
 
-    final fetchedTags = await _tagService.fetchTags(token);
+    final fetchedTags = await _tagService.fetchTagsLvlOne(token);
     if (mounted) {
       setState(() => _tags = fetchedTags);
       _refreshCatalog();

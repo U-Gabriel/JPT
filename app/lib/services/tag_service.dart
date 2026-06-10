@@ -18,4 +18,19 @@ class TagService {
     return [];
   }
 
+  Future<List<dynamic>> fetchTagsLvlOne(String token) async {
+    final response = await http.get(
+      Uri.parse(AppConfig.tagsLvlOneEndpoint),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      return decoded['data'];
+    }
+    return [];
+  }
+
 }

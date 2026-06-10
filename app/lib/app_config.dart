@@ -47,6 +47,7 @@ class AppConfig {
 
   //tag && notice && faq
   static String get tagsEndpoint => "$baseUrl/tags";
+  static String get tagsLvlOneEndpoint => "$baseUrl/tags/lvl/1";
   static String get noticeCreateEndpoint => "$baseUrl/notice/create";
   static String get faqByTagEndpoint => "$baseUrl/faqs/tag";
 
