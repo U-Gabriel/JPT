@@ -82,13 +82,13 @@ class _AdvisePageState extends State<AdvisePage> {
 
             // On affiche le gros titre textuel uniquement si l'AppBar n'est pas là
             if (!widget.hideNotice)
-              const Padding(
+              /*const Padding(
                 padding: EdgeInsets.fromLTRB(22, 20, 22, 5),
                 child: Text(
                   "FAQ Centre d'aide",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF1D1D1F)),
                 ),
-              ),
+              ),*/
 
             const Padding(
               padding: EdgeInsets.fromLTRB(22, 20, 22, 12),

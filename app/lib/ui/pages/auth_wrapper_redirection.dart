@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import 'home_page.dart';
-import 'home_page_login.dart';
+import 'home_page_no_login.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -14,7 +14,7 @@ class AuthWrapper extends StatelessWidget {
     if (authProvider.isLoggedIn) {
       return const HomePage();
     } else {
-      return const HomePageLogin();
+      return const HomePageNoLogin();
     }
   }
 }

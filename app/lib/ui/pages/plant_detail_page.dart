@@ -55,6 +55,15 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                       pinned: true,
                       actions: [
                         IconButton(
+                          icon: const Icon(Icons.quiz_rounded, color: Colors.white),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/profile_faq',
+                            );
+                          },
+                        ),
+                        IconButton(
                           icon: const Icon(Icons.wifi_find, color: Colors.white),
                           onPressed: () {
                             Navigator.pushNamed(

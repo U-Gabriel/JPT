@@ -1,28 +1,34 @@
+import 'package:app/ui/pages/my_plant_page_no_login.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/nav_provider.dart';
+import '../../providers/auth_provider.dart';
+import 'shopping_page.dart';
+import 'advise_page.dart';
+
+import 'package:app/ui/pages/my_plant_page_no_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import '../../providers/nav_provider.dart';
 import '../../providers/auth_provider.dart';
-import 'my_plant_page.dart';
 import 'shopping_page.dart';
 import 'advise_page.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePageNoLogin extends StatelessWidget {
+  const HomePageNoLogin({super.key});
 
   static const List<Widget> _pages = [
-    AdvisePage(),         // Index 0
-    MyPlantPage(),        // Index 1 (Ta page avec ses vraies plantes connectées)
+    AdvisePage(),        // Index 0
+    MyPlantPageNoLogin(), // Index 1
     ShoppingPage(),       // Index 2
   ];
 
-  /// Génère dynamiquement le titre de l'AppBar selon l'onglet
+  /// Génère dynamiquement le titre de l'AppBar selon l'index
   String _getAppBarTitle(int index) {
     switch (index) {
       case 0:
         return "Conseils & Expertises";
-      case 1:
-        return "Mes Équipements"; // Titre personnalisé pour ses objets connectés
       case 2:
         return "Boutique GDOME";
       default:
@@ -36,29 +42,32 @@ class HomePage extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context);
 
     final currentIndex = navProvider.selectedIndex;
+    final isMyPlantPage = currentIndex == 1;
 
     const Color appBgColor = Color(0xFFF4F7F5);
 
     return Scaffold(
       backgroundColor: appBgColor,
-      // 🌟 L'APP BAR PREMIUM POUR UTILISATEUR CONNECTÉ
-      appBar: AppBar(
+      // 🌟 L'APP BAR DYNAMIQUE ET PREMIUM
+      appBar: isMyPlantPage
+          ? null // Totalement invisible sur la page d'accueil personnalisée
+          : AppBar(
         backgroundColor: appBgColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
+        elevation: 0, // Supprime l'ombre vieillissante
+        scrolledUnderElevation: 0, // Reste propre même au scroll
         automaticallyImplyLeading: false,
 
-        // À gauche : Ton favicon
+        // À gauche : Le favicon de l'entreprise au format SVG
         leading: Padding(
           padding: const EdgeInsets.only(left: 20.0),
           child: SvgPicture.asset(
-            'assets/logo/favicon_original.svg',
+            'assets/logo/favicon_original.svg', // Ton favicon épuré
             alignment: Alignment.center,
           ),
         ),
-        leadingWidth: 44,
+        leadingWidth: 44, // Ajuste la zone pour l'icône de gauche
 
-        // Au centre : Le titre dynamique
+        // Au centre : Le titre adapté à l'onglet en cours
         title: Text(
           _getAppBarTitle(currentIndex),
           style: const TextStyle(
@@ -68,9 +77,9 @@ class HomePage extends StatelessWidget {
             letterSpacing: -0.3,
           ),
         ),
-        centerTitle: false, // Alignement iOS/Modern propre
+        centerTitle: false, // Alignement gauche moderne (style iOS/Apple)
 
-        // À droite : Actions adaptées (Pas de redirection login ici puisqu'il est connecté)
+        // À droite : Le bouton profil retravaillé
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
@@ -89,16 +98,21 @@ class HomePage extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.person_outline_rounded, color: Color(0xFF1D1D1F), size: 22),
                 onPressed: () {
-                  // Il est connecté, donc on l'envoie direct sur son profil
-                  Navigator.pushNamed(context, '/profile');
+                  if (authProvider.isAuthenticated) {
+                    Navigator.pushNamed(context, '/profile');
+                  } else {
+                    Navigator.pushNamed(context, '/login');
+                  }
                 },
-                tooltip: 'Mon Profil',
+                tooltip: 'Profil',
               ),
             ),
           ),
         ],
       ),
       body: SafeArea(
+        // On n'applique le SafeArea du haut que si l'AppBar n'est pas là
+        top: isMyPlantPage,
         child: _pages[currentIndex],
       ),
       bottomNavigationBar: Container(
@@ -114,11 +128,11 @@ class HomePage extends StatelessWidget {
         child: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: navProvider.setIndex,
-          selectedItemColor: const Color(0xFF1E7B43), // Ton vert GDOME
+          selectedItemColor: const Color(0xFF1E7B43),
           unselectedItemColor: Colors.grey.shade400,
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
-          elevation: 0,
+          elevation: 0, // Géré par le Container parent pour un effet plus doux
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
           items: const [

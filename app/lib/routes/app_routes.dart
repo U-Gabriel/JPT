@@ -21,7 +21,7 @@ import '../ui/pages/group_plant_type_page.dart';
 import '../ui/pages/modification_wifi_connect_page.dart';
 import '../ui/pages/modification_wifi_my_object_page.dart';
 import '../ui/pages/my_plant_page.dart';
-import '../ui/pages/my_plant_page_login.dart';
+import '../ui/pages/my_plant_page_no_login.dart';
 import '../ui/pages/notice_page.dart';
 import '../ui/pages/plant_detail_known_page.dart';
 import '../ui/pages/profile_page.dart';
@@ -37,7 +37,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/': (context) => const AuthWrapper(),
   '/advise': (_) => const AdvisePage(),
   '/plant': (_) => const MyPlantPage(),
-  '/plant_login': (_) => const MyPlantPageLogin(),
+  '/plant_login': (_) => const MyPlantPageNoLogin(),
   '/event': (_) => const ShoppingPage(),
   //profile
   '/profile': (_) => const ProfilePage(),
