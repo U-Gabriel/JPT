@@ -4,10 +4,12 @@ import 'package:app/providers/plant_provider_my_List.dart';
 import 'package:app/services/object_profile_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 
 import 'bloc/object_profile/object_profile_event.dart';
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'routes/app_routes.dart';
 import 'core/theme.dart';
 import 'providers/nav_provider.dart';
@@ -16,6 +18,7 @@ import 'providers/plant_provider.dart';
 import 'bloc/object_profile/object_profile_bloc.dart';
 import 'bloc/object_profile_my_list/object_profile_my_list_bloc.dart';
 import 'bloc/object_profile_my_list/object_profile_my_list_event.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +50,13 @@ class RootApp extends StatelessWidget {
     if (token == null || token.isEmpty || personIdStr == null) {
       return MaterialApp(
         title: 'Jackpot App',
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: appTheme,
         routes: appRoutes,
         initialRoute: '/',
@@ -74,6 +84,13 @@ class RootApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Jackpot App',
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: appTheme,
         routes: appRoutes,
         initialRoute: '/',

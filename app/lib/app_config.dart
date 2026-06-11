@@ -2,15 +2,14 @@ import 'package:app/models/plant_type.dart';
 import 'package:app/ui/pages/shopping_page.dart';
 
 class AppConfig {
-  static const String url = "http://51.77.141.175";
-  static const String url_s = "http://51.77.141.175";
-  static const String url_dataset = "http://51.77.141.175";
-  static const String port = "3000";
+  static const String url = "https://gdome.fr/api";
+  static const String url_s = "https://gdome.fr/api";
+  static const String url_dataset = "https://gdome.fr/api";
 
   static const int defaultPlantId = 5;
   static const String defaultPlantTitle = "Joker";
 
-  static String get baseUrl => "$url:$port";
+  static String get baseUrl => url;
   static String get baseUrlS => url_s;
   static String get baseUrlDataset => url_dataset;
 

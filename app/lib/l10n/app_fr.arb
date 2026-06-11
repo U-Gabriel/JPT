@@ -1,0 +1,9 @@
+{
+  "@@locale": "fr",
+  "welcomeMessage": "Bienvenue sur GDOME",
+  "loginButton": "Se connecter",
+  "errorMessage": "Une erreur est survenue, veuillez réessayer.",
+
+  "signupButton": "Créer mon compte GDOME",
+  "frenchCreation": "Création connectée française"
+}

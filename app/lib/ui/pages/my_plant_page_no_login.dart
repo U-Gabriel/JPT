@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../l10n/generated/app_localizations.dart';
+
+
 class MyPlantPageNoLogin extends StatelessWidget {
   const MyPlantPageNoLogin({super.key});
 
@@ -15,7 +18,7 @@ class MyPlantPageNoLogin extends StatelessWidget {
             const SizedBox(height: 20),
 
             // 1. SECTION LOGO & BIENVENUE
-            _buildHeaderSection(),
+            _buildHeaderSection(context),
 
             const SizedBox(height: 30),
 
@@ -40,7 +43,7 @@ class MyPlantPageNoLogin extends StatelessWidget {
   }
 
   /// Section d'en-tête avec logo et message de bienvenue chaleureux
-  Widget _buildHeaderSection() {
+  Widget _buildHeaderSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
@@ -69,7 +72,7 @@ class MyPlantPageNoLogin extends StatelessWidget {
                 const Text("🇫🇷", style: TextStyle(fontSize: 14)),
                 const SizedBox(width: 6),
                 Text(
-                  "Création connectée française",
+                  AppLocalizations.of(context)!.frenchCreation,
                   style: TextStyle(
                     color: Colors.blue.shade900,
                     fontWeight: FontWeight.w600,
@@ -141,9 +144,9 @@ class MyPlantPageNoLogin extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: const Text(
-                "Créer mon compte GDOME",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+              child: Text(
+                AppLocalizations.of(context)!.signupButton,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ),
