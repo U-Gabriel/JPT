@@ -30,7 +30,7 @@ const UploadObjectProfilePicture = async (req, res) => {
 
         // 1. Définir le nom et le chemin
         const fileName = `${id_object_profile}.webp`; // On force le format .webp (plus léger)
-        const uploadDir = "/var/www/html/dataset/user/object_profile";
+        const uploadDir = "/var/www/gdome/dataset/user/object_profile";
         const fullPath = path.join(uploadDir, fileName);
 
         // 2. Traitement avec SHARP
