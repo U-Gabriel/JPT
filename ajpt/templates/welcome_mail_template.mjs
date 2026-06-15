@@ -37,8 +37,7 @@ export const getWelcomeEmailHtml = (mail) => {
                     <p>Votre compte est désormais activé pour l'adresse :</p>
                     <div class="user-badge">${mail}</div>
                     <p>Vous pouvez maintenant accéder à votre espace personnel et configurer vos préférences.</p>
-                    
-                    <a href="#" class="button">Lancer l'application</a>
+                    <p>À bientôt !</p>
                 </div>
             </div>
             <div class="footer">
