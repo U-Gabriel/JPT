@@ -7,6 +7,7 @@ import {ResponseApi} from "../models/response-api.mjs";
 import crypto from 'crypto';
 import transporter from '../services/mail_service.mjs';
 
+const getSender = () => '"Gdome" <no-reply@gdome.fr>';
 
 /**
  * Enregistre une nouvelle personne
@@ -58,7 +59,7 @@ const sendAlreadyRegisteredMail = async (mail) => {
 
     try {
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: getSender(),
             to: mail, // On s'assure que cette variable contient bien l'email
             subject: 'Tentative d’inscription sur votre compte GDOME App',
             html: getAlreadyRegisteredEmailHtml("ATTENTION") 
@@ -84,7 +85,7 @@ const RegisterSendMail = async (body) => {
         // 2. Si l'utilisateur existe, on envoie le mail
         if (user) {
             const mailOptions = {
-                from: process.env.EMAIL_USER,
+                from: getSender(),
                 to: mail,
                 subject: 'Activez votre compte GDOME App',
                 html: getRegisterEmailHtml(user.mail, registerCode)
@@ -155,7 +156,7 @@ const RegisterAccount = async (body) => {
 const sendWelcomeMail = async (mail) => {
     try {
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: getSender(),
             to: mail,
             subject: 'Bienvenue chez GDOME - Compte validé !',
             html: getWelcomeEmailHtml(mail)
@@ -215,7 +216,7 @@ const SendMailForgotPassword = async (body) => {
 
         // 3. Envoi du mail
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: getSender(),
             to: mail,
             subject: 'Réinitialisation de votre mot de passe',
             html: getForgotEmailHtml(user.firstname, resetCode)
