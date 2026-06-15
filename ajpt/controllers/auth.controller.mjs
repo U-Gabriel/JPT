@@ -1,4 +1,4 @@
-import {Add, GetByIdAndPassword, GetByIdAndPasswordVerified, GenerateToken, ModifyLastConnexion, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, GetProfileById, DeletePersonById} from '../models/person.mjs'
+import {Add, GetByIdAndPassword, GetByIdAndPasswordVerified, GenerateToken, RefreshAccessSession, ModifyLastConnexion, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, GetProfileById, DeletePersonById} from '../models/person.mjs'
 import { getForgotEmailHtml } from "../templates/forgot_mail_template.mjs";
 import { getRegisterEmailHtml } from "../templates/register_mail_template.mjs";
 import { getAlreadyRegisteredEmailHtml } from "../templates/already_registered_mail_template.mjs";
@@ -170,32 +170,65 @@ const sendWelcomeMail = async (mail) => {
 
 /**
  * Authentification d'un utilisateur
- * @param pseudo
- * @param password Le mot de passe
- * @returns {Promise<unknown>}
- * @constructor
+ * @param person Le body contenant pseudo/mail et password
  */
 const Authentication = async (person) => {
-    return new Promise(async (resolve, _) => {
-        if(( person.pseudo == null && person.mail == null) || person.password == null) {
-            resolve(new ResponseApi().InitMissingParameters())
-            return
+    if ((person.pseudo == null && person.mail == null) || person.password == null) {
+        return new ResponseApi().InitMissingParameters();
+    }
+    try {
+        const res = await GetByIdAndPasswordVerified(person);
+        if (!res) {
+            return new ResponseApi().InitUnauthorized("This pseudo and password not matching.");
         }
-        try{
-            const res = await GetByIdAndPasswordVerified(person);
-            if(!res) {
-                resolve(new ResponseApi().InitUnauthorized("This pseudo and password not matching."))
-                return
-            }
-            const modifyDateNow = ModifyLastConnexion(person.pseudo)
-            res.token = GenerateToken(res)
-            console.log(res.token)
-            resolve(new ResponseApi().InitOK(res))
-        } catch(error) {
-            resolve(new ResponseApi().InitInternalServer(error))
-        }
-    });
+        
+        // Enregistre la date de connexion (asynchrone)
+        await ModifyLastConnexion(res.pseudo);
+        
+        // Appelle notre nouvelle logique de double Token
+        // tokens vaut désormais : { token: "...", refreshToken: "..." }
+        const tokens = GenerateToken(res);
+        
+        // Construction du nouvel objet data attendu par l'application
+        const responseData = {
+            id_person: res.id_person,
+            pseudo: res.pseudo,
+            mail: res.mail,
+            firstname: res.firstname,
+            surname: res.surname,
+            id_role: res.id_role,
+            is_verified: res.is_verified,
+            token: tokens.token,            // Access Token (court)
+            refresh_token: tokens.refreshToken // Refresh Token (long)
+        };
+
+        return new ResponseApi().InitOK(responseData);
+    } catch (error) {
+        console.error(error);
+        return new ResponseApi().InitInternalServer(error);
+    }
 }
+
+/**
+ * Reçoit le refresh_token de l'application et renvoie un access token valide
+ */
+const RefreshToken = async (body) => {
+    const { refresh_token } = body;
+    if (!refresh_token) return new ResponseApi().InitMissingParameters();
+
+    try {
+        const result = await RefreshAccessSession(refresh_token);
+        if (!result) {
+            return new ResponseApi().InitUnauthorized("Session expirée ou invalide. Veuillez vous reconnecter.");
+        }
+        
+        // Renvoie l'objet { token: "NOUVEAU_TOKEN" } enveloppé dans ta classe ResponseApi
+        return new ResponseApi().InitOK(result);
+    } catch (error) {
+        console.error("Erreur lors du Refresh Token :", error);
+        return new ResponseApi().InitInternalServer("Une erreur technique est survenue.");
+    }
+};
 
 const SendMailForgotPassword = async (body) => {
     const { mail } = body;
@@ -343,4 +376,4 @@ const RemoveUser = async (body = {}) => {
 };
 
 
-export {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, GetMyProfile, RemoveUser}
+export {Register, Authentication, RefreshToken, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, GetMyProfile, RemoveUser}

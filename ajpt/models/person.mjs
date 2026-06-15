@@ -274,22 +274,68 @@ const ModifyLastConnexion = (pseudo) => {
 
 
 /**
- * Génère le JWT token
- * @returns {*|null}
+ * Génère le couple Access Token et Refresh Token
+ * @param person L'utilisateur brut de la BDD
+ * @returns {{token: string, refreshToken: string}|null}
  * @constructor
- * @param person
  */
 const GenerateToken = (person) => {
-    if(!person) {
-        return null
+    if (!person) {
+        return null;
     }
-    try{
-        return jwt.sign(person, process.env.TOKEN, { expiresIn: "1d" })
-    } catch(e) {
-        console.log(e)
-        throw e
+    try {
+        // Sécurité : On nettoie le payload pour ne pas imbriquer d'anciennes clés JWT
+        const payload = {
+            id_person: person.id_person,
+            pseudo: person.pseudo,
+            mail: person.mail,
+            id_role: person.id_role,
+            is_verified: person.is_verified
+        };
+
+        // 1. Access Token : Valable 15 minutes (sécurité accrue)
+        const token = jwt.sign(payload, process.env.TOKEN, { expiresIn: "15m" });
+
+        // 2. Refresh Token : Valable 30 jours (pour l'appareil mobile)
+        const refreshToken = jwt.sign({ id_person: person.id_person }, process.env.TOKEN, { expiresIn: "30d" });
+
+        return { token, refreshToken };
+    } catch (e) {
+        console.error("Erreur génération tokens :", e);
+        throw e;
     }
 }
+
+/**
+ * Reçoit un Refresh Token, le valide, et recrée un Access Token ET un nouveau Refresh Token (Session Infinie)
+ * @param {string} refreshToken 
+ * @returns {Promise<{token: string, refresh_token: string}|null>}
+ */
+const RefreshAccessSession = (refreshToken) => {
+    return new Promise((resolve, reject) => {
+        if (!refreshToken) return resolve(null);
+
+        jwt.verify(refreshToken, process.env.TOKEN, async (err, decoded) => {
+            if (err) return resolve(null); // Expiré pour de bon (plus de 30 jours sans ouvrir l'app)
+
+            try {
+                // On récupère les données à jour de l'utilisateur
+                const user = await GetProfileById(decoded.id_person);
+                if (!user || !user.is_verified) return resolve(null);
+
+                // On génère un ENSEMBLE TOUT NEUF (L'Access de 15 min ET le Refresh de 30 jours)
+                const tokens = GenerateToken(user);
+                
+                resolve({
+                    token: tokens.token,
+                    refresh_token: tokens.refreshToken // 👈 C'est ça qui repousse la date de 30 jours !
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    });
+};
 
 /**
  * Vérifie l'existence d'un utilisateur par mail et enregistre le code de reset
@@ -439,4 +485,4 @@ const DeletePersonById = async (id_person) => {
 };
 
 
-export {Person, Add, GetByIdAndPassword, GetByIdAndPasswordVerified, ModifyLastConnexion, GenerateToken, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, GetProfileById, DeletePersonById}
+export {Person, Add, GetByIdAndPassword, GetByIdAndPasswordVerified, ModifyLastConnexion, GenerateToken, RefreshAccessSession, SetPasswordReset, CheckResetCode, UpdatePasswordWithCode, SetRegisterVerification, FinalizeAccount, SearchPersonsByText, GetProfileById, DeletePersonById}

@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken'
 
 const WHITE_ROUTES = [
     '/register',
-    '/login_app'
+    '/login_app',
+    '/login_app/refresh'
 ]
 
 const authToken = (req, res, next) => {

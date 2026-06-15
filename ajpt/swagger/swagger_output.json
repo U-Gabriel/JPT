@@ -123,6 +123,31 @@
           "responses": {}
         }
       },
+      "/login_app/refresh": {
+        "post": {
+          "tags": [
+            "Authentification"
+          ],
+          "description": "Connexion et retourne le Bearer token (pour application).",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "refreshToken",
+              "in": "body",
+              "description": "Refresh de connexion",
+              "schema": {
+                "$ref": "#/definitions/RefreshToken"
+              }
+            }
+          ],
+          "responses": {}
+        }
+      },
       "/login_app/forgot_password": {
         "patch": {
           "tags": [
@@ -1209,6 +1234,15 @@
           "password": {
             "type": "string",
             "example": "aaaaaa"
+          }
+        }
+      },
+      "RefreshToken": {
+        "type": "object",
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "example": "ergzerferfqerfsfgrtgzergfverezr54g5re65465e1f5re5f1re65f1r"
           }
         }
       },

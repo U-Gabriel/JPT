@@ -1,4 +1,4 @@
-import {Register, Authentication, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, GetMyProfile, RemoveUser} from '../controllers/auth.controller.mjs'
+import {Register, Authentication, RefreshToken, SendMailForgotPassword, ConfimationSimpleForgotPassword, ModificationForgotPassword, RegisterSendMail, RegisterAccount, SearchPersons, GetMyProfile, RemoveUser} from '../controllers/auth.controller.mjs'
 
 
 import express from "express"
@@ -27,6 +27,11 @@ routerAuth.patch("/register/validate_account", async (req, res) => {
 routerAuth.post("/login_app", async (req, res) => {
     const response = await Authentication(req.body)
     res.status(response.code).send(response)
+});
+
+routerAuth.post("/login_app/refresh", async (req, res) => {
+    const response = await RefreshToken(req.body);
+    res.status(response.code).send(response);
 });
 
 routerAuth.patch("/login_app/forgot_password", async (req, res) => {
