@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class BowlDetailPage extends StatelessWidget {
@@ -7,10 +8,11 @@ class BowlDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Détails Gamelle (Bowl)"),
+        title: Text(AppLocalizations.of(context)!.detailsBowlsD),
         backgroundColor: Colors.blueGrey,
         foregroundColor: Colors.white,
       ),
@@ -21,11 +23,11 @@ class BowlDetailPage extends StatelessWidget {
             const Icon(Icons.pets, size: 80, color: Colors.blueGrey),
             const SizedBox(height: 16),
             Text(
-              "Page Gamelle - Profil ID: $objectProfileId",
+              localizations.bowlPageProfileId(objectProfileId.toString()),
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text("Le design spécifique des animaux sera intégré ici.", style: TextStyle(color: Colors.grey)),
+            Text(localizations.specificAnimalDesignWillBeHere, style: TextStyle(color: Colors.grey)),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class SuccessDialog {
@@ -36,7 +37,7 @@ class SuccessDialog {
                       (route) => false, // Cette condition 'false' dit de supprimer TOUTES les pages précédentes
                 );
               },
-              child: const Text("Valider", style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: Text(AppLocalizations.of(context)!.validateD, style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
           ),
         ],

@@ -4,6 +4,473 @@
   "loginButton": "Login",
   "errorMessage": "An error occurred, please try again.",
 
+  "myPlantPageNoLogin": "=======================",
+
   "signupButton": "Create my GDOME account",
-  "frenchCreation": "French connected creation"
+  "frenchCreation": "French connected creation",
+  "welcomeGdome": "Welcome to GDOME",
+  "systemeSentence": "The smart home ecosystem that reimagines your relationship with nature and your home.",
+  "iConnect": "I'm logging in",
+  "ourVision": "Our vision",
+  "smartPots": "Smart pots",
+  "plantNeed": "Your plants communicate their needs in real time thanks to our high-precision sensors.",
+  "tomorrow": "Tomorrow...",
+  "bowlNeed": "A growing ecosystem: smart pet bowls, pet care, and overall comfort.",
+  "newComany": "A new company with you",
+  "newComanyDesc": "GDOME is a brand-new French company. Our mission is to combine respect for life with the smart features of the connected home, without compromising on design.",
+  "objectQuestion": "Do you have any questions about our products?",
+  "faqDiscovery": "Explore our Help Center",
+
+  "myPlantPage": "=======================",
+
+  "myFavorites": "My Favorites",
+  "noFoundItems": "No items found.",
+  "myList": "My List",
+
+  "emptyStateWidget": "=======================",
+
+  "myFavoritesEmptyTitle": "No favorites yet",
+  "myFavoritesEmptySubtitle": "Add your favorite plants to find them here in a heartbeat.",
+  "myListEmptyTitle": "Your collection is empty",
+  "myListEmptySubtitle": "Start adding your GDOME smart devices to track their health in real time.",
+
+  "loginPage": "=======================",
+
+  "incorrectId": "Incorrect credentials. Please try again.",
+  "happySeeYou": "It's great to see you again!",
+  "cultivateInside": "Cultivate your inner well-being.",
+  "email": "Email",
+  "emailExample": "your@email.com",
+  "invalidEmail": "Invalid email format",
+  "password": "Password",
+  "suspension": "••••••••",
+  "tooShortPassword": "Password too short",
+  "forgotPassword": "Forgot password ?",
+  "loginMaj": "LOGIN",
+  "noAccount": "No account yet?",
+  "signUp": "Sign up",
+
+  "signupPage": "=======================",
+
+  "signUpFailure": "Sign up failed. This username or email may already be in use.",
+  "oops": "Oops!",
+  "ok": "OK",
+  "createAnAccount": "Create an account",
+  "joinAdventure": "Join the GDOME adventure in just a few seconds.",
+  "pseudo": "Pseudo",
+  "pseudoQuestion": "How should we call you?",
+  "confirmation": "Confirmation",
+  "confirmationQuestion": "Confirm your password",
+  "differentPasswords": "Passwords do not match",
+  "signUpMaj": "SIGN UP",
+  "alreadyAccount": "Already have an account?",
+  "login": "Login",
+
+  "signupValidationPage": "=======================",
+
+  "welcome": "Welcome !",
+  "startMaj": "START",
+  "verification": "Verification",
+  "signupValidationDesc": "Enter the 6-digit code sent to\n{userEmail}",
+  "signupResendCodeTimer": "Resend code in {seconds} s",
+  "signupResendCode": "Resend code",
+  "sendNewCode": "A new code has been sent!",
+  "failureSendTryLater": "Failed to send. Please try again later.",
+  "accountValidationMaj": "VALIDATE MY ACCOUNT",
+
+  "profilePage": "=======================",
+
+  "user": "User",
+  "noAddressEmail": "No email address",
+  "identity": "Identity",
+  "noSpecified": "Not specified",
+  "manageMyApp": "Manage my application",
+  "security": "Security",
+  "changePassword": "Change password",
+  "myItems": "My items",
+  "manageMyDevices": "Manage my devices",
+  "favoritesItems": "Favorite items",
+  "faq": "FAQ",
+  "helpCenter": "Help Center",
+  "leaveReview": "Leave my review",
+  "shareExperience": "Share your experience and help us improve !",
+  "logOut": "Log out",
+
+  "forgotPasswordPage": "=======================",
+
+  "failureSendMail": "An error occurred while sending the email. Please check your connection or the entered address.",
+  "retry": "Retry",
+  "enterMailRetrieve": "Enter the email address associated with your account. We will send you a code to reset your password.",
+  "sendTheCodeMaj": "SEND THE CODE",
+  "back": "Back",
+  "yourEmail": "Your Email",
+  "enterYourEmail": "Please enter your email",
+
+  "getCodeEmailPage": "=======================",
+
+  "enterMailReceived": "Please enter the code received by email.",
+  "codeContainLimit": "The code must contain 6 digits.",
+  "invalidCode": "Invalid code",
+  "incorrectCode": "The code entered is incorrect or has expired. Please try again.",
+  "enterCodeDigits": "Enter the 6-digit code sent to",
+  "hintZeroSix": "000000",
+  "confirmationMaj": "CONFIRM",
+  "signupResendCodeIn": "Resend code in ",
+
+  "resetPasswordPage": "=======================",
+
+  "retrySessionExpire": "Session expired. Please try again.",
+  "expiredCode": "The code has expired or is invalid.",
+  "passwordChangeNoConnected": "Password changed, but connection error. Please log in manually.",
+  "updatePassword": "Password updated !",
+  "autoLoginLoading": "Automatic login in progress...",
+  "successPasswordConnectOk": "Password successfully changed! You can now log in.",
+  "loginBackMaj": "BACK TO LOGIN",
+  "newPasswordLine": "New\npassword",
+  "createNewStrongPassword": "Create a strong password to secure your account.",
+  "newPassword": "New password",
+  "confirmationThePassword": "Confirm password",
+  "resetMaj": "RESET",
+  "limitChar": "Minimum 6 characters",
+
+  "myObjectProfilePage": "=======================",
+
+  "connectedDevices": "My Connected Devices",
+  "failureChargeCategories": "Unable to load your categories.",
+  "noDevicesForMoment": "No device registered at the moment.",
+
+  "myFavoriteCatalogPage": "=======================",
+
+  "myFavoritesMajD": "My Favorites",
+  "failureChargeFavorites": "Unable to load your favorites.",
+  "noFavoritesForMoment": "No favorites at the moment",
+
+  "noticePage": "=======================",
+
+  "completeAllField": "Please complete the required fields",
+  "thanksForFeedback" : "Thank you for your feedback !",
+  "occurredError": "An error occurred",
+  "commentsMaj": "COMMENTS",
+  "experienceBack": "We value your experience",
+  "experienceBackDesc": "Because we know that things aren't always perfect, your feedback is valuable to help the new GDOME adventure improve every day.",
+  "noticeSubject" : "Subject of the notice",
+  "enterTitle": "Enter a title",
+  "itemConcerned": "Concerned item (Optional)",
+  "categoryD": "Category",
+  "selectCategory": "Select a category",
+  "yourMessage": "Your message",
+  "noEmptyContent": "Content cannot be empty",
+  "sendBackMaj" : "SUBMIT MY FEEDBACK",
+
+  "shoppingPage": "=======================",
+
+  "modelSearch": "Search for a model...",
+  "allD": "All",
+  "noAvailableProduct": "No product available",
+  "cartArticlesAdded": "{qty} item(s) added to the cart!",
+  "failureAddAskTry": "Error while adding. Please try again.",
+  "gdomeMaj": "GDOME",
+  "theExperience": "The experience",
+  "technicalSpecifications": "Technical specifications",
+  "productInStock": "In stock ({count} units)",
+  "outOfStock": "Currently out of stock",
+  "productNotFound": "Product not found",
+  "backToCatalogMaj": "BACK TO CATALOG",
+
+  "shoppingProductBottomBarPage": "=======================",
+
+  "buyNowMaj": "BUY NOW",
+  "outOfStockMaj": "OUT OF STOCK",
+
+  "shoppingProductTrustPage": "=======================",
+
+  "badgeSecurePay": "Secure\nPayment",
+  "badgeHighPrecision": "High\nPrecision Design",
+  "badgeSatisfaction": "Satisfaction\nGuaranteed",
+
+  "plantDetailKnownPage": "=======================",
+
+  "plantNotFound": "Plant not found",
+  "descriptionD": "Description",
+  "expertTips": "Expert tips",
+  "lifeCalendar": "Life Calendar",
+  "scientificName": "Scientific name: ",
+  "unknownD": "Unknown",
+  "familyD": "Family",
+  "plantFamilyLabel": "Family: {familyName}",
+  "metricHeight": "Height",
+  "metricSun": "Sun/day",
+  "metricPlanting": "Planting",
+  "plantNoSpecificAdvise": "No specific advice available.",
+  "needsAndEnv": "Needs & Environment",
+  "plantExposure": "Exposure",
+  "plantGround": "Soil",
+  "seasonSpring": "Spring",
+  "seasonSummer": "Summer",
+  "seasonAutumn": "Autumn",
+  "seasonWinter": "Winter",
+
+  "orderValidationPage": "=======================",
+
+  "congratulationsD": "Congratulations!",
+  "validateOrder": "Your order has been successfully validated and is being prepared.",
+  "yourOrderMaj": "YOUR ORDER",
+  "deliveryAddressMaj": "DELIVERY ADDRESS",
+  "totalAmountPaidD": "Total amount paid",
+  "backToHomeMaj": "BACK TO HOME",
+  "trackMyOrdersD": "Track my orders",
+
+  "orderPaymentPage": "=======================",
+
+  "summaryD": "Summary",
+  "deliveryToMAJ": "DELIVERY TO",
+  "subtotalD": "Subtotal",
+  "deliveryD": "Delivery",
+  "freeD": "Free",
+  "totalMaj": "TOTAL",
+  "unableToInitThePayment": "Unable to initialize the payment.",
+  "paymentNotFinalized": "Payment not finalized: {errorMessage}",
+  "paymentErrorGeneric": "An error occurred during payment. Please try again.",
+  "btnConfirmAndPay": "CONFIRM AND PAY {price}",
+
+  "orderAddressPage": "=======================",
+
+  "franceD": "France",
+  "yourAddressMaj": "YOUR ADDRESSES",
+  "orderSummaryMaj": "ORDER SUMMARY",
+  "addressD": "Address",
+  "useAnotherAddress": "Use another address",
+  "addAnDeliveryAddressMaj": "ADD A DELIVERY ADDRESS",
+  "nameAddressD": "Address name (Home, Office...)",
+  "enterAddressD": "Enter your address...",
+  "additionalInformationD": "Additional information (Apartment, Floor...)",
+  "postalCodeD": "Postal Code",
+  "cityD": "City",
+  "countryD": "Country",
+  "setAsDefaultD": "Set as default",
+  "chooseAnAddressMaj": "CHOOSE AN ADDRESS",
+  "validateAddressMaj": "VALIDATE THIS ADDRESS",
+  "fillInTheFieldsMaj": "FILL IN THE FIELDS",
+  "btnConfirmOrderMaj": "CONFIRM {price}",
+  "btnChooseAddressMaj": "CHOOSE AN ADDRESS",
+
+  "modificationWifiMyObjectPage": "=======================",
+
+  "wifiConfigTitle": "WiFi Configuration",
+  "wifiUpdateForObject": "Update for {objectTitle}",
+  "wifiRangeWarning": "Make sure your device is within range during modification.",
+  "wifiSsidLabel": "Network Name (SSID)",
+  "exampleWifiSsidLabel" : "Ex: MyBox_1234",
+  "wifiPasswordLabel": "Password",
+  "wifiBtnModify": "Modify my WiFi",
+  "wifiErrorEmptyFields": "Please fill in all fields",
+
+  "modificationWifiConnectPage": "=======================",
+
+  "wifiConnectSuccessHeader": "Configuration successful!",
+  "wifiConnectSearchHeader": "Connecting to network",
+  "wifiConnectSeconds": "seconds",
+  "wifiConnectWait": "Please wait...",
+  "wifiConnectBtnFinish": "Finish",
+  "wifiConnectBtnRetry": "Retry",
+  "wifiConnectLedStatus": "Device LED Status",
+  "wifiStatusSearchTitle": "Searching for device...",
+  "wifiStatusSearchSubtitle": "Make sure the device is nearby and turned on. Activate manual mode on your device and press the BLUE button.",
+  "wifiStatusProcessingTitle": "Attempting to connect...",
+  "wifiStatusProcessingSubtitle": "The device is trying to join your WiFi. The LED should blink.",
+  "wifiStatusSuccessTitle": "All set!",
+  "wifiStatusSuccessSubtitle": "The device is now connected. The blue LED should turn off.",
+  "wifiStatusErrorTitle": "An error occurred",
+  "wifiStatusErrorSubtitleFallback": "Please check that your WiFi SSID and password are correct.",
+  "wifiErrorBluetoothOff": "Bluetooth is disabled. Please enable it.",
+  "wifiErrorScanFailed": "Unable to scan surroundings.",
+  "wifiErrorConnectionLost": "Connection with the device lost.",
+  "wifiErrorTimeout": "The device is taking too long to respond.",
+  "wifiErrorWrongProfile": "This pot belongs to another profile. Action denied. Please check pot ownership.",
+  "wifiErrorConnectionFailed": "The device could not connect to {ssid}.",
+
+  "homePageNoLogin": "=======================",
+
+  "homeTitleAdvise": "Advice & Expertise",
+  "homeTitleShop": "GDOME Shop",
+  "homeTooltipProfile": "Profile",
+  "navTabAdvise": "Advice",
+  "navTabMyObjects": "My objects",
+  "navTabShop": "Shop",
+
+  "homePage": "=======================",
+
+  "homeTitleEquipment": "My Equipment",
+  "homeTooltipMyProfile": "My Profile",
+
+  "addConnectMyObjectPage": "=======================",
+
+  "addObjTitle": "Connection",
+  "addObjStepTitle": "Let's connect your device!",
+  "addObjStepDesc": "We will finally be able to connect your {plantName} to our device. Press the blue button on the device so our application can detect it.",
+  "addObjDefaultPlantName": "your plant",
+  "addObjRecapPlant": "Plant",
+  "addObjRecapNetwork": "Network",
+  "addObjRecapUnknown": "Unknown",
+  "addObjRecapId": "Device ID",
+  "addObjStatusCreating": "Creating your plant profile...",
+  "addObjStatusSearching": "Searching for device...",
+  "addObjBtnSearching": "Searching...",
+  "addObjBtnCreating": "Creating profile...",
+  "addObjBtnStart": "Start connection",
+  "addObjDialogAlreadyLinkedTitle": "Device already linked",
+  "addObjDialogAlreadyLinkedDesc": "This device is already linked to the flower '{flowerName}'.\n\nPlease delete the associated flower in your settings first.",
+  "addObjDialogBtnUnderstand": "UNDERSTOOD",
+  "addObjDialogSuccessTitle": "Congratulations!",
+  "addObjDialogSuccessDesc": "Your {plantName} is configured and activated!",
+  "addObjErrorNoResponse": "The device is no longer responding. Profile canceled.",
+  "addObjErrorWifiFailed": "The device could not connect to Wi-Fi. The profile was canceled.",
+  "addObjErrorNoResponseConn": "The device is no longer responding. Connection canceled.",
+  "loginD" : "Login",
+
+  "plantDetailContent": "=======================",
+
+  "plantDetailTitle": "Plant Details",
+  "plantDetailNoDescription": "No description available",
+  "plantDetailBtnClose": "Close",
+  "plantDetailSectionControls": "Controls",
+
+  "plantDetailWrapper": "=======================",
+
+  "noAvailableToken" : "Token no available",
+
+  "sensorValue": "=======================",
+
+  "noAvailableD" : "No available",
+
+  "objectConnectionController": "=======================",
+
+  "apiErrorTitle": "API Error",
+  "apiErrorCreateProfileFailed": "Unable to create the device, please check your internet connection.",
+
+  "plantControlSwitches": "=======================",
+
+  "plantControlReasonAuto": "Manual watering unavailable: automatic mode is already managing your plant optimally.",
+  "plantControlReasonOffline": "Cannot water: the device is offline.",
+  "plantControlBtnWatering": "WATERING IN PROGRESS...",
+  "plantControlBtnAuto": "AUTOMATIC WATERING",
+  "plantControlBtnStart": "START WATERING",
+
+  "plantItemMyListWidget": "=======================",
+
+  "plantItemUnknownName": "Unknown name",
+  "plantStatusDanger": "In danger",
+  "plantStatusWarning": "Needs attention",
+  "plantStatusHealthy": "Healthy",
+  "plantStatusUnknown": "Unknown",
+
+  "authRequiredDialog": "=======================",
+
+  "authRequiredTitle": "Login Required",
+  "authRequiredMessage": "To access this feature, please log in or sign up. It's free and only takes a few minutes.",
+  "authRequiredBtnLogin": "LOG IN",
+  "authRequiredBtnLater": "LATER",
+
+  "connectionErrorDialog": "=======================",
+
+  "connErrorDefaultTitle": "Connection Error",
+  "connErrorDefaultMessage": "A connection error occurred. Please try again.",
+  "connErrorBtnCancel": "Cancel",
+  "connErrorBtnRetry": "Retry",
+
+  "deleteConfirmDialog": "=======================",
+
+  "deleteD" : "Delete",
+
+  "successDialog": "=======================",
+
+  "validateD" : "Validate",
+
+  "wifiErrorDialog": "=======================",
+
+  "wifiErrorD" : "Wi-Fi Error",
+
+  "productCard": "=======================",
+
+  "shopProductPromoBadge": "SALE",
+  "shopProductOutOfStock": "Out of stock",
+  "shopProductInStock": "In stock ({stock})",
+
+  "stepProgressBar": "=======================",
+
+  "progressBarCompleted": "{percent}% completed",
+
+  "addMyObjectPage": "=======================",
+
+  "newObjectD" : "New object",
+  "addObjectMainTitle": "Link your device",
+  "addObjectExplanation": "If you own a JackPote smart device, you're in the right place! Let's start by linking your device to the app. To begin: which plant is this device for?",
+  "addObjectFieldName": "Plant name",
+  "addObjectFieldHint": "Search for a plant (e.g., Ficus...)",
+  "addObjectBtnNotFound": "I can't find my plant",
+  "addObjectBtnOtherUsage": "Device other than a pot",
+  "addObjectOtherUsageDefaultTitle": "Smart device",
+  "addObjectShopText": "If you haven't purchased your JackPote yet, let's head over to our store to grab one!",
+  "addObjectShopBtn": "Go to store",
+
+  "buyMyObjectPage": "=======================",
+
+  "gdomeStoreD" : "Store GDOME",
+  "welcomeStoreD" : "Welcome to the store !\nComing soon... Stay tuned!",
+
+  "bowlDetailPage": "=======================",
+
+  "detailsBowlsD" : "Détails Gamelle (Bowl)",
+  "bowlPageProfileId": "Bowl Page - Profile ID: {id}",
+  "specificAnimalDesignWillBeHere": "The specific animal design will be integrated here.",
+
+  "addWifiInformationPage": "=======================",
+
+  "wifiInfoTitle": "Wi-Fi Information",
+  "wifiInfoDescription": "In order for your GDOME device to communicate with you, it must be connected to your home network — the one that will be available when you’re away.",
+  "wifiPasswordHint": "Your Wi-Fi password",
+  "wifiEmptyFieldsError": "Please fill in all Wi-Fi fields",
+  "nextButton": "Next",
+
+  "addNameSpeMyObjectPage": "=======================",
+
+  "defaultObjectTitle": "Your object",
+  "customConfigTitle": "Custom Configuration",
+  "customConfigGiveNameTitle": "Name Your Object",
+  "customConfigGiveNameDescription": "Your object is not related to plants. Choose a name to distinguish it in the list.",
+  "customConfigInputLabel": "Connected Object Name",
+  "customConfigInputHint": "e.g., Living Room Sensor, Desk GDOME...",
+  "customConfigEmptyNameError": "The object name is required!",
+  "continueButton": "Continue",
+
+  "advisePage": "=======================",
+
+  "helpCenterTitle": "Help Center",
+  "faqCategoriesLabel": "Categories",
+  "faqSearchHint": "Search for a specific question...",
+  "faqFeedbackNoticeTitle": "Your feedback helps us grow",
+  "faqFeedbackNoticeSubtitle": "Any suggestions? Help us improve GDOME.",
+  "faqFeedbackNoticeButton": "Share my experience",
+  "faqNoResultsFound": "No answers found"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

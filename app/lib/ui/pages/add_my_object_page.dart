@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:app/models/plant_type.dart';
 import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,8 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: const Text(
-          'Nouvel objet',
+        title: Text(
+          AppLocalizations.of(context)!.newObjectD,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -46,21 +47,21 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
             const SizedBox(height: 30),
 
             // 2. Titre
-            const Text(
-              'Associez votre objet',
+            Text(
+              AppLocalizations.of(context)!.addObjectMainTitle,
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
 
             // 3. Phrase d'explication (corrigée)
-            const Text(
-              "Si vous possédez un objet connecté JackPote, vous êtes au bon endroit ! Commençons par associer votre objet à l'application. Pour débuter : à quelle plante cet objet sera-t-il destiné ?",
+            Text(
+            AppLocalizations.of(context)!.addObjectExplanation,
               style: TextStyle(fontSize: 15, color: Colors.black54, height: 1.5),
             ),
             const SizedBox(height: 40),
 
             // 4. Champ de recherche avec Autocomplete (API)
-            const Text("Nom de la plante", style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context)!.addObjectFieldName, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Autocomplete<PlantType>(
               displayStringForOption: (PlantType option) => option.title,
@@ -72,7 +73,7 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
                 final prefs = await SharedPreferences.getInstance();
                 final token = prefs.getString('token');
 
-                final results = await _plantService.searchPlants(textEditingValue.text, token!);
+                final results = await _plantService.searchPlants(textEditingValue.text);
                 return results.cast<PlantType>();
               },
               onSelected: (PlantType selection) {
@@ -94,7 +95,7 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
                   controller: controller,
                   focusNode: focusNode,
                   decoration: InputDecoration(
-                    hintText: 'Rechercher une plante (ex: Ficus...)',
+                    hintText: AppLocalizations.of(context)!.addObjectFieldHint,
                     prefixIcon: const Icon(Icons.search, color: Colors.green),
                     filled: true,
                     fillColor: Colors.grey[100],
@@ -194,8 +195,8 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
                   );
                 },
                 icon: const Icon(Icons.help_outline, size: 18, color: Colors.grey),
-                label: const Text(
-                  "Je ne trouve pas ma plante",
+                label: Text(
+                  AppLocalizations.of(context)!.addObjectBtnNotFound,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -229,8 +230,8 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
                   );
                 },
                 icon: const Icon(Icons.devices_other, size: 18, color: Colors.green),
-                label: const Text(
-                  "Objet différent d'un pot",
+                label: Text(
+                  AppLocalizations.of(context)!.addObjectBtnOtherUsage,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -260,8 +261,8 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
               ),
               child: Column(
                 children: [
-                  const Text(
-                    "Si vous n'avez pas encore acheté votre JackPote, allons dans notre boutique pour nous dégoter votre pot !",
+                  Text(
+                    AppLocalizations.of(context)!.addObjectShopText,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 14, color: Colors.black87),
                   ),
@@ -269,7 +270,7 @@ class _AddMyObjectPageState extends State<AddMyObjectPage> {
                   ElevatedButton.icon(
                     onPressed: () => Navigator.pushNamed(context, '/buy_my_object'),
                     icon: const Icon(Icons.shopping_cart_outlined),
-                    label: const Text("Aller à la boutique"),
+                    label: Text(AppLocalizations.of(context)!.addObjectShopBtn),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[700],
                       foregroundColor: Colors.white,

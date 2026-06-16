@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -20,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.didChangeDependencies();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.isLoggedIn && authProvider.accessToken != null) {
-      _profileFuture = _userService.fetchMyProfile(authProvider.accessToken!);
+      _profileFuture = _userService.fetchMyProfile();
     }
   }
 
@@ -47,8 +48,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
           // Si l'API échoue, on prend les valeurs de secours du SharedPreferences
           final userData = snapshot.data ?? authProvider.userData ?? {};
-          final String pseudo = userData['pseudo'] ?? authProvider.pseudo ?? 'Utilisateur';
-          final String email = userData['mail'] ?? 'Pas d\'adresse email';
+          final String pseudo = userData['pseudo'] ?? authProvider.pseudo ?? AppLocalizations.of(context)!.user;
+          final String email = userData['mail'] ?? AppLocalizations.of(context)!.noAddressEmail;
           final String name = "${userData['firstname'] ?? ''} ${userData['surname'] ?? ''}".trim();
 
           return CustomScrollView(
@@ -118,17 +119,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         child: Column(
                           children: [
-                            _buildInfoRow(Icons.person_outline, "Identité", name.isEmpty ? "Non renseigné" : name),
+                            _buildInfoRow(Icons.person_outline, AppLocalizations.of(context)!.identity, name.isEmpty ? AppLocalizations.of(context)!.noSpecified : name),
                             const Divider(height: 24, thickness: 0.8),
-                            _buildInfoRow(Icons.mail_outline, "Email", email),
+                            _buildInfoRow(Icons.mail_outline, AppLocalizations.of(context)!.email, email),
                           ],
                         ),
                       ),
 
                       const SizedBox(height: 28),
 
-                      const Text(
-                        "Gérer mon application",
+                      Text(
+                        AppLocalizations.of(context)!.manageMyApp,
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
                       ),
 
@@ -146,32 +147,32 @@ class _ProfilePageState extends State<ProfilePage> {
                           _buildMenuCard(
                             context,
                             icon: Icons.lock_reset_outlined,
-                            title: "Sécurité",
-                            subtitle: "Modifier le mot de passe",
+                            title: AppLocalizations.of(context)!.security,
+                            subtitle: AppLocalizations.of(context)!.changePassword,
                             color: Colors.orange,
                             route: '/forgot_password',
                           ),
                           _buildMenuCard(
                             context,
                             icon: Icons.devices_other,
-                            title: "Mes objets",
-                            subtitle: "Gérer mes appareils",
+                            title: AppLocalizations.of(context)!.myItems,
+                            subtitle: AppLocalizations.of(context)!.manageMyDevices,
                             color: Colors.blue,
                             route: '/my_objects_catalog',
                           ),
                           _buildMenuCard(
                             context,
                             icon: Icons.star_border_rounded,
-                            title: "Mes favoris",
-                            subtitle: "Éléments préférés",
+                            title: AppLocalizations.of(context)!.myFavorites,
+                            subtitle: AppLocalizations.of(context)!.favoritesItems,
                             color: Colors.pink,
                             route: '/my_favorites_catalog',
                           ),
                           _buildMenuCard(
                             context,
                             icon: Icons.help_outline_rounded,
-                            title: "FAQ",
-                            subtitle: "Centre d'aide & notices",
+                            title: AppLocalizations.of(context)!.faq,
+                            subtitle: AppLocalizations.of(context)!.helpCenter,
                             color: Colors.teal,
                             route: '/profile_faq',
                           ),
@@ -184,8 +185,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       _buildFullWidthMenuCard(
                         context,
                         icon: Icons.rate_review_outlined,
-                        title: "Donner mon avis",
-                        subtitle: "Partagez votre expérience et aidez-nous à nous améliorer !",
+                        title: AppLocalizations.of(context)!.leaveReview,
+                        subtitle: AppLocalizations.of(context)!.shareExperience,
                         color: Colors.purple,
                         route: '/notice_page',
                       ),
@@ -207,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                           ),
                           icon: const Icon(Icons.logout_rounded, size: 22),
-                          label: const Text("Se déconnecter", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          label: Text(AppLocalizations.of(context)!.logOut, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                       ),
                       const SizedBox(height: 20),

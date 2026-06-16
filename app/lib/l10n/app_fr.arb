@@ -4,6 +4,493 @@
   "loginButton": "Se connecter",
   "errorMessage": "Une erreur est survenue, veuillez réessayer.",
 
+  "myPlantPageNoLogin": "=======================",
+
   "signupButton": "Créer mon compte GDOME",
-  "frenchCreation": "Création connectée française"
+  "frenchCreation": "Création connectée française",
+  "welcomeGdome": "Bienvenue chez GDOME",
+  "systemeSentence": "L'écosystème domotique qui réinvente votre relation avec la nature et votre intérieur.",
+  "iConnect": "Je me connecte",
+  "ourVision": "Notre vision",
+  "smartPots": "Pots Intelligents",
+  "plantNeed": "Vos plantes dictent leurs besoins en temps réel grâce à nos capteurs haute précision.",
+  "tomorrow": "Demain...",
+  "bowlNeed": "Un écosystème en expansion : gamelles connectées, soin des animaux et confort global.",
+  "newComany": "Une jeune pousse passionnée",
+  "newComanyDesc": "GDOME est une toute nouvelle entreprise française. Notre mission est d'allier le respect du vivant à l'intelligence de la maison connectée, sans compromis sur le design.",
+  "objectQuestion": "Des questions sur nos objets ?",
+  "faqDiscovery": "Explorez notre Centre d'aide",
+
+  "myPlantPage": "=======================",
+
+  "myFavorites": "Mes favoris",
+  "noFoundItems": "Aucun objets trouvés.",
+  "myList": "Ma Liste",
+
+  "emptyStateWidget": "=======================",
+
+  "myFavoritesEmptyTitle": "Aucun favori pour l'instant",
+  "myFavoritesEmptySubtitle": "Ajoute tes objets en favoris pour les retrouver ici en un clin d'œil.",
+  "myListEmptyTitle": "Ta collection est vide",
+  "myListEmptySubtitle": "Commence à ajouter tes objets connectés GDOME pour suivre leur santé en temps réel.",
+
+  "loginPage": "=======================",
+
+  "incorrectId": "Identifiants incorrects. Veuillez réessayer.",
+  "happySeeYou": "Heureux de vous revoir !",
+  "cultivateInside": "Cultivez votre bien-être intérieur.",
+  "email": "Email",
+  "emailExample": "votre@email.com",
+  "invalidEmail": "Format d'email invalide",
+  "password": "Mot de passe",
+  "suspension": "••••••••",
+  "tooShortPassword": "Mot de passe trop court",
+  "forgotPassword": "Mot de passe oublié ?",
+  "loginMaj": "SE CONNECTER",
+  "noAccount": "Pas encore de compte ?",
+  "signUp": "Inscrivez-vous",
+
+  "signupPage": "=======================",
+
+  "signUpFailure": "Échec de l'inscription. Ce pseudo ou cet email est peut-être déjà utilisé.",
+  "oops": "Oups !",
+  "ok": "OK",
+  "createAnAccount": "Créer un compte",
+  "joinAdventure": "Rejoignez l'aventure GDOME en quelques secondes.",
+  "pseudo": "Pseudo",
+  "pseudoQuestion": "Comment doit-on vous appeler ?",
+  "confirmation": "Confirmation",
+  "confirmationQuestion": "Confirmez votre mot de passe",
+  "differentPasswords": "Les mots de passe diffèrent",
+  "signUpMaj": "S'INSCRIRE",
+  "alreadyAccount": "Déjà un compte ?",
+  "login": "Se connecter",
+
+  "signupValidationPage": "=======================",
+
+  "welcome": "Bienvenue !",
+  "startMaj": "COMMENCER",
+  "verification": "Vérification",
+  "signupValidationDesc": "Saisissez le code de 6 chiffres envoyé à\n{userEmail}",
+  "signupResendCodeTimer": "Renvoyer le code dans {seconds} s",
+  "signupResendCode": "Renvoyer le code",
+  "sendNewCode": "Un nouveau code a été envoyé !",
+  "failureSendTryLater": "Échec de l'envoi. Réessayez plus tard.",
+  "accountValidationMaj": "VALIDER MON COMPTE",
+
+  "profilePage": "=======================",
+
+  "user": "Utilisateur",
+  "noAddressEmail": "Pas d'adresse email",
+  "identity": "Identité",
+  "noSpecified": "Non renseigné",
+  "manageMyApp": "Gérer mon application",
+  "security": "Sécurité",
+  "changePassword": "Modifier le mot de passe",
+  "myItems": "Mes objets",
+  "manageMyDevices": "Gérer mes appareils",
+  "favoritesItems": "Éléments préférés",
+  "faq": "FAQ",
+  "helpCenter": "Centre d'aide",
+  "leaveReview": "Donner mon avis",
+  "shareExperience": "Partagez votre expérience et aidez-nous à nous améliorer !",
+  "logOut": "Se déconnecter",
+
+  "forgotPasswordPage": "=======================",
+
+  "failureSendMail" : "Une erreur est survenue lors de l'envoi du mail. Vérifiez votre connexion ou l'adresse saisie.",
+  "retry" : "Réessayer",
+  "enterMailRetrieve" : "Entrez l'adresse e-mail associée à votre compte. Nous vous enverrons un code pour réinitialiser votre mot de passe.",
+  "sendTheCodeMaj" : "ENVOYER LE CODE",
+  "back" : "Retour",
+  "yourEmail" : "Votre Email",
+  "enterYourEmail" : "Veuillez entrer votre email",
+
+  "getCodeEmailPage": "=======================",
+
+  "enterMailReceived" : "Veuillez entrer le code reçu par mail.",
+  "codeContainLimit" : "Le code doit comporter 6 chiffres.",
+  "invalidCode" : "Code invalide",
+  "incorrectCode" : "Le code saisi est incorrect ou a expiré. Veuillez réessayer.",
+  "enterCodeDigits" : "Entrez le code à 6 chiffres envoyé à",
+  "hintZeroSix" : "000000",
+  "confirmationMaj": "CONFIRMER",
+  "signupResendCodeIn" : "Renvoyer le code dans ",
+
+  "resetPasswordPage": "=======================",
+
+  "retrySessionExpire" : "Session expirée. Veuillez recommencer.",
+  "expiredCode" : "Le code a expiré ou est invalide.",
+  "passwordChangeNoConnected" : "Mot de passe changé, mais erreur de connexion. Connectez-vous manuellement.",
+  "updatePassword" : "Mot de passe mis à jour !",
+  "autoLoginLoading" : "Connexion automatique en cours...",
+  "successPasswordConnectOk" : "Mot de passe modifié avec succès ! Vous pouvez maintenant vous connecter.",
+  "loginBackMaj" : "RETOUR À LA CONNEXION",
+  "newPasswordLine" : "Nouveau\nmot de passe",
+  "createNewStrongPassword" : "Créez un mot de passe fort pour sécuriser votre compte.",
+  "newPassword" : "Nouveau mot de passe",
+  "confirmationThePassword" : "Confirmer le mot de passe",
+  "resetMaj" : "RÉINITIALISER",
+  "limitChar" : "6 caractères minimum",
+
+  "myObjectProfilePage": "=======================",
+
+  "connectedDevices" : "Mes Objets Connectés",
+  "failureChargeCategories" : "Impossible de charger vos catégories.",
+  "noDevicesForMoment" : "Aucun objet enregistré pour le moment.",
+
+  "myFavoriteCatalogPage": "=======================",
+
+  "myFavoritesMajD": "Mes Favoris",
+  "failureChargeFavorites" : "Impossible de charger vos favoris.",
+  "noFavoritesForMoment" : "Aucun favori pour le moment",
+
+  "noticePage": "=======================",
+
+  "completeAllField" : "Veuillez compléter les champs obligatoires",
+  "thanksForFeedback" : "Merci pour votre retour !",
+  "occurredError" : "Une erreur est survenue",
+  "commentsMaj" : "COMMENTAIRES",
+  "experienceBack" : "Votre expérience nous intéresse",
+  "experienceBackDesc" : "Parce qu'on sait que tout n'est pas toujours parfait, votre retour est précieux pour faire progresser la nouvelle aventure GDOME chaque jour.",
+  "noticeSubject" : "Sujet de l'avis",
+  "enterTitle" : "Saisissez un titre",
+  "itemConcerned" : "Objet concerné (Optionnel)",
+  "categoryD" : "Catégorie",
+  "selectCategory" : "Sélectionnez une catégorie",
+  "yourMessage" : "Votre message",
+  "noEmptyContent" : "Le contenu ne peut pas être vide",
+  "sendBackMaj" : "ENVOYER MON RETOUR",
+
+  "shoppingPage": "=======================",
+
+  "modelSearch" : "Rechercher un modèle...",
+  "allD" : "Tous",
+  "noAvailableProduct" : "Aucun produit disponible",
+  "cartArticlesAdded": "{qty} article(s) ajouté(s) au panier !",
+  "failureAddAskTry" : "Erreur lors de l'ajout. Réessayez.",
+  "gdomeMaj" : "GDOME",
+  "theExperience" : "L'expérience",
+  "technicalSpecifications"  : "Fiche technique",
+  "productInStock": "En stock ({count} unités)",
+  "outOfStock" : "Actuellement épuisé",
+  "productNotFound" : "Produit introuvable",
+  "backToCatalogMaj" : "RETOURNER AU CATALOGUE",
+
+  "shoppingProductBottomBarPage": "=======================",
+
+  "buyNowMaj" : "ACHETER MAINTENANT",
+  "outOfStockMaj" : "ÉPUISÉ",
+
+  "shoppingProductTrustPage": "=======================",
+
+  "badgeSecurePay": "Paiement\nSécurisé",
+  "badgeHighPrecision": "Conception\n Haute Précision",
+  "badgeSatisfaction": "Satisfaction\nAssurée",
+
+  "plantDetailKnownPage": "=======================",
+
+  "plantNotFound" : "Plante introuvable",
+  "descriptionD" : "Description",
+  "expertTips" : "Conseils d'expert",
+  "lifeCalendar" : "Calendrier de vie",
+  "scientificName" : "Nom scientifique : ",
+  "unknownD" : "Inconnue",
+  "familyD" : "Famille",
+  "plantFamilyLabel": "Famille : {familyName}",
+  "metricHeight": "Hauteur",
+  "metricSun": "Soleil/j",
+  "metricPlanting": "Plantation",
+  "plantNoSpecificAdvise": "Pas de conseils spécifiques.",
+  "needsAndEnv": "Besoins & Environnement",
+  "plantExposure": "Exposition",
+  "plantGround": "Sol",
+  "seasonSpring": "Printemps",
+  "seasonSummer": "Été",
+  "seasonAutumn": "Automne",
+  "seasonWinter": "Hiver",
+
+  "orderValidationPage": "=======================",
+
+  "congratulationsD" : "Félicitations !",
+  "validateOrder" : "Votre commande a été validée avec succès et est en cours de préparation.",
+  "yourOrderMaj" : "VOTRE COMMANDE",
+  "deliveryAddressMaj" : "ADRESSE DE LIVRAISON",
+  "totalAmountPaidD" : "Montant total réglé",
+  "backToHomeMaj" : "RETOURNER À L'ACCUEIL",
+  "trackMyOrdersD" : "Suivre mes commandes",
+
+  "orderPaymentPage": "=======================",
+
+  "summaryD" : "Récapitulatif",
+  "deliveryToMAJ" : "LIVRAISON À",
+  "subtotalD" : "Sous-total",
+  "deliveryD" : "Livraison",
+  "freeD" : "Offerte",
+  "totalMaj" : "TOTAL",
+  "unableToInitThePayment" : "Impossible d'initialiser le paiement.",
+  "paymentNotFinalized": "Paiement non finalisé : {errorMessage}",
+  "paymentErrorGeneric": "Une erreur est survenue lors du paiement. Veuillez réessayer.",
+  "btnConfirmAndPay": "CONFIRMER ET PAYER {price}",
+
+  "orderAddressPage": "=======================",
+
+  "franceD" : "France",
+  "yourAddressMaj" : "VOS ADRESSES",
+  "orderSummaryMaj" : "RÉSUMÉ COMMANDE",
+  "addressD" : "Adresse",
+  "useAnotherAddress" : "Utiliser une autre adresse",
+  "addAnDeliveryAddressMaj" : "AJOUTER UNE ADRESSE DE LIVRAISON",
+  "nameAddressD" : "Nom de l'adresse (Maison, Bureau...)",
+  "enterAddressD" : "Saisissez votre adresse...",
+  "additionalInformationD" : "Complément (Appartement, Étage...)",
+  "postalCodeD" : "Code Postal",
+  "cityD" : "Ville",
+  "countryD": "Pays",
+  "setAsDefaultD" : "Définir par défaut",
+  "chooseAnAddressMaj" : "CHOISIR UNE ADRESSE",
+  "validateAddressMaj" : "VALIDER CETTE ADRESSE",
+  "fillInTheFieldsMaj" : "REMPLIR LES CHAMPS",
+  "btnConfirmOrderMaj": "CONFIRMER {price}",
+  "btnChooseAddressMaj": "CHOISIR UNE ADRESSE",
+
+  "modificationWifiMyObjectPage": "=======================",
+
+  "wifiConfigTitle": "Configuration WiFi",
+  "wifiUpdateForObject": "Mise à jour pour {objectTitle}",
+  "wifiRangeWarning": "Assurez-vous que votre objet est à portée lors de la modification.",
+  "wifiSsidLabel": "Nom du réseau (SSID)",
+  "exampleWifiSsidLabel" : "Ex: MaBox_WiFi",
+  "wifiPasswordLabel": "Mot de passe",
+  "wifiBtnModify": "Modifier mon WiFi",
+  "wifiErrorEmptyFields": "Veuillez remplir tous les champs",
+
+  "modificationWifiConnectPage": "=======================",
+
+  "wifiConnectSuccessHeader": "Configuration réussie !",
+  "wifiConnectSearchHeader": "Connexion au réseau",
+  "wifiConnectSeconds": "secondes",
+  "wifiConnectWait": "Veuillez patienter...",
+  "wifiConnectBtnFinish": "Terminer",
+  "wifiConnectBtnRetry": "Réessayer",
+  "wifiConnectLedStatus": "Statut LED de l'objet",
+  "wifiStatusSearchTitle": "Recherche de l'objet...",
+  "wifiStatusSearchSubtitle": "Assurez-vous que l'objet est à proximité et allumé. Activer le mode manuel de votre objet puis appuyer sur le bouton BLEU.",
+  "wifiStatusProcessingTitle": "Tentative de connexion...",
+  "wifiStatusProcessingSubtitle": "L'objet essaie de rejoindre votre WiFi. La LED doit clignoter.",
+  "wifiStatusSuccessTitle": "Tout est prêt !",
+  "wifiStatusSuccessSubtitle": "L'objet est maintenant connecté. La LED bleu doit disparaître.",
+  "wifiStatusErrorTitle": "Une erreur est survenue",
+  "wifiStatusErrorSubtitleFallback": "Vérifiez que votre SSID et mot de passe WiFi sont corrects.",
+  "wifiErrorBluetoothOff": "Bluetooth désactivé. Veuillez l'activer.",
+  "wifiErrorScanFailed": "Impossible de scanner les environs.",
+  "wifiErrorConnectionLost": "Connexion avec l'objet perdue.",
+  "wifiErrorTimeout": "L'objet met trop de temps à répondre.",
+  "wifiErrorWrongProfile": "Ce pot appartient à un autre Profil créé. Action refusée. Vérifier l'identitée de pots",
+  "wifiErrorConnectionFailed": "L'objet n'a pas pu se connecter à {ssid}.",
+
+  "homePageNoLogin": "=======================",
+
+  "homeTitleAdvise": "Conseils & Expertises",
+  "homeTitleShop": "Boutique GDOME",
+  "homeTooltipProfile": "Profil",
+  "navTabAdvise": "Conseils",
+  "navTabMyObjects": "Mes objets",
+  "navTabShop": "Magasin",
+
+  "homePage": "=======================",
+
+  "homeTitleEquipment": "Mes Équipements",
+  "homeTooltipMyProfile": "Mon Profil",
+
+  "addConnectMyObjectPage": "=======================",
+
+  "addObjTitle": "Connexion",
+  "addObjStepTitle": "Connectons votre objet !",
+  "addObjStepDesc": "Nous allons enfin pouvoir connecter votre {plantName} à notre objet. Appuyez sur le bouton bleu de l'objet pour que notre application puisse le détecter.",
+  "addObjDefaultPlantName": "votre plante",
+  "addObjRecapPlant": "Plante",
+  "addObjRecapNetwork": "Réseau",
+  "addObjRecapUnknown": "Inconnu",
+  "addObjRecapId": "ID Objet",
+  "addObjStatusCreating": "Création de votre profil plante...",
+  "addObjStatusSearching": "Recherche de l'objet...",
+  "addObjBtnSearching": "Recherche...",
+  "addObjBtnCreating": "Création profil...",
+  "addObjBtnStart": "Lancer la connexion",
+  "addObjDialogAlreadyLinkedTitle": "Objet déjà associé",
+  "addObjDialogAlreadyLinkedDesc": "Cet objet est déjà lié à la fleur '{flowerName}'.\n\nVeuillez d'abord supprimer la fleur associée dans vos paramètres.",
+  "addObjDialogBtnUnderstand": "COMPRIS",
+  "addObjDialogSuccessTitle": "Félicitations !",
+  "addObjDialogSuccessDesc": "Votre {plantName} est configurée et activée !",
+  "addObjErrorNoResponse": "L'objet ne répond plus. Profil annulé.",
+  "addObjErrorWifiFailed": "L'objet n'a pas pu se connecter au Wi-Fi. Le profil a été annulé.",
+  "addObjErrorNoResponseConn": "L'objet ne répond plus. Connexion annulée.",
+  "loginD" : "Connexion",
+
+  "plantDetailContent": "=======================",
+
+  "plantDetailTitle": "Détail de la plante",
+  "plantDetailNoDescription": "Pas de description",
+  "plantDetailBtnClose": "Fermer",
+  "plantDetailSectionControls": "Contrôles",
+
+  "plantDetailWrapper": "=======================",
+
+  "noAvailableToken" : "Token non disponible",
+
+  "sensorValue": "=======================",
+
+  "noAvailableD" : "Non disponible",
+
+  "objectConnectionController": "=======================",
+
+  "apiErrorTitle": "Erreur API",
+  "apiErrorCreateProfileFailed": "Impossible de créer l'objet, vérifiez votre connexion internet.",
+
+  "plantControlSwitches": "=======================",
+
+  "plantControlReasonAuto": "Arrosage manuel indisponible : le mode automatique gère déjà votre plante de façon optimale.",
+  "plantControlReasonOffline": "Impossible d'arroser : l'objet est hors ligne.",
+  "plantControlBtnWatering": "ARROSAGE EN COURS...",
+  "plantControlBtnAuto": "ARROSAGE AUTOMATIQUE",
+  "plantControlBtnStart": "LANCER L'ARROSAGE",
+
+  "plantItemMyListWidget": "=======================",
+
+  "plantItemUnknownName": "Nom inconnu",
+  "plantStatusDanger": "En danger",
+  "plantStatusWarning": "À surveiller",
+  "plantStatusHealthy": "En bonne santé",
+  "plantStatusUnknown": "Inconnu",
+
+  "authRequiredDialog": "=======================",
+
+  "authRequiredTitle": "Besoin de connexion",
+  "authRequiredMessage": "Pour accéder à cette fonctionnalité, veuillez vous connecter ou vous inscrire. C'est gratuit et ne prend que quelques minutes.",
+  "authRequiredBtnLogin": "SE CONNECTER",
+  "authRequiredBtnLater": "PLUS TARD",
+
+  "connectionErrorDialog": "=======================",
+
+  "connErrorDefaultTitle": "Erreur de connexion",
+  "connErrorDefaultMessage": "Une erreur de connexion est survenue. Veuillez réessayer.",
+  "connErrorBtnCancel": "Annuler",
+  "connErrorBtnRetry": "Réessayer",
+
+  "deleteConfirmDialog": "=======================",
+
+  "deleteD" : "Supprimer",
+
+  "successDialog": "=======================",
+
+  "validateD" : "Valider",
+
+  "wifiErrorDialog": "=======================",
+
+  "wifiErrorD" : "Erreur Wi-Fi",
+
+  "productCard": "=======================",
+
+  "shopProductPromoBadge": "PROMO",
+  "shopProductOutOfStock": "Indisponible",
+  "shopProductInStock": "En stock ({stock})",
+
+  "stepProgressBar": "=======================",
+
+  "progressBarCompleted": "{percent}% complété",
+
+  "addMyObjectPage": "=======================",
+
+  "newObjectD" : "Nouvel objet",
+  "addObjectMainTitle": "Associez votre objet",
+  "addObjectExplanation": "Si vous possédez un objet connecté GDOME, vous êtes au bon endroit ! Commençons par associer votre objet à l'application. Pour débuter : à quelle plante cet objet sera-t-il destiné ?",
+  "addObjectFieldName": "Nom de la plante",
+  "addObjectFieldHint": "Rechercher une plante (ex: Ficus...)",
+  "addObjectBtnNotFound": "Je ne trouve pas ma plante",
+  "addObjectBtnOtherUsage": "Objet différent d'un pot",
+  "addObjectOtherUsageDefaultTitle": "Objet connecté",
+  "addObjectShopText": "Si vous n'avez pas encore acheté votre objet GDOME, allons dans notre boutique pour nous dégoter votre pot !",
+  "addObjectShopBtn": "Aller à la boutique",
+
+  "buyMyObjectPage": "=======================",
+
+  "gdomeStoreD" : "Boutique GDOME",
+  "welcomeStoreD" : "Bienvenue dans la boutique !\nProchainement accessible... Restez connectés !",
+
+  "bowlDetailPage": "=======================",
+
+  "detailsBowlsD" : "Détails Gamelle (Bowl)",
+  "bowlPageProfileId": "Page Gamelle - Profil ID: {id}",
+  "specificAnimalDesignWillBeHere": "Le design spécifique des animaux sera intégré ici.",
+
+  "addWifiInformationPage": "=======================",
+
+  "wifiInfoTitle": "Informations WIFI",
+  "wifiInfoDescription": "Pour que votre objet GDOME puisse communiquer avec vous, il doit être connecté à votre réseau domestique, celui qui sera disponible lorsque vous ne serez plus là.",
+  "wifiPasswordHint": "Votre mot de passe wifi",
+  "wifiEmptyFieldsError": "Veuillez remplir tous les champs wifi",
+  "nextButton": "Suivant",
+
+  "addNameSpeMyObjectPage": "=======================",
+
+  "defaultObjectTitle": "Votre objet",
+  "customConfigTitle": "Configuration personnalisée",
+  "customConfigGiveNameTitle": "Donnez un nom à votre Objet",
+  "customConfigGiveNameDescription": "Votre objet n'est pas en rapport avec les plantes. Choisissez un nom pour différencier votre objet dans la liste.",
+  "customConfigInputLabel": "Nom de l'objet connecté",
+  "customConfigInputHint": "Ex: Capteur Salon, GDOME Bureau...",
+  "customConfigEmptyNameError": "Le nom de l'objet est obligatoire !",
+  "continueButton": "Continuer",
+
+  "advisePage": "=======================",
+
+  "helpCenterTitle": "Centre d'aide",
+  "faqCategoriesLabel": "Catégories",
+  "faqSearchHint": "Rechercher une question précise...",
+  "faqFeedbackNoticeTitle": "Votre avis nous fait grandir",
+  "faqFeedbackNoticeSubtitle": "Une suggestion ? Aidez-nous à améliorer GDOME.",
+  "faqFeedbackNoticeButton": "Partager mon expérience",
+  "faqNoResultsFound": "Aucune réponse trouvée"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

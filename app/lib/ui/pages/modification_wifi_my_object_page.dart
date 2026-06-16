@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/generated/app_localizations.dart';
+
 class ModificationWifiMyObjectPage extends StatefulWidget {
   final int objectProfileId;
   final String title;
@@ -25,7 +27,7 @@ class _ModificationWifiMyObjectPageState extends State<ModificationWifiMyObjectP
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Configuration WiFi", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text(AppLocalizations.of(context)!.wifiConfigTitle, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.green),
@@ -48,12 +50,12 @@ class _ModificationWifiMyObjectPageState extends State<ModificationWifiMyObjectP
             ),
             const SizedBox(height: 24),
             Text(
-              "Mise à jour pour ${widget.title}",
+              AppLocalizations.of(context)!.wifiUpdateForObject(widget.title),
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              "Assurez-vous que votre objet est à portée lors de la modification.",
+              AppLocalizations.of(context)!.wifiRangeWarning,
               style: TextStyle(color: Colors.grey[600], fontSize: 14),
             ),
             const SizedBox(height: 40),
@@ -61,14 +63,14 @@ class _ModificationWifiMyObjectPageState extends State<ModificationWifiMyObjectP
             // --- CHAMPS DE SAISIE ---
             _buildTextField(
               controller: _ssidController,
-              label: "Nom du réseau (SSID)",
-              hint: "Ex: MaBox_WiFi",
+              label: AppLocalizations.of(context)!.wifiSsidLabel,
+              hint: AppLocalizations.of(context)!.exampleWifiSsidLabel,
               icon: Icons.wifi,
             ),
             const SizedBox(height: 20),
             _buildTextField(
               controller: _passwordController,
-              label: "Mot de passe",
+              label: AppLocalizations.of(context)!.wifiPasswordLabel,
               hint: "••••••••",
               icon: Icons.lock_outline,
               isPassword: true,
@@ -89,8 +91,8 @@ class _ModificationWifiMyObjectPageState extends State<ModificationWifiMyObjectP
                 ),
                 child: _isUpdating
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                  "Modifier mon WiFi",
+                    : Text(
+                  AppLocalizations.of(context)!.wifiBtnModify,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ),
@@ -144,7 +146,7 @@ class _ModificationWifiMyObjectPageState extends State<ModificationWifiMyObjectP
   void _handleUpdate() {
     if (_ssidController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Veuillez remplir tous les champs")),
+        SnackBar(content: Text(AppLocalizations.of(context)!.wifiErrorEmptyFields)),
       );
       return;
     }

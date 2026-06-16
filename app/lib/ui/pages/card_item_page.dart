@@ -53,7 +53,7 @@ class _CardItemPageState extends State<CardItemPage> {
 
   void _loadCart(String token) async {
     try {
-      final items = await _shopService.fetchCartList(token);
+      final items = await _shopService.fetchCartList();
       if (mounted) {
         setState(() {
           _cartItems = items;
@@ -70,7 +70,7 @@ class _CardItemPageState extends State<CardItemPage> {
 
   void _removeItem(CartItem item) async {
     final token = context.read<AuthProvider>().accessToken!;
-    bool success = await _shopService.deleteCartItem(token, item.idCartItem);
+    bool success = await _shopService.deleteCartItem(item.idCartItem);
 
     if (success && mounted) {
       setState(() => _cartItems.removeWhere((i) => i.idCartItem == item.idCartItem));

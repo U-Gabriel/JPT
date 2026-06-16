@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -43,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = false);
 
     if (!success) {
-      _showErrorSnackBar("Identifiants incorrects. Veuillez réessayer.");
+      _showErrorSnackBar(AppLocalizations.of(context)!.incorrectId);
       return;
     }
 
@@ -104,8 +105,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
 
 
-                      const Text(
-                        "Heureux de vous revoir !",
+                      Text(
+                        AppLocalizations.of(context)!.happySeeYou,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 26,
@@ -116,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        "Cultivez votre bien-être intérieur.",
+                        AppLocalizations.of(context)!.cultivateInside,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.grey.shade600,
@@ -130,13 +131,13 @@ class _LoginPageState extends State<LoginPage> {
                       // --- CHAMP EMAIL ---
                       _buildTextField(
                         controller: _emailController,
-                        label: "Email",
-                        hint: "votre@email.com",
+                        label: AppLocalizations.of(context)!.email,
+                        hint: AppLocalizations.of(context)!.emailExample,
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         validator: (value) =>
-                        value == null || !value.contains('@') ? "Email invalide" : null,
+                        value == null || !value.contains('@') ? AppLocalizations.of(context)!.invalidEmail : null,
                       ),
 
                       const SizedBox(height: 20),
@@ -144,8 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                       // --- CHAMP MOT DE PASSE ---
                       _buildTextField(
                         controller: _passwordController,
-                        label: "Mot de passe",
-                        hint: "••••••••",
+                        label: AppLocalizations.of(context)!.password,
+                        hint: AppLocalizations.of(context)!.suspension,
                         icon: Icons.lock_outline_rounded,
                         isPassword: true,
                         obscureText: _obscurePassword,
@@ -154,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                         onFieldSubmitted: (_) => _submitLogin(),
                         togglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
                         validator: (value) =>
-                        value == null || value.length < 6 ? "Mot de passe trop court" : null,
+                        value == null || value.length < 6 ? AppLocalizations.of(context)!.tooShortPassword : null,
                       ),
 
                       Align(
@@ -162,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: TextButton(
                           onPressed: () => Navigator.pushNamed(context, '/forgot_password'),
                           style: TextButton.styleFrom(foregroundColor: Colors.green.shade800),
-                          child: const Text("Mot de passe oublié ?", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                          child: Text(AppLocalizations.of(context)!.forgotPassword, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                         ),
                       ),
 
@@ -188,8 +189,8 @@ class _LoginPageState extends State<LoginPage> {
                               width: 24,
                               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
                           )
-                              : const Text(
-                            "SE CONNECTER",
+                              :  Text(
+                            AppLocalizations.of(context)!.loginMaj,
                             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, letterSpacing: 1.1),
                           ),
                         ),
@@ -201,11 +202,11 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Pas encore de compte ?", style: TextStyle(color: Colors.grey.shade600)),
+                          Text(AppLocalizations.of(context)!.noAccount, style: TextStyle(color: Colors.grey.shade600)),
                           TextButton(
                             onPressed: () => Navigator.pushNamed(context, '/signup'),
                             style: TextButton.styleFrom(foregroundColor: const Color(0xFF2E7D32)),
-                            child: const Text("Inscrivez-vous", style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: Text(AppLocalizations.of(context)!.signUp, style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),

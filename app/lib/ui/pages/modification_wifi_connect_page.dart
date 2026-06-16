@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
+import '../../l10n/generated/app_localizations.dart';
+
 class ModificationWifiConnectPage extends StatefulWidget {
   final int objectProfileId;
   final String title;
@@ -58,7 +60,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
   void _startProcess() async {
     _resetState();
     if (await FlutterBluePlus.adapterState.first != BluetoothAdapterState.on) {
-      _handleError("Bluetooth désactivé. Veuillez l'activer.");
+      _handleError(AppLocalizations.of(context)!.wifiErrorBluetoothOff);
       return;
     }
     _startTimeoutTimer();
@@ -75,7 +77,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
         }
       });
     } catch (e) {
-      _handleError("Impossible de scanner les environs.");
+      _handleError(AppLocalizations.of(context)!.wifiErrorScanFailed);
     }
   }
 
@@ -96,7 +98,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
         }
       }
     } catch (e) {
-      _handleError("Connexion avec l'objet perdue.");
+      _handleError(AppLocalizations.of(context)!.wifiErrorConnectionLost);
     }
   }
 
@@ -114,8 +116,6 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
     final String jsonString = jsonEncode(payload);
     final bytes = utf8.encode(jsonString);
 
-    print("LOG FINAL AVANT ENVOI: $jsonString");
-
     // 2. On annule tout timer existant pour éviter les doublons
     _retrySendTimer?.cancel();
 
@@ -125,7 +125,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
         timer.cancel();
         return;
       }
-      print("Tentative de renvoi...");
+
       _targetCharacteristic!.write(bytes, withoutResponse: false)
           .catchError((e) => debugPrint("Erreur write: $e"));
     });
@@ -163,14 +163,14 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
       if (code == 2) {
         setState(() => _isProcessing = true);
         _retrySendTimer?.cancel();
-        print("L'objet a reçu, j'arrête d'envoyer.");
+
       } else if (code == 0) {
         _finalize(success: true);
       } else if (code == 3) {
         _timer?.cancel();
         _retrySendTimer?.cancel();
 
-        _errorMessage = "Ce pot appartient à un autre Profil créé. Action refusée. Vérifier l'identitée de pots";
+        _errorMessage = AppLocalizations.of(context)!.wifiErrorWrongProfile;
         _canRetry = false;
 
         // On envoie l'ACK 10 un peu plus tard
@@ -196,7 +196,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
       if (success) {
         _isSuccess = true;
       } else {
-        _errorMessage = "L'objet n'a pas pu se connecter à ${widget.ssid}.";
+        _errorMessage = AppLocalizations.of(context)!.wifiErrorConnectionFailed(widget.ssid);
         _canRetry = true;
       }
     });
@@ -226,7 +226,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
       if (_counter > 0) {
         if (mounted) setState(() => _counter--);
       } else {
-        _handleError("L'objet met trop de temps à répondre.");
+        _handleError(AppLocalizations.of(context)!.wifiErrorTimeout);
       }
     });
   }
@@ -277,7 +277,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
     return Column(
       children: [
         Text(
-          _isSuccess ? "Configuration réussie !" : "Connexion au réseau",
+          _isSuccess ? AppLocalizations.of(context)!.wifiConnectSuccessHeader : AppLocalizations.of(context)!.wifiConnectSearchHeader,
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
@@ -322,7 +322,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
           mainAxisSize: MainAxisSize.min,
           children: [
             Text("$_counter", style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-            const Text("secondes", style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(AppLocalizations.of(context)!.wifiConnectSeconds, style: TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
       ],
@@ -330,28 +330,29 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
   }
 
   Widget _buildInstructions() {
-    String title = "Recherche de l'objet...";
-    String subtitle = "Assurez-vous que l'objet est à proximité et allumé. Activer le mode manuel de votre objet puis appuyer sur le bouton BLEU.";
+    final l10n = AppLocalizations.of(context)!;
+    String title = l10n.wifiStatusSearchTitle;
+    String subtitle = l10n.wifiStatusSearchSubtitle;
     Color ledColor = Colors.blue;
 
     if (_isProcessing) {
-      title = "Tentative de connexion...";
-      subtitle = "L'objet essaie de rejoindre votre WiFi. La LED doit clignoter.";
+      title = l10n.wifiStatusProcessingTitle;
+      subtitle = l10n.wifiStatusProcessingSubtitle;
       ledColor = Colors.orange;
     }
     if (_isSuccess) {
-      title = "Tout est prêt !";
-      subtitle = "L'objet est maintenant connecté. La LED bleu doit disparaître.";
+      title = l10n.wifiStatusSuccessTitle;
+      subtitle = l10n.wifiStatusSuccessSubtitle;
       ledColor = Colors.green;
     }
 
     if (_errorMessage.isNotEmpty) {
-      title = "Une erreur est survenue";
+      title = l10n.wifiStatusErrorTitle;
       // Si le message d'erreur contient "Profil", c'est notre erreur de sécurité 3
-      if (_errorMessage.contains("Profil")) {
+      if (_errorMessage.contains(l10n.wifiErrorWrongProfile)) {
         subtitle = _errorMessage; // Affiche "Ce pot appartient à un autre Profil..."
       } else {
-        subtitle = "Vérifiez que votre SSID et mot de passe WiFi sont corrects.";
+        subtitle = l10n.wifiStatusErrorSubtitleFallback;
       }
       ledColor = Colors.red;
     }
@@ -376,7 +377,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
                 decoration: BoxDecoration(shape: BoxShape.circle, color: ledColor, boxShadow: [BoxShadow(color: ledColor, blurRadius: 8)]),
               ),
               const SizedBox(width: 10),
-              Text("Statut LED de l'objet", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ledColor)),
+              Text(AppLocalizations.of(context)!.wifiConnectLedStatus, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ledColor)),
             ],
           ),
         ],
@@ -392,7 +393,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: Colors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
           onPressed: () => Navigator.pop(context),
-          child: const Text("Terminer", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          child: Text(AppLocalizations.of(context)!.wifiConnectBtnFinish, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
         ),
       );
     }
@@ -405,11 +406,11 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
           style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
           onPressed: _startProcess,
           icon: const Icon(Icons.refresh, color: Colors.white),
-          label: const Text("Réessayer", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          label: Text(AppLocalizations.of(context)!.wifiConnectBtnRetry, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
         ),
       );
     }
 
-    return const Text("Veuillez patienter...", style: TextStyle(color: Colors.grey));
+    return Text(AppLocalizations.of(context)!.wifiConnectWait, style: TextStyle(color: Colors.grey));
   }
 }

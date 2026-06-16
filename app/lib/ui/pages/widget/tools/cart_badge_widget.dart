@@ -26,7 +26,7 @@ class _CartBadgeWidgetState extends State<CartBadgeWidget> {
   void _loadInitialCartCount() async {
     final auth = context.read<AuthProvider>();
     if (auth.isAuthenticated) {
-      final count = await _shopService.getCartCount(auth.accessToken ?? "");
+      final count = await _shopService.getCartCount();
       if (mounted) {
         // On met à jour le Provider avec la valeur réelle de l'API
         context.read<CartProvider>().updateCount(count);

@@ -2,6 +2,8 @@ import 'package:app/models/plant_type.dart';
 import 'package:app/ui/pages/shopping_page.dart';
 
 class AppConfig {
+  static const String serverBaseUrl = "https://gdome.fr";
+
   static const String url = "https://gdome.fr/api";
   static const String url_s = "https://gdome.fr/api";
   static const String url_dataset = "https://gdome.fr/api";
@@ -14,6 +16,7 @@ class AppConfig {
   static String get baseUrlDataset => url_dataset;
 
   static String get loginEndpoint => "$baseUrl/login_app";
+  static String get refreshEndpoint => "$baseUrl/login_app/refresh";
   static String get signupEndpoint => "$baseUrl/register";
   static String get sendMailEndpoint => "$baseUrl/register/send_mail";
   static String get validateAccountEndpoint => "$baseUrl/register/validate_account";

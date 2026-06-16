@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class WifiErrorDialog {
@@ -7,11 +8,11 @@ class WifiErrorDialog {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.wifi_off, color: Colors.orange),
-            SizedBox(width: 10),
-            Text("Erreur Wi-Fi"),
+            const Icon(Icons.wifi_off, color: Colors.orange),
+            const SizedBox(width: 10),
+            Text(AppLocalizations.of(context)!.wifiErrorD),
           ],
         ),
         content: Text(message),
@@ -19,7 +20,7 @@ class WifiErrorDialog {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green[700]),
             onPressed: () => Navigator.of(context).pop(), // Ferme la popup
-            child: const Text("Retour", style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.back, style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

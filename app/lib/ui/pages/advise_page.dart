@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/faq_service.dart';
 
@@ -57,15 +58,16 @@ class _AdvisePageState extends State<AdvisePage> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBFBFD),
       // 🌟 AJOUT DE L'APPBAR DYNAMIQUE ICI
       appBar: widget.hideNotice
           ? AppBar(
-        title: const Text(
-          "Centre d'aide",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        title: Text(
+          localizations.helpCenterTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         backgroundColor: const Color(0xFFFBFBFD),
         foregroundColor: const Color(0xFF1D1D1F),
@@ -78,7 +80,7 @@ class _AdvisePageState extends State<AdvisePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (authProvider.isLoggedIn && !widget.hideNotice) _buildNoticeSection(context),
+            if (authProvider.isLoggedIn && !widget.hideNotice) _buildNoticeSection(context, localizations),
 
             // On affiche le gros titre textuel uniquement si l'AppBar n'est pas là
             if (!widget.hideNotice)
@@ -90,11 +92,11 @@ class _AdvisePageState extends State<AdvisePage> {
                 ),
               ),*/
 
-            const Padding(
-              padding: EdgeInsets.fromLTRB(22, 20, 22, 12),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(22, 20, 22, 12),
               child: Text(
-                "Catégories",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                localizations.faqCategoriesLabel,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey),
               ),
             ),
 
@@ -113,7 +115,7 @@ class _AdvisePageState extends State<AdvisePage> {
             const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _buildSearchBar(),
+              child: _buildSearchBar(localizations),
             ),
             const SizedBox(height: 30),
 
@@ -123,7 +125,7 @@ class _AdvisePageState extends State<AdvisePage> {
               child: _isLoadingFaqs
                   ? _buildFaqShimmer()
                   : _faqs.isEmpty
-                  ? _buildEmptyState()
+                  ? _buildEmptyState(localizations)
                   : Column(
                 children: _faqs.map((faq) => _buildFaqCard(faq)).toList(),
               ),
@@ -174,7 +176,7 @@ class _AdvisePageState extends State<AdvisePage> {
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(AppLocalizations localizations) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -191,7 +193,7 @@ class _AdvisePageState extends State<AdvisePage> {
         controller: _searchController,
         onChanged: (value) => _performSearch(),
         decoration: InputDecoration(
-          hintText: "Rechercher une question précise...",
+          hintText: localizations.faqSearchHint,
           hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 15),
           prefixIcon: const Icon(Icons.search_rounded, color: Colors.green, size: 26),
           border: InputBorder.none,
@@ -317,7 +319,7 @@ class _AdvisePageState extends State<AdvisePage> {
     );
   }
 
-  Widget _buildNoticeSection(BuildContext context) {
+  Widget _buildNoticeSection(BuildContext context, AppLocalizations localizations) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
       padding: const EdgeInsets.all(24),
@@ -349,18 +351,18 @@ class _AdvisePageState extends State<AdvisePage> {
                 child: const Icon(Icons.tips_and_updates_outlined, color: Colors.white, size: 28),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Votre avis nous fait grandir",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                      localizations.faqFeedbackNoticeTitle,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      "Une suggestion ? Aidez-nous à améliorer GDOME.",
-                      style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.3),
+                      localizations.faqFeedbackNoticeSubtitle,
+                      style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.3),
                     ),
                   ],
                 ),
@@ -377,9 +379,9 @@ class _AdvisePageState extends State<AdvisePage> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
-              child: const Text(
-                "Partager mon expérience",
-                style: TextStyle(color: Color(0xFF27AE60), fontWeight: FontWeight.bold),
+              child: Text(
+                localizations.faqFeedbackNoticeButton,
+                style: const TextStyle(color: Color(0xFF27AE60), fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -388,14 +390,14 @@ class _AdvisePageState extends State<AdvisePage> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations localizations) {
     return Center(
       child: Column(
         children: [
           const SizedBox(height: 30),
           Icon(Icons.search_off_rounded, size: 60, color: Colors.grey.shade300),
           const SizedBox(height: 10),
-          const Text("Aucune réponse trouvée", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
+          Text(localizations.faqNoResultsFound, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
         ],
       ),
     );

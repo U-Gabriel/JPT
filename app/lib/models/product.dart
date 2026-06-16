@@ -41,7 +41,8 @@ class Product {
       stock: json['stock_quantity'] ?? 0,
       brand: json['brand'] ?? "GDOME",
       images: (json['assets'] as List? ?? [])
-          .map((a) => "http://51.77.141.175:3000/${a['file_path']}")
+          .map((a) => a['file_path'] as String? ?? "")
+          .where((path) => path.isNotEmpty)
           .toList(),
     );
   }

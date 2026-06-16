@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+
 class StepProgressBar extends StatelessWidget {
   final double percent;
 
@@ -7,6 +9,7 @@ class StepProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int percentValue = (percent * 100).toInt();
     return Column(
       children: [
         LinearProgressIndicator(
@@ -16,7 +19,7 @@ class StepProgressBar extends StatelessWidget {
           minHeight: 8,
         ),
         const SizedBox(height: 8),
-        Text("${(percent * 100).toInt()}% complété",
+        Text(AppLocalizations.of(context)!.progressBarCompleted(percentValue.toString()),
             style: const TextStyle(color: Colors.grey, fontSize: 12)),
       ],
     );

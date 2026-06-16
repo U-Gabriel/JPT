@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:app/ui/profile/widget/catalog_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,7 @@ class _MyObjectProfilePageState extends State<MyObjectProfilePage> {
     super.initState();
     final token = context.read<AuthProvider>().accessToken;
     if (token != null) {
-      _catalogFuture = _profileService.fetchCategoryCatalog(token);
+      _catalogFuture = _profileService.fetchCategoryCatalog();
     }
   }
 
@@ -31,7 +32,7 @@ class _MyObjectProfilePageState extends State<MyObjectProfilePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text("Mes Objets Connectés", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.connectedDevices, style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 0,
@@ -43,13 +44,13 @@ class _MyObjectProfilePageState extends State<MyObjectProfilePage> {
             return _buildShimmerLoader();
           }
           if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text("Impossible de charger vos catégories."));
+            return Center(child: Text(AppLocalizations.of(context)!.failureChargeCategories));
           }
 
           final categories = snapshot.data!;
 
           if (categories.isEmpty) {
-            return const Center(child: Text("Aucun objet enregistré pour le moment."));
+            return Center(child: Text(AppLocalizations.of(context)!.noDevicesForMoment));
           }
 
           return ListView.builder(

@@ -1,6 +1,8 @@
 import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
 import 'package:flutter/material.dart';
 
+import '../../l10n/generated/app_localizations.dart';
+
 class AddWifiInformationPage extends StatefulWidget {
   const AddWifiInformationPage({Key? key}) : super(key: key);
 
@@ -29,13 +31,14 @@ class _AddWifiInformationPageState extends State<AddWifiInformationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: const Text("Configuration WIFI"),
+        title: Text(localizations.wifiConfigTitle),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -45,24 +48,24 @@ class _AddWifiInformationPageState extends State<AddWifiInformationPage> {
             const StepProgressBar(percent: 0.50), // 50% comme demandé
             const SizedBox(height: 30),
 
-            const Text(
-              'Informations WIFI',
+            Text(
+              localizations.wifiInfoTitle,
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
-              "Pour que votre JackPote puisse communiquer avec vous, il doit être connecté à votre réseau domestique.",
+              localizations.wifiInfoDescription,
               style: TextStyle(fontSize: 15, color: Colors.black54, height: 1.5),
             ),
             const SizedBox(height: 40),
 
             // Champ SSID
-            const Text("Nom du réseau (SSID)", style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(localizations.wifiSsidLabel, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextField(
               controller: _ssidController,
               decoration: InputDecoration(
-                hintText: 'Ex: MaBox_1234',
+                hintText: localizations.exampleWifiSsidLabel,
                 prefixIcon: const Icon(Icons.wifi, color: Colors.green),
                 filled: true,
                 fillColor: Colors.grey[100],
@@ -75,13 +78,13 @@ class _AddWifiInformationPageState extends State<AddWifiInformationPage> {
             const SizedBox(height: 20),
 
             // Champ Password
-            const Text("Mot de passe", style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(localizations.wifiPasswordLabel, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextField(
               controller: _passwordController,
               obscureText: !_isPasswordVisible,
               decoration: InputDecoration(
-                hintText: 'Votre mot de passe wifi',
+                hintText: localizations.wifiPasswordHint,
                 prefixIcon: const Icon(Icons.lock_outline, color: Colors.green),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -109,7 +112,7 @@ class _AddWifiInformationPageState extends State<AddWifiInformationPage> {
                 onPressed: () {
                   if (_ssidController.text.isEmpty || _passwordController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Veuillez remplir tous les champs wifi")),
+                      SnackBar(content: Text(localizations.wifiEmptyFieldsError)),
                     );
                   } else {
                     Navigator.pushNamed(
@@ -128,7 +131,7 @@ class _AddWifiInformationPageState extends State<AddWifiInformationPage> {
                   backgroundColor: Colors.green[700],
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text("Suivant", style: TextStyle(fontSize: 18, color: Colors.white)),
+                child: Text(localizations.nextButton, style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ),
           ],

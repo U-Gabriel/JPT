@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:app/app_config.dart';
 
+import '../services/api_client.dart';
+
 class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   String? _accessToken;
@@ -25,9 +27,18 @@ class AuthProvider extends ChangeNotifier {
 
   bool get isLoggedIn => _isAuthenticated;
 
-
   AuthProvider() {
     _loadUser();
+
+    ApiClient().onForceLogout = () {
+      _isAuthenticated = false;
+      _accessToken = null;
+      _userId = null;
+      _userData = null;
+      _user = null;
+      _pseudo = null;
+      notifyListeners();
+    };
   }
 
   Future<void> _loadUser() async {
@@ -66,14 +77,12 @@ class AuthProvider extends ChangeNotifier {
         body: jsonEncode({'pseudo': pseudo, 'password': password}),
       );
 
-      print("📩 Status: ${response.statusCode}");
-      print("📩 Body: ${response.body}");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body);
         final data = json['data'];
 
         _accessToken = data['token'];
+        final String refreshToken = data['refresh_token']; // Récupération du refresh
         _userId = data['id_person'].toString();
         _pseudo = data['pseudo'];
         _userData = data;
@@ -81,20 +90,67 @@ class AuthProvider extends ChangeNotifier {
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', _accessToken!);
+        await prefs.setString('refresh_token', refreshToken); // Stockage local
         await prefs.setString('id_person', _userId!);
         await prefs.setString('data', jsonEncode(_userData));
 
         notifyListeners();
-        print("✅ Login réussi pour $_pseudo ($_userId)");
         return true;
       } else {
-        print("❌ Login échoué: ${response.statusCode}");
         return false;
       }
-    } catch (e, stack) {
-      debugPrint("💥 Exception login: $e");
-      debugPrint("$stack");
+    } catch (e) {
       return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> validateAccount({
+    required String pseudo,
+    required String mail,
+    required String password,
+    required String code,
+  }) async {
+    final url = Uri.parse(AppConfig.validateAccountEndpoint);
+    try {
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "pseudo": pseudo,
+          "mail": mail,
+          "password": password,
+          "code": code,
+        }),
+      );
+
+      final json = jsonDecode(response.body);
+
+      if (json['status']?.toString().toUpperCase() == "OK") {
+        final data = json['data'];
+        final userData = data['user'];
+
+        _accessToken = userData['token']?.toString();
+        final String? refreshToken = userData['refresh_token']?.toString();
+        _userId = userData['id_person']?.toString();
+        _pseudo = userData['pseudo']?.toString();
+
+        _userData = userData;
+        _user = userData;
+        _isAuthenticated = true;
+
+        final prefs = await SharedPreferences.getInstance();
+        if (_accessToken != null) await prefs.setString('token', _accessToken!);
+        if (refreshToken != null) await prefs.setString('refresh_token', refreshToken);
+        if (_userId != null) await prefs.setString('id_person', _userId!);
+        await prefs.setString('data', jsonEncode(userData));
+
+        notifyListeners();
+        return {"success": true, "message": "Compte validé et connecté !"};
+      } else {
+        return {"success": false, "message": json['message'] ?? "Code incorrect."};
+      }
+    } catch (e) {
+      return {"success": false, "message": "Erreur technique : $e"};
     }
   }
 
@@ -181,77 +237,6 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       print("💥 Erreur lors de l'appel sendMail: $e");
       return false;
-    }
-  }
-
-  Future<Map<String, dynamic>> validateAccount({
-    required String pseudo,
-    required String mail,
-    required String password,
-    required String code,
-  }) async {
-    final url = Uri.parse(AppConfig.validateAccountEndpoint);
-    try {
-      print("➡️ Envoi validation à $url");
-      final response = await http.patch(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "pseudo": pseudo,
-          "mail": mail,
-          "password": password,
-          "code": code,
-        }),
-      );
-
-      final json = jsonDecode(response.body);
-
-      // On vérifie le status de manière plus flexible (insensible à la casse)
-      if (json['status']?.toString().toUpperCase() == "OK") {
-        final data = json['data'];
-
-        // 🚨 LA CORRECTION EST ICI : On récupère l'objet 'user'
-        final userData = data['user'];
-
-        print("--- DEBUG VALIDATION ACCOUNT ---");
-        print("👤 UserData extrait: $userData");
-        print("🔑 Token extrait: ${userData['token']}");
-        print("--------------------------------");
-
-        // ✅ On utilise maintenant 'userData' au lieu de 'data'
-        _accessToken = userData['token']?.toString();
-        _userId = userData['id_person']?.toString();
-        _pseudo = userData['pseudo']?.toString();
-
-        // On stocke l'intégralité pour le profil
-        _userData = userData;
-        _user = userData;
-        _isAuthenticated = true;
-
-        // ✅ Sauvegarde locale avec les bonnes variables
-        final prefs = await SharedPreferences.getInstance();
-        if (_accessToken != null) await prefs.setString('token', _accessToken!);
-        if (_userId != null) await prefs.setString('id_person', _userId!);
-
-        // On sauvegarde l'objet user complet
-        await prefs.setString('data', jsonEncode(userData));
-
-        notifyListeners();
-
-        return {"success": true, "message": "Compte validé et connecté !"};
-      }else {
-        // Si le status n'est pas OK
-        return {
-          "success": false,
-          "message": json['message'] ?? "Le code est incorrect ou a expiré."
-        };
-      }
-    } catch (e, stack) {
-      // C'est ici que tu tombes actuellement !
-      // Regarde les logs pour voir l'erreur précise.
-      print("💥 ERREUR CRITIQUE VALIDATION: $e");
-      print(stack);
-      return {"success": false, "message": "Erreur technique : $e"};
     }
   }
 

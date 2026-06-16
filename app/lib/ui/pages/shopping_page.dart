@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shimmer/shimmer.dart';
@@ -34,10 +35,8 @@ class _ShoppingPageState extends State<ShoppingPage> {
   }
 
   void _loadInitialData() async {
-    final authProvider = context.read<AuthProvider>();
-    final token = authProvider.accessToken ?? "";
 
-    final fetchedTags = await _tagService.fetchTagsLvlOne(token);
+    final fetchedTags = await _tagService.fetchTagsLvlOne();
     if (mounted) {
       setState(() => _tags = fetchedTags);
       _refreshCatalog();
@@ -101,7 +100,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
             controller: _searchController,
             onSubmitted: (v) => _refreshCatalog(),
             decoration: InputDecoration(
-              hintText: "Rechercher un modèle...",
+              hintText: AppLocalizations.of(context)!.modelSearch,
               prefixIcon: const Icon(Icons.search_rounded, color: AppT.ink),
               filled: true,
               fillColor: Colors.white,
@@ -131,7 +130,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
           itemCount: _tags.length + 1,
           itemBuilder: (context, index) {
             final isFirst = index == 0;
-            final label = isFirst ? "Tous" : _tags[index - 1]['title'];
+            final label = isFirst ? AppLocalizations.of(context)!.allD : _tags[index - 1]['title'];
             final id = isFirst ? null : _tags[index - 1]['id_tag'];
             final isSelected = _selectedTagId == id;
 
@@ -168,7 +167,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
 
   Widget _buildProductGrid() {
     if (_catalog.isEmpty) {
-      return const SliverFillRemaining(child: Center(child: Text("Aucun produit disponible")));
+      return SliverFillRemaining(child: Center(child: Text(AppLocalizations.of(context)!.noAvailableProduct)));
     }
     return SliverPadding(
       padding: const EdgeInsets.all(24),

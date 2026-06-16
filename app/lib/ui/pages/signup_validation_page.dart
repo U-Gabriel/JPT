@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 
 class SignupValidationPage extends StatefulWidget {
@@ -66,8 +67,8 @@ class _SignupValidationPageState extends State<SignupValidationPage> {
         _startTimer();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Un nouveau code a été envoyé !"),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.sendNewCode),
               backgroundColor: Colors.green,
             ),
           );
@@ -75,8 +76,8 @@ class _SignupValidationPageState extends State<SignupValidationPage> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Échec de l'envoi. Réessayez plus tard."),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.failureSendTryLater),
               backgroundColor: Colors.orange,
             ),
           );
@@ -122,13 +123,13 @@ class _SignupValidationPageState extends State<SignupValidationPage> {
         child: SingleChildScrollView(
           child: AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            title: const Column(
+            title: Column(
               children: [
-                Icon(Icons.check_circle_rounded, color: Color(0xFF2E7D32), size: 80),
-                SizedBox(height: 16),
+                const Icon(Icons.check_circle_rounded, color: Color(0xFF2E7D32), size: 80),
+                const SizedBox(height: 16),
                 Text(
-                  "Bienvenue !",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1B5E20), fontSize: 24),
+                  AppLocalizations.of(context)!.welcome,
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1B5E20), fontSize: 24),
                 ),
               ],
             ),
@@ -162,7 +163,7 @@ class _SignupValidationPageState extends State<SignupValidationPage> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     elevation: 0,
                   ),
-                  child: const Text("COMMENCER", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  child: Text(AppLocalizations.of(context)!.startMaj, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
               ),
             ],
@@ -196,10 +197,10 @@ class _SignupValidationPageState extends State<SignupValidationPage> {
             children: [
               SvgPicture.asset('assets/logo/logo_complet.svg', height: 80),
               const SizedBox(height: 40),
-              const Text("Vérification", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xFF1B5E20))),
+              Text(AppLocalizations.of(context)!.verification, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xFF1B5E20))),
               const SizedBox(height: 12),
               Text(
-                "Saisissez le code de 6 chiffres envoyé à\n${args['email']}",
+                AppLocalizations.of(context)!.signupValidationDesc(args['email'] ?? ''),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 15, height: 1.5),
               ),
@@ -215,12 +216,12 @@ class _SignupValidationPageState extends State<SignupValidationPage> {
 
               // --- TIMER & RENVOI ---
               _timerSeconds > 0
-                  ? Text("Renvoyer le code dans $_timerSeconds s", style: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w500))
+                  ? Text(AppLocalizations.of(context)!.signupResendCodeTimer(_timerSeconds), style: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w500))
                   : TextButton(
                 onPressed: _isResending ? null : () => _handleResend(args['email']),
                 child: _isResending
                     ? const CircularProgressIndicator(strokeWidth: 2)
-                    : const Text("Renvoyer un code", style: TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold, fontSize: 16)),
+                    : Text(AppLocalizations.of(context)!.signupResendCode, style: TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold, fontSize: 16)),
               ),
 
               const SizedBox(height: 50),
@@ -239,7 +240,7 @@ class _SignupValidationPageState extends State<SignupValidationPage> {
                   ),
                   child: _isValidating
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("VALIDER MON COMPTE", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+                      : Text(AppLocalizations.of(context)!.accountValidationMaj, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
                 ),
               ),
             ],

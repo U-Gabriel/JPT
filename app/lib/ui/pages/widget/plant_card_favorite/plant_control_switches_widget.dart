@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Pour le retour haptique
 import 'package:provider/provider.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../providers/auth_provider.dart';
 import '../../../../services/object_profile_service.dart';
 import '../../../../models/object_profile.dart';
@@ -38,12 +39,12 @@ class _PlantControlSwitchesState extends State<PlantControlSwitches> {
 
     // Si le mode auto est actif, on n'arrose pas, on explique pourquoi
     if (widget.plant.isAutomatic == true) {
-      _showDisabledReason("Arrosage manuel indisponible : le mode automatique gère déjà votre plante de façon optimale.");
+      _showDisabledReason(AppLocalizations.of(context)!.plantControlReasonAuto);
       return;
     }
 
     if (!isStable) {
-      _showDisabledReason("Impossible d'arroser : l'objet est hors ligne.");
+      _showDisabledReason(AppLocalizations.of(context)!.plantControlReasonOffline);
       return;
     }
 
@@ -63,7 +64,6 @@ class _PlantControlSwitchesState extends State<PlantControlSwitches> {
         idPerson: userId,
         idObjectProfile: widget.plant.idObjectProfile,
         otherFields: {"is_water": true},
-        token: token,
       );
 
       Timer(const Duration(seconds: 30), () {
@@ -128,7 +128,7 @@ class _PlantControlSwitchesState extends State<PlantControlSwitches> {
         children: [
           const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.blue)),
           const SizedBox(width: 15),
-          Text("ARROSAGE EN COURS...", style: TextStyle(color: Colors.blue[800], fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context)!.plantControlBtnWatering, style: TextStyle(color: Colors.blue[800], fontWeight: FontWeight.bold)),
         ],
       );
     }
@@ -140,19 +140,19 @@ class _PlantControlSwitchesState extends State<PlantControlSwitches> {
           Icon(Icons.lock_outline, color: Colors.grey[600]), // Icône de verrou
           const SizedBox(width: 10),
           Text(
-            "ARROSAGE AUTOMATIQUE",
+            AppLocalizations.of(context)!.plantControlBtnAuto,
             style: TextStyle(color: Colors.grey[600], fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ],
       );
     }
 
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.water_drop, color: Colors.white),
-        SizedBox(width: 10),
-        Text("LANCER L'ARROSAGE", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        const Icon(Icons.water_drop, color: Colors.white),
+        const SizedBox(width: 10),
+        Text(AppLocalizations.of(context)!.plantControlBtnStart, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
       ],
     );
   }

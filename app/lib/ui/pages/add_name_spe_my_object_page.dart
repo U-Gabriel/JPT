@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
 
 import '../../app_config.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 class AddNameSpeMyObjectPage extends StatefulWidget {
   const AddNameSpeMyObjectPage({Key? key}) : super(key: key);
@@ -23,20 +24,21 @@ class _AddNameSpeMyObjectPageState extends State<AddNameSpeMyObjectPage> {
     if (args is Map<String, dynamic>) {
       plantId = args['id'];
       setState(() {
-        objectTitle = args['title'] ?? "Votre objet";
+        objectTitle = args['title'] ?? AppLocalizations.of(context)!.defaultObjectTitle;;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: const Text("Configuration personnalisée"),
+        title: Text(localizations.customConfigTitle),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -58,18 +60,18 @@ class _AddNameSpeMyObjectPageState extends State<AddNameSpeMyObjectPage> {
               ),
             ),
             const SizedBox(height: 24),
-            const Center(
+            Center(
               child: Text(
-                "Donnez un nom à votre Objet",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5),
+                localizations.customConfigGiveNameTitle,
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5),
                 textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 12),
-            const Center(
+            Center(
               child: Text(
-                "Votre objet n'est pas en rapport avec les plantes. Choisisez un nom pour différencier votre objet dans la liste.",
-                style: TextStyle(fontSize: 14, color: Colors.black54, height: 1.4),
+                localizations.customConfigGiveNameDescription,
+                style: const TextStyle(fontSize: 14, color: Colors.black54, height: 1.4),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -77,10 +79,10 @@ class _AddNameSpeMyObjectPageState extends State<AddNameSpeMyObjectPage> {
 
             // 2. Champ de saisie obligatoire
             RichText(
-              text: const TextSpan(
-                text: "Nom de l'objet connecté",
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                children: [
+              text: TextSpan(
+                text: localizations.customConfigInputLabel,
+                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                children: const [
                   TextSpan(text: " *", style: TextStyle(color: Colors.red)),
                 ],
               ),
@@ -89,7 +91,7 @@ class _AddNameSpeMyObjectPageState extends State<AddNameSpeMyObjectPage> {
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
-                hintText: "Ex: Capteur Salon, JackPote Bureau...",
+                hintText: localizations.customConfigInputHint,
                 filled: true,
                 fillColor: Colors.grey[100],
                 border: OutlineInputBorder(
@@ -110,8 +112,8 @@ class _AddNameSpeMyObjectPageState extends State<AddNameSpeMyObjectPage> {
                 onPressed: () {
                   if (_nameController.text.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Le nom de l'objet est obligatoire !"),
+                      SnackBar(
+                          content: Text(localizations.customConfigEmptyNameError),
                           backgroundColor: Colors.red
                       ),
                     );
@@ -131,7 +133,7 @@ class _AddNameSpeMyObjectPageState extends State<AddNameSpeMyObjectPage> {
                   backgroundColor: Colors.blueGrey[800], // Teinte légèrement différente pour marquer le côté "hardware/libre"
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text("Continuer", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                child: Text(localizations.continueButton, style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             ),
           ],

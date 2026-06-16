@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -44,12 +45,12 @@ class _GetCodeEmailPageState extends State<GetCodeEmailPage> {
 
     // --- AJOUT DE LA VALIDATION ICI ---
     if (code.isEmpty) {
-      _showSnackBar("Veuillez entrer le code reçu par mail.");
+      _showSnackBar(AppLocalizations.of(context)!.enterMailReceived);
       return;
     }
 
     if (code.length < 6) {
-      _showSnackBar("Le code doit comporter 6 chiffres.");
+      _showSnackBar(AppLocalizations.of(context)!.codeContainLimit);
       return;
     }
     // ----------------------------------
@@ -95,18 +96,18 @@ class _GetCodeEmailPageState extends State<GetCodeEmailPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.red),
-            SizedBox(width: 10),
-            Text("Code invalide"),
+            const Icon(Icons.error_outline, color: Colors.red),
+            const SizedBox(width: 10),
+            Text(AppLocalizations.of(context)!.invalidCode),
           ],
         ),
-        content: const Text("Le code saisi est incorrect ou a expiré. Veuillez réessayer."),
+        content: Text(AppLocalizations.of(context)!.incorrectCode),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text("OK", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+            child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
           )
         ],
       ),
@@ -148,13 +149,13 @@ class _GetCodeEmailPageState extends State<GetCodeEmailPage> {
                 child: Icon(Icons.security_rounded, size: 60, color: Colors.green.shade700),
               ),
               const SizedBox(height: 32),
-              const Text(
-                "Vérification",
+              Text(
+                AppLocalizations.of(context)!.verification,
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: Color(0xFF1B5E20), letterSpacing: -1),
               ),
               const SizedBox(height: 16),
               Text(
-                "Entrez le code à 6 chiffres envoyé à",
+                AppLocalizations.of(context)!.enterCodeDigits,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 15, color: Colors.grey.shade600),
               ),
@@ -182,7 +183,7 @@ class _GetCodeEmailPageState extends State<GetCodeEmailPage> {
                   if (value.length == 6) _handleVerification(email);
                 },
                 decoration: InputDecoration(
-                  hintText: "000000",
+                  hintText: AppLocalizations.of(context)!.hintZeroSix,
                   hintStyle: TextStyle(color: Colors.grey.shade300, letterSpacing: 15),
                   counterText: "", // Cache le compteur de caractères
                   filled: true,
@@ -214,7 +215,7 @@ class _GetCodeEmailPageState extends State<GetCodeEmailPage> {
                   ),
                   child: _isVerifying
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("CONFIRMER", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                      : Text(AppLocalizations.of(context)!.confirmationMaj, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                 ),
               ),
 
@@ -227,12 +228,12 @@ class _GetCodeEmailPageState extends State<GetCodeEmailPage> {
                   final success = await Provider.of<AuthProvider>(context, listen: false).requestPasswordReset(email);
                   if (success) startTimer();
                 },
-                child: Text("Renvoyer le code", style: TextStyle(color: Colors.green.shade800, fontWeight: FontWeight.bold)),
+                child: Text(AppLocalizations.of(context)!.signupResendCode, style: TextStyle(color: Colors.green.shade800, fontWeight: FontWeight.bold)),
               )
                   : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Renvoyer le code dans ", style: TextStyle(color: Colors.grey)),
+                  Text(AppLocalizations.of(context)!.signupResendCodeIn, style: TextStyle(color: Colors.grey)),
                   Text("${_start}s", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                 ],
               ),

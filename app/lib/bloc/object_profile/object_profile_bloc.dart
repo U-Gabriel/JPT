@@ -38,9 +38,7 @@ class ObjectProfileBloc extends Bloc<ObjectProfileEvent, ObjectProfileState> {
 
   Future<void> _onLoad(LoadProfiles event, Emitter<ObjectProfileState> emit) async {
     try {
-      final profiles = await service.fetchObjectProfilesListFavoris(
-        token,
-      );
+      final profiles = await service.fetchObjectProfilesListFavoris();
       if (!listEquals(profiles, _currentProfiles)) {
         _currentProfiles = profiles;
         _profilesController.add(_currentProfiles);

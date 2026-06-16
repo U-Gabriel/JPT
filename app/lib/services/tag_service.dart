@@ -1,16 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../app_config.dart';
+import 'api_client.dart';
 
 class TagService {
-  Future<List<dynamic>> fetchTags(String token) async {
-    final response = await http.get(
-      Uri.parse(AppConfig.tagsEndpoint),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+  final ApiClient _apiClient = ApiClient();
+
+  Future<List<dynamic>> fetchTags() async {
+    final response = await _apiClient.get(Uri.parse(AppConfig.tagsEndpoint));
+
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
       return decoded['data'];
@@ -18,14 +16,9 @@ class TagService {
     return [];
   }
 
-  Future<List<dynamic>> fetchTagsLvlOne(String token) async {
-    final response = await http.get(
-      Uri.parse(AppConfig.tagsLvlOneEndpoint),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+  Future<List<dynamic>> fetchTagsLvlOne() async {
+    final response = await _apiClient.get(Uri.parse(AppConfig.tagsLvlOneEndpoint));
+
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
       return decoded['data'];

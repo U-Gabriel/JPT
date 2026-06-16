@@ -35,7 +35,7 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
     final userId = int.tryParse(auth.userId ?? '') ?? 0;
 
     if (token != null) {
-      final result = await _service.getGroupsResume(userId, widget.objectProfileId, token);
+      final result = await _service.getGroupsResume(userId, widget.objectProfileId);
       setState(() {
         _groups = result;
         if (_groups.isNotEmpty) {
@@ -356,7 +356,7 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
     setState(() => _isLoading = true);
 
     // 2. Appel au service
-    final success = await _service.deleteGroup(userId, _selectedGroup!.idGroup, token);
+    final success = await _service.deleteGroup(userId, _selectedGroup!.idGroup);
 
     if (success) {
       // 3. Rafraîchir la liste localement
@@ -392,7 +392,6 @@ class _GroupPlantTypePageState extends State<GroupPlantTypePage> {
       idObjectProfile: widget.objectProfileId,
       idGroup: _selectedGroup!.idGroup,
       isStandard: _selectedGroup!.isStandard,
-      token: token,
     );
 
     if (success) {

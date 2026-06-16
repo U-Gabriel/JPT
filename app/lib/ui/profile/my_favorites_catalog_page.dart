@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:app/ui/profile/widget/catalog_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,7 @@ class _MyFavoritesCatalogPageState extends State<MyFavoritesCatalogPage> {
     super.initState();
     final token = context.read<AuthProvider>().accessToken;
     if (token != null) {
-      _favoritesFuture = _profileService.fetchCategoryFavorites(token);
+      _favoritesFuture = _profileService.fetchCategoryFavorites();
     }
   }
 
@@ -31,7 +32,7 @@ class _MyFavoritesCatalogPageState extends State<MyFavoritesCatalogPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text("Mes Favoris", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.myFavoritesMajD, style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 0,
@@ -43,7 +44,7 @@ class _MyFavoritesCatalogPageState extends State<MyFavoritesCatalogPage> {
             return _buildShimmerLoader();
           }
           if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text("Impossible de charger vos favoris."));
+            return Center(child: Text(AppLocalizations.of(context)!.failureChargeFavorites));
           }
 
           final categories = snapshot.data!;
@@ -52,13 +53,13 @@ class _MyFavoritesCatalogPageState extends State<MyFavoritesCatalogPage> {
           final cleanCategories = categories.where((cat) => cat.objects.isNotEmpty).toList();
 
           if (cleanCategories.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.star_border_rounded, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text("Aucun favori pour le moment.", style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  const Icon(Icons.star_border_rounded, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  Text(AppLocalizations.of(context)!.noFavoritesForMoment, style: const TextStyle(color: Colors.grey, fontSize: 16)),
                 ],
               ),
             );
@@ -120,7 +121,7 @@ class _MyFavoritesCatalogPageState extends State<MyFavoritesCatalogPage> {
                               final token = context.read<AuthProvider>().accessToken;
                               if (token != null) {
                                 // On relance la requête API pour rafraîchir instantanément l'écran
-                                _favoritesFuture = _profileService.fetchCategoryFavorites(token);
+                                _favoritesFuture = _profileService.fetchCategoryFavorites();
                               }
                             });
                           },

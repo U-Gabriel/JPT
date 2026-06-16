@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../models/product.dart';
 import '../../../services/shopping_service.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../utils/app_theme_tokens.dart';
@@ -72,7 +73,6 @@ class _ShoppingDetailsPageState extends State<ShoppingDetailsPage> {
     final success = await _shopService.addToCart(
       idObject: _product!.id,
       quantity: _selectedQty,
-      token: auth.accessToken!,
     );
 
     if (mounted) setState(() => _isSubmitting = false);
@@ -88,14 +88,14 @@ class _ShoppingDetailsPageState extends State<ShoppingDetailsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 backgroundColor: AppT.ink,
-                content: Text("$_selectedQty article(s) ajouté(s) au panier !"),
+                content: Text(AppLocalizations.of(context)!.cartArticlesAdded(_selectedQty)),
                 behavior: SnackBarBehavior.floating
             )
         );
       }
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Erreur lors de l'ajout. Réessayez."), backgroundColor: Colors.redAccent)
+          SnackBar(content: Text(AppLocalizations.of(context)!.failureAddAskTry), backgroundColor: Colors.redAccent)
       );
     }
   }
@@ -159,7 +159,7 @@ class _ShoppingDetailsPageState extends State<ShoppingDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(p.brand?.toUpperCase() ?? "GDOME", style: const TextStyle(color: AppT.gold, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 3)),
+                Text(p.brand?.toUpperCase() ?? AppLocalizations.of(context)!.gdomeMaj, style: const TextStyle(color: AppT.gold, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 3)),
                 const SizedBox(height: 8),
                 Text(p.title, style: AppT.title),
                 const SizedBox(height: 24),
@@ -167,11 +167,11 @@ class _ShoppingDetailsPageState extends State<ShoppingDetailsPage> {
                 const SizedBox(height: 32),
                 const ProductTrustBadges(),
                 const SizedBox(height: 40),
-                _buildSectionLabel("L'expérience"),
+                _buildSectionLabel(AppLocalizations.of(context)!.theExperience),
                 Text(p.description, style: TextStyle(height: 1.8, color: AppT.ink.withOpacity(0.8), fontSize: 15)),
                 if (p.technicalDetails.isNotEmpty) ...[
                   const SizedBox(height: 40),
-                  _buildSectionLabel("Fiche technique"),
+                  _buildSectionLabel(AppLocalizations.of(context)!.technicalSpecifications),
                   ProductSpecList(specs: p.technicalDetails),
                 ],
               ],
@@ -212,7 +212,7 @@ class _ShoppingDetailsPageState extends State<ShoppingDetailsPage> {
               Icon(Icons.inventory_2_outlined, size: 16, color: p.stock > 0 ? Colors.green : Colors.red),
               const SizedBox(width: 8),
               Text(
-                p.stock > 0 ? "En stock (${p.stock} unités)" : "Actuellement épuisé",
+                p.stock > 0 ? AppLocalizations.of(context)!.productInStock(p.stock) : AppLocalizations.of(context)!.outOfStock,
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: p.stock > 0 ? Colors.green : Colors.red),
               ),
             ],
@@ -249,11 +249,11 @@ class _ShoppingDetailsPageState extends State<ShoppingDetailsPage> {
         children: [
           Icon(Icons.inventory_2_outlined, size: 64, color: AppT.muted.withOpacity(0.5)),
           const SizedBox(height: 16),
-          const Text("Produit introuvable", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppT.ink)),
+          Text(AppLocalizations.of(context)!.productNotFound, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppT.ink)),
           const SizedBox(height: 24),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("RETOURNER AU CATALOGUE", style: TextStyle(color: AppT.gold, fontWeight: FontWeight.bold)),
+            child: Text(AppLocalizations.of(context)!.backToCatalogMaj, style: TextStyle(color: AppT.gold, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

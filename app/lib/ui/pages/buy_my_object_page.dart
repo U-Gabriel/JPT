@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class BuyMyObjectPage extends StatelessWidget {
@@ -6,12 +7,12 @@ class BuyMyObjectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Boutique JackPote")),
-      body: const Center(
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.gdomeStoreD)),
+      body: Center(
         child: Text(
-          "Bienvenue dans la boutique !\nDécouvrez nos pots connectés.",
+          AppLocalizations.of(context)!.welcomeStoreD,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
       ),
     );

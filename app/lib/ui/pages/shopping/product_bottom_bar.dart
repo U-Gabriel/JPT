@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../utils/app_theme_tokens.dart';
 
@@ -64,7 +65,7 @@ class ProductBottomBar extends StatelessWidget {
               child: (isLoading)
                   ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                   : Text(
-                inStock ? "ACHETER MAINTENANT" : "ÉPUISÉ",
+                inStock ? AppLocalizations.of(context)!.buyNowMaj : AppLocalizations.of(context)!.outOfStockMaj,
                 style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 0.8),
               ),
             ),

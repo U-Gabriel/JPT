@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:app/services/object_profile_service.dart';
 import 'package:app/ui/pages/widget/popup/connection_error_dialog.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+
 class ObjectConnectionController {
   final ObjectProfileService apiService = ObjectProfileService();
 
@@ -19,7 +21,6 @@ class ObjectConnectionController {
         idObject: idObject,
         idPlantType: idPlantType,
         idPerson: idPerson,
-        token: token,
       );
     } catch (e) {
       // On gère la pop-up directement ici ou on relance l'erreur ?
@@ -28,8 +29,8 @@ class ObjectConnectionController {
 
       bool? retry = await ConnectionErrorDialog.show(
         context,
-        title: "Erreur API",
-        message: "Impossible de créer l'objet, vérifiez votre connexion internet.",
+        title: AppLocalizations.of(context)!.apiErrorTitle,
+        message: AppLocalizations.of(context)!.apiErrorCreateProfileFailed,
       );
 
       if (retry == true) {

@@ -7,12 +7,14 @@ import 'package:http_parser/http_parser.dart';
 
 import '../app_config.dart';
 import '../models/avatar.dart';
+import 'api_client.dart';
 
 class AvatarService {
-  Future<List<Avatar>> fetchAvatars(String token) async {
-    final response = await http.get(
+  final ApiClient _apiClient = ApiClient();
+
+  Future<List<Avatar>> fetchAvatars() async {
+    final response = await _apiClient.get(
       Uri.parse(AppConfig.avatarListEndpoint),
-      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode == 200) {
@@ -26,26 +28,26 @@ class AvatarService {
   Future<bool> uploadCustomAvatar({
     required int idObjectProfile,
     required File imageFile,
-    required String token,
   }) async {
     final url = Uri.parse(AppConfig.avatarUpdateEndpoint);
 
-    var request = http.MultipartRequest("POST", url);
-    request.headers['Authorization'] = 'Bearer $token';
-
-    // Ajout des champs texte
-    request.fields['id_object_profile'] = idObjectProfile.toString();
-
-    // Ajout du fichier
-    request.files.add(await http.MultipartFile.fromPath(
-      'picture',
-      imageFile.path,
-      contentType: MediaType('image', 'jpeg'), // ou 'png' selon le fichier
-    ));
-
     try {
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
+      // 1. On prépare le fichier EXACTEMENT comme tu le faisais avant, avec la clé 'picture'
+      final multipartFile = await http.MultipartFile.fromPath(
+        'picture', // 👈 C'est exactement ta ligne d'origine !
+        imageFile.path,
+        contentType: MediaType('image', 'jpeg'),
+      );
+
+      // 2. On envoie le tout à notre ApiClient magique
+      final response = await _apiClient.multipart(
+        method: "POST",
+        url: url,
+        fields: {
+          'id_object_profile': idObjectProfile.toString(), // Ton champ texte d'origine
+        },
+        files: [multipartFile], // Ton fichier d'origine
+      );
 
       if (response.statusCode == 200) {
         final decoded = json.decode(response.body);

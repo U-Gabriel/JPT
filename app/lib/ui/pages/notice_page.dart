@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:app/services/tag_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,8 +38,8 @@ class _NoticePageState extends State<NoticePage> {
     final objService = ObjectProfileService();
 
     try {
-      final fetchedObjects = await objService.fetchObjectProfilesList(auth.accessToken!);
-      final fetchedTags = await TagService().fetchTags(auth.accessToken!);
+      final fetchedObjects = await objService.fetchObjectProfilesList();
+      final fetchedTags = await TagService().fetchTags();
 
       setState(() {
         objects = fetchedObjects;
@@ -46,7 +47,7 @@ class _NoticePageState extends State<NoticePage> {
         isLoading = false;
       });
     } catch (e) {
-      debugPrint("💥 Erreur lors du chargement des données : $e");
+      debugPrint("!!! Erreur lors du chargement des données : $e");
       setState(() => isLoading = false);
     }
   }
@@ -55,7 +56,7 @@ class _NoticePageState extends State<NoticePage> {
     // Le selectedObjectId n'est plus requis dans la validation
     if (!_formKey.currentState!.validate() || selectedTagId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Veuillez compléter les champs obligatoires")),
+        SnackBar(content: Text(AppLocalizations.of(context)!.completeAllField)),
       );
       return;
     }
@@ -69,7 +70,6 @@ class _NoticePageState extends State<NoticePage> {
       content: _contentController.text,
       idObjectProfile: selectedObjectId,
       idTag: selectedTagId!,
-      token: auth.accessToken!,
     );
 
     setState(() => isLoading = false);
@@ -78,13 +78,13 @@ class _NoticePageState extends State<NoticePage> {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(res['message'] ?? "Merci pour votre retour !"), backgroundColor: Colors.green),
+          SnackBar(content: Text(res['message'] ?? AppLocalizations.of(context)!.thanksForFeedback), backgroundColor: Colors.green),
         );
       }
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(res['message'] ?? "Une erreur est survenue"), backgroundColor: Colors.red),
+          SnackBar(content: Text(res['message'] ?? AppLocalizations.of(context)!.occurredError), backgroundColor: Colors.red),
         );
       }
     }
@@ -133,8 +133,8 @@ class _NoticePageState extends State<NoticePage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: const BackButton(color: Colors.black),
-        title: const Text(
-          "COMMENTAIRES",
+        title: Text(
+          AppLocalizations.of(context)!.commentsMaj,
           style: TextStyle(color: Color(0xFF2D3E50), fontWeight: FontWeight.w600, fontSize: 18),
         ),
         centerTitle: true,
@@ -150,8 +150,8 @@ class _NoticePageState extends State<NoticePage> {
             children: [
               SvgPicture.asset('assets/logo/logo_complet.svg', height: 60),
               const SizedBox(height: 20),
-              const Text(
-                "Votre expérience nous intéresse",
+              Text(
+                AppLocalizations.of(context)!.experienceBack,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF2D3E50)),
               ),
@@ -159,7 +159,7 @@ class _NoticePageState extends State<NoticePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  "Parce qu'on sait que tout n'est pas toujours parfait, votre retour est précieux pour faire progresser l'aventure GDOME chaque jour.",
+                  AppLocalizations.of(context)!.experienceBackDesc,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15, color: Colors.blueGrey.shade700, height: 1.5, fontStyle: FontStyle.italic),
                 ),
@@ -168,15 +168,15 @@ class _NoticePageState extends State<NoticePage> {
 
               TextFormField(
                 controller: _titleController,
-                decoration: _buildInputDecoration("Sujet de l'avis", Icons.title),
-                validator: (v) => (v == null || v.isEmpty) ? "Saisissez un titre" : null,
+                decoration: _buildInputDecoration(AppLocalizations.of(context)!.noticeSubject, Icons.title),
+                validator: (v) => (v == null || v.isEmpty) ? AppLocalizations.of(context)!.enterTitle : null,
               ),
               const SizedBox(height: 16),
 
-              // DROPDOXN OBJET : MODIFIÉ EN OPTIONNEL (Pas de validator)
+              // OBJET
               DropdownButtonFormField<int>(
                 value: selectedObjectId,
-                decoration: _buildInputDecoration("Objet concerné (Optionnel)", Icons.sensors),
+                decoration: _buildInputDecoration(AppLocalizations.of(context)!.itemConcerned, Icons.sensors),
                 items: objects.map<DropdownMenuItem<int>>((ObjectProfile obj) {
                   return DropdownMenuItem<int>(
                     value: obj.idObjectProfile,
@@ -190,7 +190,7 @@ class _NoticePageState extends State<NoticePage> {
 
               DropdownButtonFormField<int>(
                 value: selectedTagId,
-                decoration: _buildInputDecoration("Catégorie", Icons.label_outline),
+                decoration: _buildInputDecoration(AppLocalizations.of(context)!.categoryD, Icons.label_outline),
                 items: tags.map<DropdownMenuItem<int>>((dynamic tag) {
                   return DropdownMenuItem<int>(
                     value: tag['id_tag'] as int,
@@ -198,7 +198,7 @@ class _NoticePageState extends State<NoticePage> {
                   );
                 }).toList(),
                 onChanged: (val) => setState(() => selectedTagId = val),
-                validator: (v) => v == null ? "Sélectionnez une catégorie" : null,
+                validator: (v) => v == null ? AppLocalizations.of(context)!.selectCategory : null,
                 icon: const Icon(Icons.arrow_drop_down_circle_outlined, color: Colors.green),
               ),
               const SizedBox(height: 16),
@@ -206,10 +206,10 @@ class _NoticePageState extends State<NoticePage> {
               TextFormField(
                 controller: _contentController,
                 maxLines: 5,
-                decoration: _buildInputDecoration("Votre message", Icons.chat_bubble_outline).copyWith(
+                decoration: _buildInputDecoration(AppLocalizations.of(context)!.yourMessage, Icons.chat_bubble_outline).copyWith(
                   alignLabelWithHint: true,
                 ),
-                validator: (v) => (v == null || v.isEmpty) ? "Le contenu ne peut pas être vide" : null,
+                validator: (v) => (v == null || v.isEmpty) ? AppLocalizations.of(context)!.noEmptyContent : null,
               ),
               const SizedBox(height: 35),
 
@@ -225,8 +225,8 @@ class _NoticePageState extends State<NoticePage> {
                     shadowColor: Colors.green.withOpacity(0.4),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                   ),
-                  child: const Text(
-                    "ENVOYER MON RETOUR",
+                  child: Text(
+                    AppLocalizations.of(context)!.sendBackMaj,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
                   ),
                 ),

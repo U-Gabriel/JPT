@@ -1,5 +1,6 @@
 import 'package:app/ui/pages/widget/tools/redirection_object_profile_details_page.dart';
 import 'package:flutter/material.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/object_profile.dart';
 import 'package:app/app_config.dart';
 import '../../bowl_detail_page.dart';
@@ -23,11 +24,13 @@ class PlantItemMyListWidget extends StatelessWidget {
     return colorScheme.outline;
   }
 
-  String getStateLabel(int? state) {
-    if (state == 5) return "En danger";
-    if (state == 3 || state == 4) return "À surveiller";
-    if (state == 1 || state == 2) return "En bonne santé";
-    return "Inconnu";
+  String getStateLabel(BuildContext context, int? state) {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (state == 5) return l10n.plantStatusDanger;
+    if (state == 3 || state == 4) return l10n.plantStatusWarning;
+    if (state == 1 || state == 2) return l10n.plantStatusHealthy;
+    return l10n.plantStatusUnknown;
   }
 
   @override
@@ -88,7 +91,7 @@ class PlantItemMyListWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        plant.title ?? "Nom inconnu",
+                        plant.title ?? AppLocalizations.of(context)!.plantItemUnknownName,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
@@ -109,7 +112,7 @@ class PlantItemMyListWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(
-                          getStateLabel(plant.state),
+                          getStateLabel(context, plant.state),
                           style: TextStyle(
                             color: stateColor,
                             fontSize: 12,

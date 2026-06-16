@@ -8,6 +8,7 @@ import 'package:app/ui/pages/widget/controllers/object_connection_controller.dar
 import 'package:app/ui/pages/widget/popup/connection_error_dialog.dart';
 import 'package:app/ui/pages/widget/popup/wifi_error_dialog.dart';
 import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../services/object_profile_service.dart';
 import 'widget/tools/bluetooth_discovery_service.dart';
 
@@ -61,22 +62,22 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
           try {
             final auth = Provider.of<AuthProvider>(context, listen: false);
             // On vérifie si ce profil existe vraiment encore pour quelqu'un
-            final profile = await _profileService.fetchObjectProfileDetails(existingProfileId, auth.accessToken!);
+            final profile = await _profileService.fetchObjectProfileDetails(existingProfileId);
 
             // SI ON ARRIVE ICI, LE PROFIL EXISTE VRAIMENT EN BDD
             await showDialog(
               context: context,
               barrierDismissible: false,
               builder: (ctx) => AlertDialog(
-                title: const Text("Objet déjà associé"),
-                content: Text("Cet objet est déjà lié à la fleur '${profile.title}'.\n\nVeuillez d'abord supprimer la fleur associée dans vos paramètres."),
+                title: Text(AppLocalizations.of(context)!.addObjDialogAlreadyLinkedTitle),
+                content: Text(AppLocalizations.of(context)!.addObjDialogAlreadyLinkedDesc(profile.title)),
                 actions: [
                   TextButton(
                     onPressed: () {
                       Navigator.pop(ctx);
                       Navigator.pop(context);
                     },
-                    child: const Text("COMPRIS"),
+                    child: Text(AppLocalizations.of(context)!.addObjDialogBtnUnderstand),
                   ),
                 ],
               ),
@@ -135,7 +136,7 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
     if (args is Map<String, dynamic>) {
       setState(() {
         plantId = args['id'];
-        plantName = args['name'] ?? "votre plante";
+        plantName = args['name'] ?? AppLocalizations.of(context)!.addObjDefaultPlantName;
         ssid = args['ssid'];
         password = args['password'];
       });
@@ -150,7 +151,7 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: const Text("Connexion"),
+        title: Text(AppLocalizations.of(context)!.loginD),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -160,14 +161,14 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
             const StepProgressBar(percent: 0.75), // On avance à 75%
             const SizedBox(height: 30),
 
-            const Text(
-              'Connectons votre objet !',
+            Text(
+              AppLocalizations.of(context)!.addObjStepTitle,
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
 
             Text(
-              "Nous allons enfin pouvoir connecter votre $plantName à notre objet. Appuyez sur le bouton bleu de l'objet pour que notre aplication puisse le détecter. ",
+              AppLocalizations.of(context)!.addObjStepDesc as String,
               style: const TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
             ),
 
@@ -183,9 +184,9 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
               ),
               child: Column(
                 children: [
-                  _buildRecapRow(Icons.local_florist, "Plante", plantName),
+                  _buildRecapRow(Icons.local_florist, AppLocalizations.of(context)!.addObjRecapPlant, plantName),
                   const Divider(),
-                  _buildRecapRow(Icons.wifi, "Réseau", ssid ?? "Inconnu"),
+                  _buildRecapRow(Icons.wifi, AppLocalizations.of(context)!.addObjRecapNetwork, ssid ?? AppLocalizations.of(context)!.addObjRecapUnknown),
                   const Divider(),
 
                   // --- NOUVELLE SECTION BLUETOOTH ---
@@ -197,8 +198,8 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
                       const SizedBox(height: 10),
                       Text(
                         isCreatingProfile
-                            ? "Création de votre profil plante..."
-                            : "Recherche de l'objet...",
+                            ? AppLocalizations.of(context)!.addObjStatusCreating
+                            : AppLocalizations.of(context)!.addObjStatusSearching,
                         style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.black54),
                       ),
                     ],
@@ -230,8 +231,8 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
                 ),
                 child: Text(
                     isSearching
-                        ? "Recherche..."
-                        : (isCreatingProfile ? "Création profil..." : "Lancer la connexion"),
+                        ? AppLocalizations.of(context)!.addObjBtnSearching
+                        : (isCreatingProfile ? AppLocalizations.of(context)!.addObjBtnCreating : AppLocalizations.of(context)!.addObjBtnStart),
                     style: const TextStyle(fontSize: 18, color: Colors.white)
                 ),
               ),
@@ -306,8 +307,7 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
       bool activated = await _profileService.updateObjectProfile(
         idPerson: userId,
         idObjectProfile: newId,
-        otherFields: {"activate": 1}, // <--- C'est ici que c'est dynamique
-        token: token,
+        otherFields: {"activate": 1},
       );
 
       setState(() => isCreatingProfile = false);
@@ -316,18 +316,18 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
         // SUCCÈS TOTAL
         await SuccessDialog.show(
           context: context,
-          title: "Félicitations !",
-          message: "Votre $plantName est configurée et activée !",
+          title: AppLocalizations.of(context)!.addObjDialogSuccessTitle,
+          message: AppLocalizations.of(context)!.addObjDialogSuccessDesc(plantName),
           routeName: "/",
         );
       } else {
 
         print("Échec Wi-Fi. Rollback...");
-        await _profileService.deleteObjectProfile(idPerson: userId, idObjectProfile: newId, token: token);
+        await _profileService.deleteObjectProfile(idPerson: userId, idObjectProfile: newId);
 
         _errSub?.resume();
 
-        await ConnectionErrorDialog.show(context, message: "L'objet ne répond plus. Profil annulé.");
+        await ConnectionErrorDialog.show(context, message: AppLocalizations.of(context)!.addObjErrorNoResponse);
 
         if (mounted) Navigator.of(context).pop();
       }
@@ -340,7 +340,6 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
       await _profileService.deleteObjectProfile(
         idPerson: userId,
         idObjectProfile: newId,
-        token: token,
       );
 
       setState(() => isCreatingProfile = false);
@@ -349,12 +348,12 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
       if (wifiStatus == 1) {
         await WifiErrorDialog.show(
             context,
-            "L'objet n'a pas pu se connecter au Wi-Fi. Le profil a été annulé."
+            AppLocalizations.of(context)!.addObjErrorWifiFailed
         );
       } else {
         ConnectionErrorDialog.show(
           context,
-          message: "L'objet ne répond plus. Connexion annulée.",
+          message: AppLocalizations.of(context)!.addObjErrorNoResponseConn,
         );
       }
 

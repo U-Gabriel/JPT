@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +31,7 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
   Future<PlantType?> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
-    return _plantService.getDescriptionPlantType(widget.plantId, token);
+    return _plantService.getDescriptionPlantType(widget.plantId);
   }
 
   @override
@@ -44,7 +45,7 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
             return const Center(child: CircularProgressIndicator(color: Colors.green));
           }
           final plant = snapshot.data;
-          if (plant == null) return const Center(child: Text("Plante introuvable"));
+          if (plant == null) return Center(child: Text(AppLocalizations.of(context)!.plantNotFound));
 
           return CustomScrollView(
             slivers: [
@@ -79,17 +80,17 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
                       const SizedBox(height: 25),
                       _buildQuickMetrics(plant),
                       const SizedBox(height: 30),
-                      _buildSectionTitle("Description"),
+                      _buildSectionTitle(AppLocalizations.of(context)!.descriptionD),
                       Text(plant.description ?? "",
                           style: TextStyle(color: Colors.grey[800], height: 1.6, fontSize: 15)),
                       const SizedBox(height: 30),
-                      _buildSectionTitle("Conseils d'expert"),
+                      _buildSectionTitle(AppLocalizations.of(context)!.expertTips),
                       _buildAdviseCard(plant.advise),
                       const SizedBox(height: 30),
-                      _buildSectionTitle("Besoins & Environnement"),
+                      _buildSectionTitle(AppLocalizations.of(context)!.needsAndEnv),
                       _buildEnvironmentGrid(plant),
                       const SizedBox(height: 30),
-                      _buildSectionTitle("Calendrier de vie"),
+                      _buildSectionTitle(AppLocalizations.of(context)!.lifeCalendar),
                       _buildSeasonBar(plant),
                       const SizedBox(height: 50),
                     ],
@@ -237,16 +238,16 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
           Text.rich(
             TextSpan(
               children: [
-                const TextSpan(
-                  text: "Nom scientifique : ",
-                  style: TextStyle(
+                TextSpan(
+                  text: AppLocalizations.of(context)!.scientificName,
+                  style: const TextStyle(
                     color: Colors.black, // Le libellé en noir
                     fontWeight: FontWeight.bold, // Optionnel : un peu plus gras pour bien distinguer
                     fontSize: 14,
                   ),
                 ),
                 TextSpan(
-                  text: plant.scientistName ?? 'Inconnue',
+                  text: plant.scientistName ?? AppLocalizations.of(context)!.unknownD,
                   style: const TextStyle(
                     color: Colors.green, // La valeur en vert
                     fontStyle: FontStyle.italic, // Très recommandé pour les noms latins
@@ -266,7 +267,9 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
             const Icon(Icons.account_tree_outlined, size: 14, color: Colors.grey),
             const SizedBox(width: 6),
             Text(
-              "Famille : ${plant.familyName ?? 'Inconnue'}",
+              AppLocalizations.of(context)!.plantFamilyLabel(
+                plant.familyName ?? AppLocalizations.of(context)!.unknownD,
+              ),
               style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 14,
@@ -283,9 +286,9 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _metricItem(Icons.height, "${plant.height ?? '--'}m", "Hauteur"),
-        _metricItem(Icons.wb_sunny_outlined, "${plant.expositionTimeSun ?? '--'}h", "Soleil/j"),
-        _metricItem(Icons.calendar_month, plant.plantationSaison ?? "--", "Plantation"),
+        _metricItem(Icons.height, "${plant.height ?? '--'}m", AppLocalizations.of(context)!.metricHeight),
+        _metricItem(Icons.wb_sunny_outlined, "${plant.expositionTimeSun ?? '--'}h", AppLocalizations.of(context)!.metricSun),
+        _metricItem(Icons.calendar_month, plant.plantationSaison ?? "--", AppLocalizations.of(context)!.metricPlanting),
       ],
     );
   }
@@ -322,7 +325,7 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
           const Icon(Icons.lightbulb_outline, color: Colors.orange),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(advise ?? "Pas de conseils spécifiques.",
+            child: Text(advise ?? AppLocalizations.of(context)!.plantNoSpecificAdvise,
                 style: TextStyle(color: Colors.green[900], fontSize: 14, height: 1.4)),
           ),
         ],
@@ -339,8 +342,8 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
       crossAxisSpacing: 10,
       childAspectRatio: 2.5,
       children: [
-        _envTile("Exposition", plant.expositionType ?? "--", Icons.wb_sunny),
-        _envTile("Sol", plant.groundType ?? "--", Icons.landscape),
+        _envTile(AppLocalizations.of(context)!.plantExposure, plant.expositionType ?? "--", Icons.wb_sunny),
+        _envTile(AppLocalizations.of(context)!.plantGround, plant.groundType ?? "--", Icons.landscape),
       ],
     );
   }
@@ -372,10 +375,17 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
   }
 
   Widget _buildSeasonBar(PlantType plant) {
-    final seasons = [plant.saisonFirst, plant.saisonSecond];
+    final apiSeasons = [plant.saisonFirst, plant.saisonSecond];
+
     return Row(
-      children: ["Printemps", "Été", "Automne", "Hiver"].map((s) {
-        bool isActive = seasons.any((element) => element?.toLowerCase() == s.toLowerCase());
+      // On boucle directement sur les valeurs de notre Enum !
+      children: PlantSeason.values.map((season) {
+
+        // On compare en utilisant la clé API de l'enum
+        bool isActive = apiSeasons.any(
+                (element) => element?.toLowerCase() == season.apiKey.toLowerCase()
+        );
+
         return Expanded(
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 2),
@@ -384,18 +394,45 @@ class _PlantDetailKnownPageState extends State<PlantDetailKnownPage> {
               color: isActive ? Colors.green : Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(s,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: isActive ? Colors.white : Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+            child: Text(
+              season.getTranslation(context), // 🌟 Appel propre de la traduction
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isActive ? Colors.white : Colors.grey,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         );
       }).toList(),
     );
   }
 
+
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+}
+
+enum PlantSeason {
+  spring("Printemps"),
+  summer("Été"),
+  autumn("Automne"),
+  winter("Hiver");
+
+  final String apiKey;
+  const PlantSeason(this.apiKey);
+
+  String getTranslation(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (this) {
+      case PlantSeason.spring: return l10n.seasonSpring;
+      case PlantSeason.summer: return l10n.seasonSummer;
+      case PlantSeason.autumn: return l10n.seasonAutumn;
+      case PlantSeason.winter: return l10n.seasonWinter;
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/nav_provider.dart';
 import '../../providers/auth_provider.dart';
 import 'my_plant_page.dart';
@@ -17,14 +18,15 @@ class HomePage extends StatelessWidget {
   ];
 
   /// Génère dynamiquement le titre de l'AppBar selon l'onglet
-  String _getAppBarTitle(int index) {
+  String _getAppBarTitle(BuildContext context, int index) {
+    final l10n = AppLocalizations.of(context)!;
     switch (index) {
       case 0:
-        return "Conseils & Expertises";
+        return l10n.homeTitleAdvise;      // ➔ "Conseils & Expertises"
       case 1:
-        return "Mes Équipements"; // Titre personnalisé pour ses objets connectés
+        return l10n.homeTitleEquipment;   // ➔ "Mes Équipements"
       case 2:
-        return "Boutique GDOME";
+        return l10n.homeTitleShop;       // ➔ "Boutique GDOME"
       default:
         return "";
     }
@@ -60,7 +62,7 @@ class HomePage extends StatelessWidget {
 
         // Au centre : Le titre dynamique
         title: Text(
-          _getAppBarTitle(currentIndex),
+          _getAppBarTitle(context, currentIndex),
           style: const TextStyle(
             color: Color(0xFF1D1D1F),
             fontSize: 18,
@@ -92,7 +94,7 @@ class HomePage extends StatelessWidget {
                   // Il est connecté, donc on l'envoie direct sur son profil
                   Navigator.pushNamed(context, '/profile');
                 },
-                tooltip: 'Mon Profil',
+                tooltip: AppLocalizations.of(context)!.homeTooltipMyProfile,
               ),
             ),
           ),
@@ -121,39 +123,39 @@ class HomePage extends StatelessWidget {
           elevation: 0,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Padding(
+              icon: const Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Icon(Icons.chat_bubble_outline_rounded, size: 22),
               ),
-              activeIcon: Padding(
+              activeIcon: const Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Icon(Icons.chat_bubble_rounded, size: 22),
               ),
-              label: 'Conseils',
+              label: AppLocalizations.of(context)!.navTabAdvise,
             ),
             BottomNavigationBarItem(
-              icon: Padding(
+              icon: const Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Icon(Icons.local_florist_outlined, size: 22),
               ),
-              activeIcon: Padding(
+              activeIcon: const Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Icon(Icons.local_florist_rounded, size: 22),
               ),
-              label: 'My Plant',
+              label: AppLocalizations.of(context)!.navTabMyObjects,
             ),
             BottomNavigationBarItem(
-              icon: Padding(
+              icon: const Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Icon(Icons.shopping_bag_outlined, size: 22),
               ),
-              activeIcon: Padding(
+              activeIcon: const Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Icon(Icons.shopping_bag_rounded, size: 22),
               ),
-              label: 'Magasin',
+              label: AppLocalizations.of(context)!.navTabShop,
             ),
           ],
         ),

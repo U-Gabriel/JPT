@@ -84,10 +84,10 @@ class MyPlantPageNoLogin extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15),
-          const Text(
-            "Bienvenue chez GDOME",
+          Text(
+            AppLocalizations.of(context)!.welcomeGdome,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w900,
               color: Color(0xFF1D1D1F),
@@ -98,7 +98,7 @@ class MyPlantPageNoLogin extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
-              "L'écosystème domotique qui réinvente votre relation avec la nature et votre intérieur.",
+              AppLocalizations.of(context)!.systemeSentence,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
@@ -162,8 +162,8 @@ class MyPlantPageNoLogin extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 backgroundColor: Colors.white,
               ),
-              child: const Text(
-                "Je me connecte",
+              child: Text(
+                AppLocalizations.of(context)!.iConnect,
                 style: TextStyle(color: Color(0xFF1D1D1F), fontWeight: FontWeight.w600, fontSize: 16),
               ),
             ),
@@ -180,8 +180,8 @@ class MyPlantPageNoLogin extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Notre Vision",
+          Text(
+            AppLocalizations.of(context)!.ourVision,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF1D1D1F)),
           ),
           const SizedBox(height: 16),
@@ -193,8 +193,8 @@ class MyPlantPageNoLogin extends StatelessWidget {
               Expanded(
                 flex: 11,
                 child: _buildBentoCard(
-                  title: "Pots Intelligents",
-                  description: "Vos plantes dictent leurs besoins en temps réel grâce à nos capteurs haute précision.",
+                  title: AppLocalizations.of(context)!.smartPots,
+                  description: AppLocalizations.of(context)!.plantNeed,
                   icon: Icons.local_florist_rounded,
                   color: const Color(0xFFE8F5E9),
                   iconColor: Colors.green.shade700,
@@ -205,8 +205,8 @@ class MyPlantPageNoLogin extends StatelessWidget {
               Expanded(
                 flex: 9,
                 child: _buildBentoCard(
-                  title: "Demain...",
-                  description: "Un écosystème en expansion : gamelles connectées, soin des animaux et confort global.",
+                  title: AppLocalizations.of(context)!.tomorrow,
+                  description: AppLocalizations.of(context)!.bowlNeed,
                   icon: Icons.pets_rounded,
                   color: const Color(0xFFFFF3E0),
                   iconColor: Colors.orange.shade700,
@@ -217,8 +217,8 @@ class MyPlantPageNoLogin extends StatelessWidget {
           const SizedBox(height: 14),
           // Carte 3 : Large pour le manifeste de la jeune pousse française
           _buildBentoCard(
-            title: "Une jeune pousse passionnée",
-            description: "GDOME est une toute nouvelle entreprise française. Notre mission est d'allier le respect du vivant à l'intelligence de la maison connectée, sans compromis sur le design.",
+            title: AppLocalizations.of(context)!.newComany,
+            description: AppLocalizations.of(context)!.newComanyDesc,
             icon: Icons.auto_awesome_rounded,
             color: Colors.white,
             iconColor: Colors.teal,
@@ -306,12 +306,12 @@ class MyPlantPageNoLogin extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Des questions sur nos objets ?",
+                      AppLocalizations.of(context)!.objectQuestion,
                       style: TextStyle(color: Colors.grey.shade300, fontSize: 13, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      "Explorez notre Centre d'aide",
+                    Text(
+                      AppLocalizations.of(context)!.faqDiscovery,
                       style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],

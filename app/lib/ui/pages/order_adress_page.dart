@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +50,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
 
   void _loadData() async {
     final token = context.read<AuthProvider>().accessToken!;
-    final addresses = await _personService.fetchAddresses(token);
+    final addresses = await _personService.fetchAddresses();
     setState(() {
       _savedAddresses = addresses;
       _selectedAddress = null; // Rien de coché par défaut
@@ -79,7 +80,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
     return Scaffold(
       backgroundColor: AppT.ivory,
       appBar: AppBar(
-        title: const Text("Livraison", style: TextStyle(color: AppT.ink, fontWeight: FontWeight.w900, fontSize: 18)),
+        title: Text(AppLocalizations.of(context)!.deliveryD, style: TextStyle(color: AppT.ink, fontWeight: FontWeight.w900, fontSize: 18)),
         centerTitle: true, backgroundColor: Colors.white, elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: AppT.ink, size: 20), onPressed: () => Navigator.pop(context)),
       ),
@@ -94,7 +95,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
             const SizedBox(height: 24),
 
             if (_savedAddresses.isNotEmpty) ...[
-              const Text("VOS ADRESSES", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1)),
+              Text(AppLocalizations.of(context)!.yourAddressMaj, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1)),
               const SizedBox(height: 12),
               SizedBox(
                 height: 160,
@@ -110,7 +111,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
             _buildExpandableNewAddress(),
 
             const SizedBox(height: 32),
-            const Text("RÉSUMÉ COMMANDE", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1)),
+            Text(AppLocalizations.of(context)!.orderSummaryMaj, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1)),
             const SizedBox(height: 16),
             ...selectedItems.map((item) => _buildSummaryTile(item)).toList(),
             const SizedBox(height: 100),
@@ -149,7 +150,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
               ],
             ),
             const Spacer(),
-            Text(addr.title.isEmpty ? "Adresse" : addr.title, style: TextStyle(fontWeight: FontWeight.bold, color: isSelected ? Colors.white : AppT.ink)),
+            Text(addr.title.isEmpty ? AppLocalizations.of(context)!.addressD : addr.title, style: TextStyle(fontWeight: FontWeight.bold, color: isSelected ? Colors.white : AppT.ink)),
             Text("${addr.addressLine1}, ${addr.city}", maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: isSelected ? Colors.white70 : AppT.muted)),
           ],
         ),
@@ -172,13 +173,13 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
               children: [
                 Icon(_showNewAddressForm ? Icons.remove_circle_outline : Icons.add_circle_outline, color: AppT.gold),
                 const SizedBox(width: 8),
-                const Text("Utiliser une autre adresse", style: TextStyle(fontWeight: FontWeight.bold, color: AppT.ink)),
+                Text(AppLocalizations.of(context)!.useAnotherAddress, style: TextStyle(fontWeight: FontWeight.bold, color: AppT.ink)),
               ],
             ),
           )
         else
         // Si aucune adresse, on affiche juste un titre fixe
-          const Text("AJOUTER UNE ADRESSE DE LIVRAISON", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1)),
+          Text(AppLocalizations.of(context)!.addAnDeliveryAddressMaj, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1)),
 
         if (_showNewAddressForm) ...[
           const SizedBox(height: 16),
@@ -187,7 +188,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: AppT.cardShadow),
             child: Column(
               children: [
-                _input(_titleCtrl, "Nom de l'adresse (Maison, Bureau...)", Icons.label_outline),
+                _input(_titleCtrl, AppLocalizations.of(context)!.nameAddressD, Icons.label_outline),
                 const SizedBox(height: 12),
 
                 // --- CHAMP ADRESSE AVEC AIDE ---
@@ -203,7 +204,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
                     }
                   },
                   decoration: InputDecoration(
-                    hintText: "Saisissez votre adresse...",
+                    hintText: AppLocalizations.of(context)!.enterAddressD,
                     prefixIcon: const Icon(Icons.map_outlined, size: 18, color: AppT.gold),
                     filled: true, fillColor: AppT.ivory,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
@@ -212,20 +213,20 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
                 if (_suggestions.isNotEmpty) _buildSuggestionsList(),
 
                 const SizedBox(height: 12),
-                _input(_addr2Ctrl, "Complément (Appartement, Étage...)", Icons.add_home_work_outlined),
+                _input(_addr2Ctrl, AppLocalizations.of(context)!.additionalInformationD, Icons.add_home_work_outlined),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Expanded(child: _input(_zipCtrl, "Code Postal", Icons.numbers)),
+                    Expanded(child: _input(_zipCtrl, AppLocalizations.of(context)!.postalCodeD, Icons.numbers)),
                     const SizedBox(width: 12),
-                    Expanded(child: _input(_cityCtrl, "Ville", Icons.location_city)),
+                    Expanded(child: _input(_cityCtrl, AppLocalizations.of(context)!.cityD, Icons.location_city)),
                   ],
                 ),
                 const SizedBox(height: 12),
-                _input(_countryCtrl, "Pays", Icons.public),
+                _input(_countryCtrl, AppLocalizations.of(context)!.countryD, Icons.public),
                 const SizedBox(height: 12),
                 SwitchListTile(
-                  title: const Text("Définir par défaut", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                  title: Text(AppLocalizations.of(context)!.setAsDefaultD, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                   contentPadding: EdgeInsets.zero,
                   value: _setAsDefault,
                   activeColor: AppT.gold,
@@ -298,17 +299,18 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
 
   Widget _buildBottomBar(List<CartItem> items) {
     double total = items.fold(0, (sum, item) => sum + (item.effectivePrice * item.quantity));
+    final l10n = AppLocalizations.of(context)!;
 
     // Logique de validation globale
     bool canProceed = false;
-    String buttonText = "CHOISIR UNE ADRESSE";
+    String buttonText = AppLocalizations.of(context)!.chooseAnAddressMaj;
 
     if (_showNewAddressForm) {
       canProceed = _isFormValid;
-      buttonText = canProceed ? "VALIDER CETTE ADRESSE" : "REMPLIR LES CHAMPS";
+      buttonText = canProceed ? AppLocalizations.of(context)!.validateAddressMaj : AppLocalizations.of(context)!.fillInTheFieldsMaj;
     } else {
       canProceed = _selectedAddress != null;
-      buttonText = canProceed ? "CONFIRMER ${total.toStringAsFixed(2)}€" : "CHOISIR UNE ADRESSE";
+      buttonText = canProceed ? l10n.btnConfirmOrderMaj("${total.toStringAsFixed(2)}€") : l10n.btnChooseAddressMaj;
     }
 
     return Container(
@@ -330,7 +332,7 @@ class _OrderAddressPageState extends State<OrderAddressPage> {
                 isDefault: _setAsDefault,
               );
               final token = context.read<AuthProvider>().accessToken!;
-              await _personService.saveAddress(token, addressToUse.toJson());
+              await _personService.saveAddress(addressToUse.toJson());
             } else {
               addressToUse = _selectedAddress!;
             }

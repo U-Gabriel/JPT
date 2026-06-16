@@ -5,7 +5,11 @@ import '../models/category_catalog.dart';
 import '../models/object_profile.dart';
 import 'package:app/app_config.dart';
 
+import 'api_client.dart';
+
 class ObjectProfileService {
+  final ApiClient _apiClient = ApiClient();
+
   final String baseUrl =  AppConfig.baseUrl;
 
   Future<int?> createObjectProfileShort({
@@ -13,16 +17,11 @@ class ObjectProfileService {
     required int idObject,
     required int idPlantType,
     required int idPerson,
-    required String token,
   }) async {
     final url = Uri.parse(AppConfig.objectProfilesEndpointCreate());
 
-    final response = await http.post(
+    final response = await _apiClient.post(
       url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
       body: jsonEncode({
         "title": title,
         "id_object": idObject,
@@ -44,16 +43,10 @@ class ObjectProfileService {
   }
 
 
-  Future<List<ObjectProfile>> fetchObjectProfilesList(String token) async {
+  Future<List<ObjectProfile>> fetchObjectProfilesList() async {
     final url = Uri.parse(AppConfig.objectProfilesEndpointList());
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      }
-    );
+    final response = await _apiClient.get(url);
 
     if (response.statusCode == 200) {
 
@@ -67,16 +60,10 @@ class ObjectProfileService {
     }
   }
 
-  Future<List<ObjectProfile>> fetchObjectProfilesListFavoris(String token) async {
+  Future<List<ObjectProfile>> fetchObjectProfilesListFavoris() async {
     final url = Uri.parse(AppConfig.objectProfilesEndpointListFavoris());
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      }
-    );
+    final response = await _apiClient.get(url);
 
     if (response.statusCode == 200) {
 
@@ -94,7 +81,6 @@ class ObjectProfileService {
     required int idPerson,
     required int idObjectProfile,
     required Map<String, dynamic> otherFields,
-    required String token,
   }) async {
     final url = Uri.parse(AppConfig.objectProfileEndpointUpdate());
 
@@ -107,12 +93,8 @@ class ObjectProfileService {
     fullBody.addAll(otherFields);
 
     try {
-      final response = await http.patch( // Utilise patch ou post selon ton API
+      final response = await _apiClient.patch(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: jsonEncode(fullBody),
       );
 
@@ -127,15 +109,11 @@ class ObjectProfileService {
     }
   }
 
-  Future<ObjectProfile> fetchObjectProfileDetails(int plantId, String token) async {
+  Future<ObjectProfile> fetchObjectProfileDetails(int plantId) async {
     final url = Uri.parse(AppConfig.objectProfilesEndpointDetails());
 
-    final response = await http.post(
+    final response = await _apiClient.post(
       url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
       body: jsonEncode({
         "id_object_profile": plantId,
       }),
@@ -162,17 +140,12 @@ class ObjectProfileService {
   Future<int> deleteObjectProfile({
     required int idPerson,
     required int idObjectProfile,
-    required String token,
   }) async {
     final url = Uri.parse(AppConfig.objectProfilesEndpointDelete());
 
     try {
-      final response = await http.post(
+      final response = await _apiClient.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: jsonEncode({
           "id_person": idPerson,
           "id_object_profile": idObjectProfile,
@@ -187,16 +160,10 @@ class ObjectProfileService {
     }
   }
 
-  Future<List<CategoryCatalog>> fetchCategoryCatalog(String token) async {
+  Future<List<CategoryCatalog>> fetchCategoryCatalog() async {
     final url = Uri.parse(AppConfig.categoryCatalogEndpoint);
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    final response = await _apiClient.get(url);
 
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
@@ -208,16 +175,10 @@ class ObjectProfileService {
   }
 
 
-  Future<List<CategoryCatalog>> fetchCategoryFavorites(String token) async {
+  Future<List<CategoryCatalog>> fetchCategoryFavorites() async {
     final url = Uri.parse(AppConfig.categoryFavoritesEndpoint);
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    final response = await _apiClient.get(url);
 
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);

@@ -40,7 +40,7 @@ class PlantDetailBloc extends Bloc<PlantDetailEvent, PlantDetailState> {
     try {
       print("--- POLLING: Récupération des données ---");
 
-      final fresh = await service.fetchObjectProfileDetails(plantId, token);
+      final fresh = await service.fetchObjectProfileDetails(plantId);
 
       _currentPlant = fresh;
 
@@ -82,7 +82,6 @@ class PlantDetailBloc extends Bloc<PlantDetailEvent, PlantDetailState> {
         idPerson: event.idPerson,
         idObjectProfile: plantId,
         otherFields: {"is_favorite": nextStatus},
-        token: token,
       );
 
       if (success) {

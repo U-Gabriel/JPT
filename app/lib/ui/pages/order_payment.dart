@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:app/ui/pages/widget/tools/step_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -35,7 +36,7 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
     return Scaffold(
       backgroundColor: AppT.ivory,
       appBar: AppBar(
-        title: const Text("Récapitulatif", style: TextStyle(color: AppT.ink, fontWeight: FontWeight.w900, fontSize: 18)),
+        title: Text(AppLocalizations.of(context)!.summaryD, style: TextStyle(color: AppT.ink, fontWeight: FontWeight.w900, fontSize: 18)),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -53,13 +54,13 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
             const SizedBox(height: 24),
 
             // --- SECTION ADRESSE ---
-            _buildHeader("LIVRAISON À"),
+            _buildHeader(AppLocalizations.of(context)!.deliveryToMAJ),
             const SizedBox(height: 12),
             _buildAddressPreview(address),
 
             const SizedBox(height: 32),
 
-            _buildHeader("VOTRE COMMANDE"),
+            _buildHeader(AppLocalizations.of(context)!.yourOrderMaj),
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
@@ -105,15 +106,15 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        _buildPriceRow("Sous-total", "${totalProducts.toStringAsFixed(2)}€"),
+                        _buildPriceRow(AppLocalizations.of(context)!.subtotalD, "${totalProducts.toStringAsFixed(2)}€"),
                         const SizedBox(height: 8),
-                        _buildPriceRow("Livraison", shipping == 0 ? "Offerte" : "${shipping.toStringAsFixed(2)}€",
+                        _buildPriceRow(AppLocalizations.of(context)!.deliveryD, shipping == 0 ? AppLocalizations.of(context)!.freeD : "${shipping.toStringAsFixed(2)}€",
                             color: shipping == 0 ? Colors.green : AppT.ink),
                         const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text("TOTAL", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                            Text(AppLocalizations.of(context)!.totalMaj, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
                             Text("${totalOrder.toStringAsFixed(2)}€",
                                 style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: AppT.gold)),
                           ],
@@ -144,15 +145,15 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
       final token = context.read<AuthProvider>().accessToken!;
 
       // 1. Appel API pour récupérer le clientSecret
-      final paymentData = await _personService.createPaymentIntent(token, items, address.idAddress ?? 0);
+      final paymentData = await _personService.createPaymentIntent(items, address.idAddress ?? 0);
 
-      if (paymentData == null) throw Exception("Impossible d'initialiser le paiement.");
+      if (paymentData == null) throw Exception(AppLocalizations.of(context)!.unableToInitThePayment);
 
       // 2. Init Stripe Payment Sheet
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentData['clientSecret'],
-          merchantDisplayName: 'JackPote App',
+          merchantDisplayName: AppLocalizations.of(context)!.gdomeMaj,
           style: ThemeMode.light,
           appearance: const PaymentSheetAppearance(
             colors: PaymentSheetAppearanceColors(primary: AppT.gold),
@@ -178,12 +179,13 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
 
     } catch (e) {
       if (e is StripeException) {
+        final errorMessage = e.error.localizedMessage ?? e.error.message ?? "";
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Paiement non finalisé : ${e.error.localizedMessage}")),
+          SnackBar(content: Text(AppLocalizations.of(context)!.paymentNotFinalized(errorMessage))),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erreur : ${e.toString()}")),
+          SnackBar(content: Text(AppLocalizations.of(context)!.paymentErrorGeneric)),
         );
       }
     } finally {
@@ -292,7 +294,7 @@ class _OrderPaymentPageState extends State<OrderPaymentPage> {
           ),
           child: _isProcessing
               ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : Text("CONFIRMER ET PAYER ${total.toStringAsFixed(2)}€", style: const TextStyle(fontWeight: FontWeight.w900)),
+              : Text(AppLocalizations.of(context)!.btnConfirmAndPay("${total.toStringAsFixed(2)}€"), style: const TextStyle(fontWeight: FontWeight.w900)),
         ),
       ),
     );

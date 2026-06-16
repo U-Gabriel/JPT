@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/app_theme_tokens.dart';
 
 class AuthRequiredDialog extends StatelessWidget {
@@ -13,6 +14,7 @@ class AuthRequiredDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       backgroundColor: Colors.white,
@@ -32,15 +34,15 @@ class AuthRequiredDialog extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             // Titre
-            const Text(
-              "Besoin de connexion",
+            Text(
+              l10n.authRequiredTitle,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppT.ink),
             ),
             const SizedBox(height: 12),
             // Message
             Text(
-              "Pour accéder à cette fonctionnalité, veuillez vous connecter ou vous inscrire. C'est gratuit et ne prend que quelques minutes.",
+              l10n.authRequiredMessage,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: AppT.muted, height: 1.5),
             ),
@@ -61,7 +63,7 @@ class AuthRequiredDialog extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text("SE CONNECTER", style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1)),
+                  child: Text(l10n.authRequiredBtnLogin, style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1)),
                 ),
                 const SizedBox(height: 8),
                 TextButton(
@@ -70,7 +72,7 @@ class AuthRequiredDialog extends StatelessWidget {
                     foregroundColor: AppT.muted,
                     minimumSize: const Size(double.infinity, 44),
                   ),
-                  child: const Text("PLUS TARD", style: TextStyle(fontWeight: FontWeight.w700)),
+                  child: Text(l10n.authRequiredBtnLater, style: TextStyle(fontWeight: FontWeight.w700)),
                 ),
               ],
             ),

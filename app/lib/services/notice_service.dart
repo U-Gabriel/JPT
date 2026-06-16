@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../app_config.dart';
+import 'api_client.dart';
 
 class NoticeService {
+  final ApiClient _apiClient = ApiClient();
 
   Future<Map<String, dynamic>> createNotice({
     required int idPerson,
@@ -10,14 +12,9 @@ class NoticeService {
     required String content,
     int? idObjectProfile,
     required int idTag,
-    required String token,
   }) async {
-    final response = await http.post(
+    final response = await _apiClient.post(
       Uri.parse(AppConfig.noticeCreateEndpoint),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
       body: jsonEncode({
         "id_person": idPerson,
         "title": title,

@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,8 +17,8 @@ class PlantDetailWrapper extends StatelessWidget {
     final token = context.read<AuthProvider>().accessToken;
 
     if (token == null) {
-      return const Scaffold(
-        body: Center(child: Text("Token non disponible")),
+      return Scaffold(
+        body: Center(child: Text(AppLocalizations.of(context)!.noAvailableToken)),
       );
     }
 

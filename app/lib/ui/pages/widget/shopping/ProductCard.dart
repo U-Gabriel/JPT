@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/product.dart';
+import '../../../../services/api_client.dart';
 import '../../../utils/app_theme_tokens.dart';
 
 class ProductCard extends StatefulWidget {
@@ -47,8 +49,24 @@ class ProductCardState extends State<ProductCard> {
                       onPageChanged: (i) => setState(() => _currentImg = i),
                       itemCount: p.images.length,
                       itemBuilder: (context, i) => Image.network(
-                        p.images[i],
+                        ApiClient().getImageUrl(p.images[i]),
                         fit: BoxFit.cover,
+
+                        // 1. Gestion du chargement élégant (Pas d'écran blanc !)
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            // L'image est chargée, on applique un léger fondu à l'apparition
+                            return AnimatedOpacity(
+                              opacity: 1.0,
+                              duration: const Duration(milliseconds: 300),
+                              child: child,
+                            );
+                          }
+                          // Pendant le chargement, on affiche ton placeholder stylisé en fond
+                          return _buildPlaceholder();
+                        },
+
+                        // 2. Si le lien est cassé ou pas de réseau
                         errorBuilder: (_, __, ___) => _buildPlaceholder(),
                       ),
                     ),
@@ -70,7 +88,7 @@ class ProductCardState extends State<ProductCard> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(color: AppT.gold, borderRadius: BorderRadius.circular(8)),
-                        child: const Text("PROMO", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 10)),
+                        child: Text(AppLocalizations.of(context)!.shopProductPromoBadge, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 10)),
                       ),
                     ),
                 ],
@@ -147,7 +165,7 @@ class ProductCardState extends State<ProductCard> {
         ),
         const SizedBox(width: 8),
         Text(
-          isOutOfStock ? "Indisponible" : "En stock ($stock)",
+          isOutOfStock ? AppLocalizations.of(context)!.shopProductOutOfStock : AppLocalizations.of(context)!.shopProductInStock(stock.toString()),
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isOutOfStock ? Colors.red : Colors.green[700]),
         ),
       ],

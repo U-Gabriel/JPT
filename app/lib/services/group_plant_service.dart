@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../app_config.dart';
 import '../models/plant_group.dart';
+import 'api_client.dart';
 
 class GroupPlantService {
+  final ApiClient _apiClient = ApiClient();
 
   Future<bool> createGroup({
     required int idPerson,
@@ -16,7 +18,6 @@ class GroupPlantService {
     required int priority,
     required int wateringTime,
     required int wateringPeriodOpen,
-    required String token,
   }) async {
     final url = Uri.parse(AppConfig.GroupPlantTypeEndpointCreate());
 
@@ -34,12 +35,8 @@ class GroupPlantService {
     });
 
     try {
-      final response = await http.post(
+      final response = await _apiClient.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: body,
       );
 
@@ -52,16 +49,12 @@ class GroupPlantService {
 
 
 
-  Future<List<PlantGroup>> getGroupsResume(int idPerson, int idObjectProfile, String token) async {
+  Future<List<PlantGroup>> getGroupsResume(int idPerson, int idObjectProfile) async {
     final url = Uri.parse(AppConfig.GroupPlantTypeEndpointGet());
 
     try {
-      final response = await http.post(
+      final response = await _apiClient.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: jsonEncode({
           "id_person": idPerson,
           "id_object_profile": idObjectProfile
@@ -80,28 +73,21 @@ class GroupPlantService {
     }
   }
 
-  Future<bool> deleteGroup(int idPerson, int idGroup, String token) async {
+  Future<bool> deleteGroup(int idPerson, int idGroup) async {
     final url = Uri.parse(AppConfig.GroupPlantTypeEndpointDelete());
 
     try {
 
-      final response = await http.delete(
+      final response = await _apiClient.delete(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: jsonEncode({
           "id_person": idPerson,
           "id_group_plant_type": idGroup
         }),
       );
-      print("STATUS CODE: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         final decoded = json.decode(response.body);
-        print("STATUS CODE: ${response.statusCode}");
-        print("RESPONSE BODY: ${response.body}");
         return decoded['data'] != null && decoded['data']['success'] == true;
       }
       return false;
@@ -115,7 +101,6 @@ class GroupPlantService {
     required int idObjectProfile,
     required int idGroup,
     required bool isStandard,
-    required String token,
   }) async {
     final url = Uri.parse(AppConfig.GroupPlantTypeEndpointAssign());
 
@@ -130,12 +115,8 @@ class GroupPlantService {
     body["id_group_plant_type"] = idGroup;
 
     try {
-      final response = await http.patch( // Utilisation de PATCH comme indiqué
+      final response = await _apiClient.patch(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: jsonEncode(body),
       );
 

@@ -364,7 +364,6 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
         final statusCode = await ObjectProfileService().deleteObjectProfile(
           idPerson: userId,
           idObjectProfile: plant.idObjectProfile,
-          token: token,
         );
 
         if (!context.mounted) return;

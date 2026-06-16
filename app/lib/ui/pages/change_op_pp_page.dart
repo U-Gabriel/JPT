@@ -36,7 +36,7 @@ class _ChangeOpPpPageState extends State<ChangeOpPpPage> {
   void _loadAvatars() async {
     final token = context.read<AuthProvider>().accessToken!;
     try {
-      final list = await AvatarService().fetchAvatars(token);
+      final list = await AvatarService().fetchAvatars();
       if (mounted) {
         setState(() {
           avatars = list.where((a) => a.pathPicture.isNotEmpty).toList();
@@ -92,7 +92,6 @@ class _ChangeOpPpPageState extends State<ChangeOpPpPage> {
     bool success = await AvatarService().uploadCustomAvatar(
       idObjectProfile: widget.objectProfileId,
       imageFile: File(pickedFile.path),
-      token: token,
     );
 
     if (mounted) {
@@ -290,7 +289,6 @@ class _ChangeOpPpPageState extends State<ChangeOpPpPage> {
               bool success = await ObjectProfileService().updateObjectProfile(
               idPerson: personId,
               idObjectProfile: widget.objectProfileId,
-              token: token,
               otherFields: {"path_picture": selectedPath},
               );
 

@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -64,7 +65,7 @@ class _SignupPageState extends State<SignupPage> {
           }
       );
     } else {
-      _showErrorDialog("Échec de l'inscription. Ce pseudo ou cet email est peut-être déjà utilisé.");
+      _showErrorDialog(AppLocalizations.of(context)!.signUpFailure);
     }
   }
 
@@ -73,12 +74,12 @@ class _SignupPageState extends State<SignupPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text("Oups !"),
+        title: Text(AppLocalizations.of(context)!.oops),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text("OK", style: TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold)),
+            child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -122,8 +123,8 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      "Créer un compte",
+                    Text(
+                      AppLocalizations.of(context)!.createAnAccount,
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
@@ -133,7 +134,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Rejoignez l'aventure GDOME en quelques secondes.",
+                      AppLocalizations.of(context)!.joinAdventure,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
                     ),
@@ -142,16 +143,16 @@ class _SignupPageState extends State<SignupPage> {
                     // --- CHAMPS DE SAISIE ---
                     _buildInputField(
                       controller: _pseudoController,
-                      label: "Pseudo",
-                      hint: "Comment doit-on vous appeler ?",
+                      label: AppLocalizations.of(context)!.pseudo,
+                      hint: AppLocalizations.of(context)!.pseudoQuestion,
                       icon: Icons.person_outline_rounded,
                       validator: (v) => v == null || v.isEmpty ? "Choisissez un pseudo" : null,
                     ),
                     const SizedBox(height: 18),
                     _buildInputField(
                       controller: _emailController,
-                      label: "Email",
-                      hint: "votre@email.com",
+                      label: AppLocalizations.of(context)!.email,
+                      hint: AppLocalizations.of(context)!.emailExample,
                       icon: Icons.alternate_email_rounded,
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) => v == null || !v.contains('@') ? "Email invalide" : null,
@@ -159,8 +160,8 @@ class _SignupPageState extends State<SignupPage> {
                     const SizedBox(height: 18),
                     _buildInputField(
                       controller: _passwordController,
-                      label: "Mot de passe",
-                      hint: "••••••••",
+                      label: AppLocalizations.of(context)!.password,
+                      hint: AppLocalizations.of(context)!.suspension,
                       icon: Icons.lock_outline_rounded,
                       isPassword: true,
                       obscureText: _obscurePassword,
@@ -170,13 +171,13 @@ class _SignupPageState extends State<SignupPage> {
                     const SizedBox(height: 18),
                     _buildInputField(
                       controller: _confirmPasswordController,
-                      label: "Confirmation",
-                      hint: "Confirmez votre mot de passe",
+                      label: AppLocalizations.of(context)!.confirmation,
+                      hint: AppLocalizations.of(context)!.confirmationQuestion,
                       icon: Icons.shield_outlined,
                       isPassword: true,
                       obscureText: _obscureConfirm,
                       togglePassword: () => setState(() => _obscureConfirm = !_obscureConfirm),
-                      validator: (v) => v != _passwordController.text ? "Les mots de passe diffèrent" : null,
+                      validator: (v) => v != _passwordController.text ? AppLocalizations.of(context)!.differentPasswords : null,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _submitSignup(),
                     ),
@@ -197,7 +198,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                         child: _isLoading
                             ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                            : const Text("S'INSCRIRE", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                            : Text(AppLocalizations.of(context)!.signUpMaj, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                       ),
                     ),
 
@@ -207,16 +208,31 @@ class _SignupPageState extends State<SignupPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Déjà un compte ?", style: TextStyle(color: Colors.grey.shade600)),
+                        Text(AppLocalizations.of(context)!.alreadyAccount, style: TextStyle(color: Colors.grey.shade600)),
                         TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text("Se connecter", style: TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold)),
+                          onPressed: () => Navigator.pushNamed(context, '/login'),
+                          child: Text(AppLocalizations.of(context)!.login, style: TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
                   ],
                 ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 10,
+            left: 20,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.9),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_back_ios_new, size: 18),
               ),
             ),
           ),

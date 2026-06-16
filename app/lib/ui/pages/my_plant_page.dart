@@ -1,7 +1,9 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:app/ui/pages/widget/plant_card_my_list/plant_item_my_list_widget.dart';
+import 'package:app/ui/pages/widget/tools/empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shimmer/shimmer.dart'; // AJOUT DE L'IMPORT
+import 'package:shimmer/shimmer.dart';
 import '../../bloc/object_profile/object_profile_bloc.dart';
 import '../../bloc/object_profile/object_profile_event.dart';
 import '../../bloc/object_profile_my_list/object_profile_my_list_bloc.dart';
@@ -20,21 +22,50 @@ class _MyPlantPageState extends State<MyPlantPage> {
   late ObjectProfileBloc favoriteBloc;
   late ObjectProfileMyListBloc myListBloc;
 
+  // ➔ ÉTAPES 1 : Gestionnaires d'état pour forcer l'affichage du Shimmer uniquement pendant l'appel
+  bool _isLoadingFavorite = true;
+  bool _isLoadingMyList = true;
+
   @override
   void initState() {
     super.initState();
     favoriteBloc = context.read<ObjectProfileBloc>();
     myListBloc = context.read<ObjectProfileMyListBloc>();
+
+    // On lance le chargement initial
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    await Future.wait([_refreshFavorite(), _refreshMyList()]);
   }
 
   Future<void> _refreshFavorite() async {
+    if (!mounted) return;
+    setState(() => _isLoadingFavorite = true);
+
     favoriteBloc.add(LoadProfiles());
-    await favoriteBloc.profilesStream.firstWhere((_) => true);
+    // On attend la première émission du stream pour couper le Shimmer
+    await favoriteBloc.profilesStream.firstWhere((_) => true).timeout(
+      const Duration(seconds: 4),
+      onTimeout: () => [],
+    );
+
+    if (mounted) setState(() => _isLoadingFavorite = false);
   }
 
   Future<void> _refreshMyList() async {
+    if (!mounted) return;
+    setState(() => _isLoadingMyList = true);
+
     myListBloc.add(LoadProfilesMyList());
-    await myListBloc.profilesStream.firstWhere((_) => true);
+    // On attend la première émission du stream pour couper le Shimmer
+    await myListBloc.profilesStream.firstWhere((_) => true).timeout(
+      const Duration(seconds: 4),
+      onTimeout: () => [],
+    );
+
+    if (mounted) setState(() => _isLoadingMyList = false);
   }
 
   // --- SHIMMER POUR LES FAVORIS (HORIZONTALE) ---
@@ -89,22 +120,31 @@ class _MyPlantPageState extends State<MyPlantPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Mes favoris',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.myFavorites,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 300,
                   child: StreamBuilder<List<ObjectProfile>>(
                     stream: favoriteBloc.profilesStream,
+                    initialData: const [], // ➔ ÉTAPE 2 : On évite le blocage du ConnectionState.waiting
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return _buildFavoriteShimmer(); // REMPLACÉ
+                      // ➔ ÉTAPE 3 : On utilise notre booléen local pour savoir si l'on cherche activement
+                      if (_isLoadingFavorite) {
+                        return _buildFavoriteShimmer();
                       }
-                      final plants = snapshot.data!;
+
+                      final plants = snapshot.data ?? [];
                       if (plants.isEmpty) {
-                        return const Center(child: Text("Aucune plante trouvée."));
+                        return EmptyStateWidget(
+                          icon: Icons.favorite_border_rounded,
+                          title: AppLocalizations.of(context)!.myFavoritesEmptyTitle,
+                          subtitle: AppLocalizations.of(context)!.myFavoritesEmptySubtitle,
+                          isHorizontal: true, // Optimise un peu la taille pour le bloc horizontal
+                        );
                       }
+
                       return ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: plants.length,
@@ -123,21 +163,29 @@ class _MyPlantPageState extends State<MyPlantPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Ma Liste',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.myList,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 6),
                 StreamBuilder<List<ObjectProfile>>(
                   stream: myListBloc.profilesStream,
+                  initialData: const [], // ➔ ÉTAPE 2 : On évite aussi le blocage ici
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return _buildMyListShimmer(); // REMPLACÉ
+                    // ➔ ÉTAPE 3 : Utilisation du second booléen local
+                    if (_isLoadingMyList) {
+                      return _buildMyListShimmer();
                     }
-                    final plants = snapshot.data!;
+
+                    final plants = snapshot.data ?? [];
                     if (plants.isEmpty) {
-                      return const Center(child: Text("Aucune plante trouvée."));
+                      return EmptyStateWidget(
+                        icon: Icons.yard_outlined,
+                        title: AppLocalizations.of(context)!.myListEmptyTitle,
+                        subtitle: AppLocalizations.of(context)!.myListEmptySubtitle,
+                      );
                     }
+
                     return ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,

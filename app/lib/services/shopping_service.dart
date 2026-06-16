@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../app_config.dart';
 import '../models/cart_item.dart';
+import 'api_client.dart';
 
 class ShoppingService {
+  final ApiClient _apiClient = ApiClient();
+
   Future<List<dynamic>> fetchCatalog({int? idTag, String? titleSearch}) async {
     try {
       final response = await http.post(
@@ -25,15 +28,9 @@ class ShoppingService {
     }
   }
 
-  Future<int> getCartCount(String token) async {
+  Future<int> getCartCount() async {
     try {
-      final response = await http.post(
-        Uri.parse(AppConfig.cartCount),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await _apiClient.post(Uri.parse(AppConfig.cartCount));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -62,14 +59,10 @@ class ShoppingService {
     }
   }
 
-  Future<bool> addToCart({required int idObject, required int quantity, required String token}) async {
+  Future<bool> addToCart({required int idObject, required int quantity}) async {
     try {
-      final response = await http.post(
+      final response = await _apiClient.post(
         Uri.parse(AppConfig.cartAdd),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
         body: jsonEncode({
           "id_object": idObject,
           "object_quantity": quantity,
@@ -86,15 +79,9 @@ class ShoppingService {
     }
   }
 
-  Future<List<CartItem>> fetchCartList(String token) async {
+  Future<List<CartItem>> fetchCartList() async {
     try {
-      final response = await http.get(
-        Uri.parse(AppConfig.cartList),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await _apiClient.get(Uri.parse(AppConfig.cartList));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -107,14 +94,10 @@ class ShoppingService {
     }
   }
 
-  Future<bool> deleteCartItem(String token, int idCartItem) async {
+  Future<bool> deleteCartItem(int idCartItem) async {
     try {
-      final response = await http.post(
+      final response = await _apiClient.post(
         Uri.parse(AppConfig.cartDelete),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: jsonEncode({"id_cart_item": idCartItem}),
       );
 

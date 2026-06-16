@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:app/services/object_profile_service.dart';
-import 'package:app/ui/pages/widget/popup/connection_error_dialog.dart';
+
+import '../../../../l10n/generated/app_localizations.dart';
 
 class ConnectionErrorDialog {
   static Future<bool?> show(
@@ -12,20 +12,26 @@ class ConnectionErrorDialog {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
+
+        // Si aucun titre/message n'est fourni par l'appelant, on utilise la traduction par défaut
+        final displayTitle = title ?? l10n.connErrorDefaultTitle;
+        final displayMessage = message ?? l10n.connErrorDefaultMessage;
+
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Row(
             children: [
               const Icon(Icons.error_outline, color: Colors.red),
               const SizedBox(width: 10),
-              Expanded(child: Text(title)), // Utilise le titre passé en paramètre
+              Expanded(child: Text(displayTitle)), // Utilise le titre passé en paramètre
             ],
           ),
-          content: Text(message),
+          content: Text(displayMessage),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text("Annuler", style: TextStyle(color: Colors.grey)),
+              child: Text(l10n.connErrorBtnCancel, style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -33,7 +39,7 @@ class ConnectionErrorDialog {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text("Réessayer", style: TextStyle(color: Colors.white)),
+              child: Text(l10n.connErrorBtnRetry, style: TextStyle(color: Colors.white)),
             ),
           ],
         );

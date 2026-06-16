@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class SensorValue extends StatelessWidget {
@@ -19,7 +20,7 @@ class SensorValue extends StatelessWidget {
             ),
           ),
           Text(
-            value != null ? value.toString() : "Non disponible",
+            value != null ? value.toString() : AppLocalizations.of(context)!.noAvailableD,
             style: TextStyle(
               fontSize: 16,
               color: value != null ? Colors.black : Colors.grey,

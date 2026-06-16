@@ -90,7 +90,6 @@ class _CreateGroupPlantPageState extends State<CreateGroupPlantPage> {
       priority: _selectedPriority,
       wateringTime: _selectedWateringSeconds,
       wateringPeriodOpen: int.tryParse(_wateringDurationController.text) ?? 5,
-      token: token,
     );
 
     if (mounted) {

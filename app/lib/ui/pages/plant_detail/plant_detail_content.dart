@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app_config.dart';
 import '../../../bloc/plant_detail/plant_detail_bloc.dart';
 import '../../../bloc/plant_detail/plant_detail_state.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../widget/plant_card_favorite/plant_control_switches_widget.dart';
 
 class PlantDetailContent extends StatelessWidget {
@@ -12,7 +13,7 @@ class PlantDetailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Détail de la plante")),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.plantDetailTitle)),
       body: BlocBuilder<PlantDetailBloc, PlantDetailState>(
         builder: (context, state) {
           if (state is PlantDetailLoading) {
@@ -47,11 +48,11 @@ class PlantDetailContent extends StatelessWidget {
                             builder: (_) => AlertDialog(
                               title: Text(plant.plantType.title),
                               content: Text(
-                                  plant.plantType.description ?? "Pas de description"),
+                                  plant.plantType.description ?? AppLocalizations.of(context)!.plantDetailNoDescription),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: const Text("Fermer"),
+                                  child: Text(AppLocalizations.of(context)!.plantDetailBtnClose),
                                 ),
                               ],
                             ),
@@ -71,7 +72,7 @@ class PlantDetailContent extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 16),
-                  const Text("Contrôles",
+                  Text(AppLocalizations.of(context)!.plantDetailSectionControls,
                       style:
                       TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),

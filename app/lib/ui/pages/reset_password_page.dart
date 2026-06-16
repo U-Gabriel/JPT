@@ -1,3 +1,5 @@
+import 'package:app/l10n/generated/app_localizations.dart';
+import 'package:app/l10n/generated/app_localizations_en.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -31,7 +33,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     final args = ModalRoute.of(context)?.settings.arguments;
 
     if (args == null || args is! Map<String, dynamic>) {
-      _showErrorSnackBar("Session expirée. Veuillez recommencer.");
+      _showErrorSnackBar(AppLocalizations.of(context)!.retrySessionExpire);
       return;
     }
 
@@ -53,7 +55,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     if (!successReset) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showErrorSnackBar("Le code a expiré ou est invalide.");
+      _showErrorSnackBar(AppLocalizations.of(context)!.expiredCode);
       return;
     }
 
@@ -69,7 +71,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       _showAutoLoginDialog();
     } else {
       // Si l'auto-login échoue (rare), on renvoie vers le login classique
-      _showErrorSnackBar("Mot de passe changé, mais erreur de connexion. Connectez-vous manuellement.");
+      _showErrorSnackBar(AppLocalizations.of(context)!.passwordChangeNoConnected);
       Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
     }
   }
@@ -85,9 +87,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           children: [
             const Icon(Icons.check_circle, color: Colors.green, size: 60),
             const SizedBox(height: 20),
-            const Text("Mot de passe mis à jour !", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            Text(AppLocalizations.of(context)!.updatePassword, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(height: 10),
-            const Text("Connexion automatique en cours...", textAlign: TextAlign.center),
+            Text(AppLocalizations.of(context)!.autoLoginLoading, textAlign: TextAlign.center),
             const SizedBox(height: 20),
             const CircularProgressIndicator(color: Colors.green),
           ],
@@ -110,8 +112,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Icon(Icons.check_circle, color: Colors.green, size: 60),
-        content: const Text(
-          "Mot de passe modifié avec succès ! Vous pouvez maintenant vous connecter.",
+        content: Text(
+          AppLocalizations.of(context)!.successPasswordConnectOk,
           textAlign: TextAlign.center,
         ),
         actions: [
@@ -119,7 +121,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             child: ElevatedButton(
               onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: const Text("RETOUR À LA CONNEXION", style: TextStyle(color: Colors.white)),
+              child: Text(AppLocalizations.of(context)!.loginBackMaj, style: TextStyle(color: Colors.white)),
             ),
           )
         ],
@@ -147,16 +149,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                const Text("Nouveau\nmot de passe",
+                Text(AppLocalizations.of(context)!.newPasswordLine,
                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF1B5E20), height: 1.1)),
                 const SizedBox(height: 12),
-                Text("Créez un mot de passe fort pour sécuriser votre compte.",
+                Text(AppLocalizations.of(context)!.createNewStrongPassword,
                     style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
 
                 const SizedBox(height: 40),
 
                 _buildInputField(
-                  label: "Nouveau mot de passe",
+                  label: AppLocalizations.of(context)!.newPassword,
                   controller: _passwordController,
                   obscure: _obscurePassword,
                   toggle: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -165,7 +167,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 const SizedBox(height: 24),
 
                 _buildInputField(
-                  label: "Confirmer le mot de passe",
+                  label: AppLocalizations.of(context)!.confirmationThePassword,
                   controller: _confirmPasswordController,
                   obscure: _obscureConfirm,
                   toggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
@@ -189,7 +191,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("RÉINITIALISER", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                        : Text(AppLocalizations.of(context)!.resetMaj, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                 ),
               ],
@@ -216,16 +218,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           controller: controller,
           obscureText: obscure,
           // --- AJOUTS ICI ---
-          textInputAction: label.contains("Confirmer")
+          textInputAction: label.contains(AppLocalizations.of(context)!.confirmation)
               ? TextInputAction.done  // Affiche "Valider" sur le dernier champ
               : TextInputAction.next, // Affiche "Suivant" sur le premier champ
           onFieldSubmitted: (_) {
-            if (label.contains("Confirmer")) {
+            if (label.contains(AppLocalizations.of(context)!.confirmation)) {
               _submitReset(); // Valide si on est sur le dernier champ
             }
           },
           // ------------------
-          validator: validator ?? (val) => val != null && val.length < 6 ? "6 caractères minimum" : null,
+          validator: validator ?? (val) => val != null && val.length < 6 ? AppLocalizations.of(context)!.limitChar : null,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.grey.shade50,

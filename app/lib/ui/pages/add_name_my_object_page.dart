@@ -43,7 +43,7 @@ class _AddNameMyObjectPageState extends State<AddNameMyObjectPage> {
   Future<PlantType?> _loadPlantData(int id) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
-    return _plantService.getDescriptionPlantType(id, token);
+    return _plantService.getDescriptionPlantType(id);
   }
 
   @override

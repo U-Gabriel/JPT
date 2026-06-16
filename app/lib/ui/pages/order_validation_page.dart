@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../models/cart_item.dart';
 import '../../../models/address_person.dart';
@@ -33,13 +34,13 @@ class OrderValidationPage extends StatelessWidget {
                       child: Icon(Icons.check_rounded, size: 50, color: Colors.white),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      "Félicitations !",
+                    Text(
+                      AppLocalizations.of(context)!.congratulationsD,
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppT.ink),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Votre commande a été validée avec succès et est en cours de préparation.",
+                      AppLocalizations.of(context)!.validateOrder,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: AppT.muted, fontSize: 14),
                     ),
@@ -48,7 +49,7 @@ class OrderValidationPage extends StatelessWidget {
                     const Divider(),
 
                     // --- RÉCAPITULATIF DES ARTICLES ---
-                    _buildSectionTitle("VOTRE COMMANDE"),
+                    _buildSectionTitle(AppLocalizations.of(context)!.yourOrderMaj),
                     const SizedBox(height: 16),
                     ...items.map((item) => _buildItemTile(item)).toList(),
 
@@ -56,7 +57,7 @@ class OrderValidationPage extends StatelessWidget {
                     const Divider(),
 
                     // --- ADRESSE DE LIVRAISON ---
-                    _buildSectionTitle("ADRESSE DE LIVRAISON"),
+                    _buildSectionTitle(AppLocalizations.of(context)!.deliveryAddressMaj),
                     const SizedBox(height: 12),
                     _buildInfoCard(
                       icon: Icons.local_shipping_outlined,
@@ -76,7 +77,7 @@ class OrderValidationPage extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Montant total réglé", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(AppLocalizations.of(context)!.totalAmountPaidD, style: TextStyle(fontWeight: FontWeight.bold)),
                           Text("${total.toStringAsFixed(2)}€",
                               style: const TextStyle(fontWeight: FontWeight.w900, color: AppT.gold, fontSize: 18)),
                         ],
@@ -101,11 +102,11 @@ class OrderValidationPage extends StatelessWidget {
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                     ),
-                    child: const Text("RETOURNER À L'ACCUEIL", style: TextStyle(fontWeight: FontWeight.w900)),
+                    child: Text(AppLocalizations.of(context)!.backToHomeMaj, style: TextStyle(fontWeight: FontWeight.w900)),
                   ),
                   TextButton(
                     onPressed: () => Navigator.pushNamed(context, '/my_orders'), // Optionnel
-                    child: const Text("Suivre mes commandes", style: TextStyle(color: AppT.gold, fontWeight: FontWeight.bold)),
+                    child: Text(AppLocalizations.of(context)!.trackMyOrdersD, style: TextStyle(color: AppT.gold, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),

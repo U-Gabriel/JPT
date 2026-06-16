@@ -10,7 +10,7 @@ class CartProvider with ChangeNotifier {
   // Charge le compte initial depuis l'API
   Future<void> loadCartCount(String token) async {
     if (token.isEmpty) return;
-    _cartCount = await _shopService.getCartCount(token);
+    _cartCount = await _shopService.getCartCount();
     notifyListeners();
   }
 

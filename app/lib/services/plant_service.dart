@@ -1,22 +1,20 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:app/app_config.dart';
-import '../models/plant_type.dart'; // Importez votre modèle ici
+import '../models/plant_type.dart';
+import 'api_client.dart';
 
 class PlantService {
+  final ApiClient _apiClient = ApiClient();
 
-  Future<List<PlantType>> searchPlants(String query, String token) async {
+  Future<List<PlantType>> searchPlants(String query) async {
     final url = Uri.parse(AppConfig.PlantTypeEndpointSearch());
 
     if (query.isEmpty) return [];
 
     try {
-      final response = await http.post(
+      final response = await _apiClient.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: jsonEncode({"title": query}),
       );
 
@@ -35,16 +33,12 @@ class PlantService {
     }
   }
 
-  Future<PlantType?> getDescriptionPlantType(int id, String token) async {
+  Future<PlantType?> getDescriptionPlantType(int id) async {
     final url = Uri.parse('${AppConfig.baseUrl}/plant_type/description/byid');
 
     try {
-      final response = await http.post(
+      final response = await _apiClient.post(
         url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
         body: jsonEncode({"id": id}),
       );
 

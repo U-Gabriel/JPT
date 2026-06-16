@@ -1,3 +1,4 @@
+import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -47,10 +48,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         context: context,
         builder: (ctx) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text("Oups !"),
-          content: const Text("Une erreur est survenue lors de l'envoi du mail. Vérifiez votre connexion ou l'adresse saisie."),
+          title: Text(AppLocalizations.of(context)!.oops),
+          content: Text(AppLocalizations.of(context)!.failureSendMail),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Réessayer"))
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context)!.retry))
           ],
         ),
       );
@@ -109,8 +110,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                   const SizedBox(height: 32),
 
-                  const Text(
-                    "Mot de passe oublié ?",
+                  Text(
+                    AppLocalizations.of(context)!.forgotPassword,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 26,
@@ -123,7 +124,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(height: 16),
 
                   Text(
-                    "Entrez l'adresse e-mail associée à votre compte. Nous vous enverrons un code pour réinitialiser votre mot de passe.",
+                    AppLocalizations.of(context)!.enterMailRetrieve,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
@@ -135,7 +136,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(height: 48),
 
                   // --- INPUT FIELD ---
-                  _buildEmailField(),
+                  _buildEmailField(context),
 
                   const SizedBox(height: 32),
 
@@ -159,8 +160,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           width: 24,
                           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
                       )
-                          : const Text(
-                        "ENVOYER LE CODE",
+                          : Text(
+                        AppLocalizations.of(context)!.sendTheCodeMaj,
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, letterSpacing: 1.1),
                       ),
                     ),
@@ -172,7 +173,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(
-                      "Retour à la connexion",
+                      AppLocalizations.of(context)!.back,
                       style: TextStyle(
                         color: Colors.green.shade800,
                         fontWeight: FontWeight.w600,
@@ -189,15 +190,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 4, bottom: 8),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
-            "Votre Email",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+            AppLocalizations.of(context)!.yourEmail,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
           ),
         ),
         TextFormField(
@@ -205,7 +206,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           keyboardType: TextInputType.emailAddress,
           cursorColor: const Color(0xFF2E7D32),
           decoration: InputDecoration(
-            hintText: "exemple@gmail.com",
+            hintText: AppLocalizations.of(context)!.emailExample,
             prefixIcon: Icon(Icons.email_outlined, color: Colors.green.shade700),
             filled: true,
             fillColor: Colors.white,
@@ -228,8 +229,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             contentPadding: const EdgeInsets.symmetric(vertical: 20),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return "Veuillez entrer votre email";
-            if (!value.contains('@')) return "Format d'email invalide";
+            if (value == null || value.isEmpty) return AppLocalizations.of(context)!.enterYourEmail;
+            if (!value.contains('@')) return AppLocalizations.of(context)!.invalidEmail;
             return null;
           },
         ),

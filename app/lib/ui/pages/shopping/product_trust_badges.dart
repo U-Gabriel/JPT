@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/app_theme_tokens.dart';
 
 class ProductTrustBadges extends StatelessWidget {
@@ -7,9 +8,9 @@ class ProductTrustBadges extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final badges = [
-      (Icons.security_outlined, "Paiement\nSécurisé"),
-      (Icons.biotech_outlined, "Conception\n Haute Précision"),
-      (Icons.verified_outlined, "Satisfaction\nAssurée"),
+      (Icons.security_outlined, AppLocalizations.of(context)!.badgeSecurePay),
+      (Icons.biotech_outlined, AppLocalizations.of(context)!.badgeHighPrecision),
+      (Icons.verified_outlined, AppLocalizations.of(context)!.badgeSatisfaction),
     ];
 
     return Container(
