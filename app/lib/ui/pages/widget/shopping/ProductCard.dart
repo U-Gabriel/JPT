@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/product.dart';
@@ -48,26 +49,55 @@ class ProductCardState extends State<ProductCard> {
                         : PageView.builder(
                       onPageChanged: (i) => setState(() => _currentImg = i),
                       itemCount: p.images.length,
-                      itemBuilder: (context, i) => Image.network(
-                        ApiClient().getImageUrl(p.images[i]),
-                        fit: BoxFit.cover,
+                      itemBuilder: (context, i) => Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // 1. LE SHIMMER (En arrière-plan) : Il s'anime immédiatement
+                          // pour indiquer visuellement à l'utilisateur que ça charge.
+                          Shimmer.fromColors(
+                            baseColor: const Color(0xFFF0EEE9),
+                            highlightColor: Colors.white,
+                            period: const Duration(milliseconds: 1500), // Battement doux
+                            child: Container(
+                              color: const Color(0xFFF0EEE9),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/logo/favicon_original.svg',
+                                  height: 40,
+                                  color: AppT.subtle.withOpacity(0.5),
+                                ),
+                              ),
+                            ),
+                          ),
 
-                        // 1. Gestion du chargement élégant (Pas d'écran blanc !)
-                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) {
-                            // L'image est chargée, on applique un léger fondu à l'apparition
-                            return AnimatedOpacity(
-                              opacity: 1.0,
-                              duration: const Duration(milliseconds: 300),
-                              child: child,
-                            );
-                          }
-                          // Pendant le chargement, on affiche ton placeholder stylisé en fond
-                          return _buildPlaceholder();
-                        },
+                          // 2. L'IMAGE (En premier plan) : Elle se télécharge en secret.
+                          Image.network(
+                            ApiClient().getImageUrl(p.images[i]),
+                            fit: BoxFit.cover,
+                            gaplessPlayback: true,
+                            cacheHeight: 450,
 
-                        // 2. Si le lien est cassé ou pas de réseau
-                        errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                            // Dès que l'image est prête, elle apparaît en 120ms par-dessus le Shimmer
+                            frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+                              if (wasSynchronouslyLoaded) return child;
+                              return AnimatedOpacity(
+                                opacity: frame == null ? 0.0 : 1.0,
+                                duration: const Duration(milliseconds: 120),
+                                curve: Curves.easeOut,
+                                child: child,
+                              );
+                            },
+
+                            // On laisse l'image se dessiner au fur et à mesure
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return child;
+                            },
+
+                            // Si le lien est mort, on affiche le placeholder statique définitif
+                            errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                          ),
+                        ],
                       ),
                     ),
                   ),

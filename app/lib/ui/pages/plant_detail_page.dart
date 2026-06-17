@@ -123,7 +123,7 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                           fit: StackFit.expand,
                           children: [
                             // Utilisation de la version ici
-                            ImageHelper.buildPlantImage(path: "${plant.pathPicture}?v=$_imageVersion"),
+                            ImageHelper.buildPlantImage(path: plant.pathPicture),
                             const DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(

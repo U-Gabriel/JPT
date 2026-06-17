@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shimmer/shimmer.dart'; // 🔥 Ajouté pour le Shimmer de l'image
 import '../../../models/product.dart';
-import '../../../services/api_client.dart'; // 🔥 Import nécessaire pour l'URL
+import '../../../services/api_client.dart';
 import '../../utils/app_theme_tokens.dart';
 
 class ProductHero extends StatelessWidget {
@@ -33,25 +34,53 @@ class ProductHero extends StatelessWidget {
               controller: controller,
               onPageChanged: onPageChanged,
               itemCount: product.images.length,
-              itemBuilder: (_, i) => Image.network(
-                // 🔥 On utilise ton getImageUrl propre pour bâtir l'adresse https://gdome.fr/...
-                ApiClient().getImageUrl(product.images[i]),
-                fit: BoxFit.cover,
+              itemBuilder: (_, i) => Stack(
+                fit: StackFit.expand,
+                children: [
+                  // 1. LE SHIMMER (Arrière-plan) : S'active directement si la connexion rame
+                  Shimmer.fromColors(
+                    baseColor: const Color(0xFFF0EEE9),
+                    highlightColor: Colors.white,
+                    period: const Duration(milliseconds: 1500),
+                    child: Container(
+                      color: const Color(0xFFF0EEE9),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/logo/favicon_original.svg',
+                          height: 40,
+                          color: AppT.subtle.withOpacity(0.5),
+                        ),
+                      ),
+                    ),
+                  ),
 
-                // ✨ Le chargement chic : fond placeholder puis fondu progressif
-                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) {
-                    return AnimatedOpacity(
-                      opacity: 1.0,
-                      duration: const Duration(milliseconds: 300),
-                      child: child,
-                    );
-                  }
-                  return _buildPlaceholder();
-                },
+                  // 2. L'IMAGE (Premier plan) : S'affiche de manière fulgurante
+                  Image.network(
+                    ApiClient().getImageUrl(product.images[i]),
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true, // Évite les sauts blancs au scroll des pages
+                    cacheHeight: 600,      // Limite la taille en mémoire (0.45 de l'écran) pour la fluidité
 
-                // En cas de pépin (Lien mort, bdd non migrée), sécurité placeholder
-                errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                    // Dès la première frame décodée par le GPU, l'image apparaît en 120ms
+                    frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+                      if (wasSynchronouslyLoaded) return child;
+                      return AnimatedOpacity(
+                        opacity: frame == null ? 0.0 : 1.0,
+                        duration: const Duration(milliseconds: 120),
+                        curve: Curves.easeOut,
+                        child: child,
+                      );
+                    },
+
+                    // Rendu direct sans bloquer l'interface
+                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return child;
+                    },
+
+                    errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                  ),
+                ],
               ),
             ),
             if (product.images.length > 1)
