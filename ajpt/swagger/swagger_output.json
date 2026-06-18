@@ -646,7 +646,7 @@
         }
       },
       "/object_profile/delete/byobjectprofile": {
-        "delete": {
+        "post": {
           "tags": [
             "Object Profile"
           ],
