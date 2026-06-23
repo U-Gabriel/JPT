@@ -219,11 +219,30 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
 
     const query = `
         SELECT 
-            op.*, -- Toutes les infos de object_profile
-            op.last_uv_exposure_date,
-            op.modify_op,
+            op.id_object_profile,
             op.title AS op_title,
             op.path_picture AS op_path_picture,
+            op.description AS user_note,
+            op.advise AS user_advice,
+            op.state_plant,
+            op.is_automatic,
+            op.is_water,
+            op.is_favorite,
+            op.last_watering_date,
+            op.modify_op,
+            op.last_uv_exposure_date,
+            -- Capteurs actuels
+            op.uv_sensor,
+            op.temperature_air_sensor,
+            op.humidity_air_sensor,
+            op.humidity_ground_sensor,
+            op.conductivity_elec_sensor,
+            -- Moyennes
+            op.uv_sensor_average,
+            op.temperature_air_sensor_average,
+            op.humidity_air_sensor_average,
+            op.humidity_ground_sensor_average,
+            op.conductivity_elec_sensor_average,
             -- Infos du groupe (Cibles)
             gpt.temperature_sensor_extern AS target_temp,
             gpt.humidity_air_sensor AS target_hum_air,
@@ -232,7 +251,10 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
             gpt.exposition_time_uv AS target_uv,
             gpt.title AS gpt_title,
             -- Infos Plante et Avatar
-            pt.id_plant_type, pt.title AS plant_title,
+            pt.id_plant_type, 
+            pt.title AS plant_title,
+            pt.description AS plant_description,
+            pt.advise AS plant_advise,
             a.title AS avatar_title, a.picture_path AS path_picture
         FROM object_profile op
         LEFT JOIN plant_type pt ON pt.id_plant_type = op.id_plant_type
@@ -303,8 +325,8 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         id_object_profile: row.id_object_profile,
         title: row.op_title,
         path_picture: row.op_path_picture,
-        description: row.description,
-        advise: row.advise,
+        description: row.plant_description,
+        advise: row.plant_advise,
         state: row.state_plant, // Ton score de santé 1-4
         advice_realtime: advice_realtime,
         is_automatic: row.is_automatic,
