@@ -76,6 +76,10 @@ const updateObjectProfileObj = async (body) => {
                 humidity_air_sensor = $3,
                 conductivity_elec_sensor = $4,
                 uv_sensor_average = $5,
+                last_uv_exposure_date = CASE 
+                    WHEN $5 > 5 THEN NOW() 
+                    ELSE last_uv_exposure_date 
+                END,
                 temperature_air_sensor_average = $6,
                 humidity_air_sensor_average = $7,
                 conductivity_elec_sensor_average = $8,
