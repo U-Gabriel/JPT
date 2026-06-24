@@ -19,7 +19,6 @@ class PlantDetailPage extends StatefulWidget {
 }
 
 class _PlantDetailPageState extends State<PlantDetailPage> {
-  // Cette variable permet de rafraîchir l'image uniquement quand on le décide
   String _imageVersion = DateTime.now().millisecondsSinceEpoch.toString();
 
   @override
@@ -53,33 +52,9 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                     SliverAppBar(
                       expandedHeight: MediaQuery.of(context).size.height * 0.30,
                       pinned: true,
+                      // L'AppBar ne garde QUE le bouton favori (standard UX)
                       actions: [
-                        IconButton(
-                          icon: const Icon(Icons.quiz_rounded, color: Colors.white),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/profile_faq',
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.wifi_find, color: Colors.white),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/modification_wifi_my_object',
-                              arguments: {
-                                'objectProfileId': plant.idObjectProfile,
-                                'title': plant.title,
-                              },
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.white),
-                          onPressed: () => _handleDelete(context, plant),
-                        ),
+                        // 1. Bouton Favoris (Reste en haut à droite, propre et réactif)
                         IconButton(
                           icon: Icon(
                             plant.isFavorite ? Icons.star : Icons.star_border,
@@ -97,16 +72,106 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                             );
                           },
                         ),
+
+                        // 2. Bouton "Plus" qui ouvre le panneau d'options moderne, beau et sans bug
                         IconButton(
-                          icon: const Icon(Icons.settings_input_component, color: Colors.white),
+                          icon: const Icon(Icons.more_vert, color: Colors.white),
                           onPressed: () {
-                            Navigator.pushNamed(
-                                context,
-                                '/group_plant_type',
-                                arguments: {
-                                  'objectProfileId': plant.idObjectProfile,
-                                  'plantId': plant.plantDetails.typeId,
-                                }
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent, // Permet de gérer nos propres arrondis
+                              barrierColor: Colors.black.withOpacity(0.5), // Assombrit le fond élégamment
+                              isScrollControlled: true,
+                              builder: (BuildContext bottomSheetContext) {
+                                return Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(30), // Superbes coins arrondis
+                                      topRight: Radius.circular(30),
+                                    ),
+                                  ),
+                                  child: SafeArea(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min, // S'adapte à la taille du contenu
+                                        children: [
+                                          // Petite barre grise de glissement (Standard UX)
+                                          Container(
+                                            width: 40,
+                                            height: 4,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[300],
+                                              borderRadius: BorderRadius.circular(2),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 24),
+
+                                          const Text(
+                                            "Fonctionnalités de l'objet",
+                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          ),
+                                          const SizedBox(height: 20),
+
+                                          // Option 1 : Réglages d'arrosage
+                                          _buildBottomSheetItem(
+                                            icon: Icons.settings_input_component,
+                                            iconColor: Colors.green,
+                                            title: "Réglages d'arrosage",
+                                            subtitle: "Ajuster les cibles d'arrosage automatique",
+                                            onTap: () {
+                                              Navigator.pop(bottomSheetContext); // Ferme le menu
+                                              Navigator.pushNamed(
+                                                context,
+                                                '/group_plant_type',
+                                                arguments: {
+                                                  'objectProfileId': plant.idObjectProfile,
+                                                  'plantId': plant.plantDetails.typeId,
+                                                },
+                                              );
+                                            },
+                                          ),
+                                          const Divider(height: 1, indent: 52),
+
+                                          // Option 2 : Modifier le Wi-Fi
+                                          _buildBottomSheetItem(
+                                            icon: Icons.wifi,
+                                            iconColor: Colors.blue,
+                                            title: "Modifier le Wi-Fi",
+                                            subtitle: "Changer le réseau réseau de l'objet",
+                                            onTap: () {
+                                              Navigator.pop(bottomSheetContext);
+                                              Navigator.pushNamed(
+                                                context,
+                                                '/modification_wifi_my_object',
+                                                arguments: {
+                                                  'objectProfileId': plant.idObjectProfile,
+                                                  'title': plant.title,
+                                                },
+                                              );
+                                            },
+                                          ),
+                                          const Divider(height: 1, indent: 52),
+
+                                          // Option 3 : Aide & FAQ
+                                          _buildBottomSheetItem(
+                                            icon: Icons.quiz_rounded,
+                                            iconColor: Colors.purple,
+                                            title: "Aide & FAQ",
+                                            subtitle: "Questions fréquentes et guide d'utilisation",
+                                            onTap: () {
+                                              Navigator.pop(bottomSheetContext);
+                                              Navigator.pushNamed(context, '/profile_faq');
+                                            },
+                                          ),
+                                          const SizedBox(height: 12),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           },
                         ),
@@ -122,7 +187,6 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                         background: Stack(
                           fit: StackFit.expand,
                           children: [
-                            // Utilisation de la version ici
                             ImageHelper.buildPlantImage(path: plant.pathPicture),
                             const DecoratedBox(
                               decoration: BoxDecoration(
@@ -190,13 +254,16 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                                     ? "Pas de description"
                                     : plant.description
                             ),
-
                             _buildInfoSection(
                                 "Conseil d'entretien",
                                 (plant.advise == null || plant.advise!.isEmpty)
                                     ? "Aucun conseil d'entretien pour le moment."
                                     : plant.advise!
                             ),
+                            const SizedBox(height: 16),
+
+                            // 🔥 NOUVELLE SECTION UX CLAIRE ET PROFESSIONNELLE
+                            _buildDeviceOptions(plant, context),
                             const SizedBox(height: 60),
                           ],
                         ),
@@ -212,62 +279,152 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
     );
   }
 
+  // --- COMPOSANT DES OPTIONS UI/UX ---
+
+  Widget _buildDeviceOptions(ObjectProfile plant, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Options de l'objet",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Column(
+              children: [
+                _buildMenuRow(
+                  icon: Icons.settings_input_component,
+                  iconColor: Colors.green,
+                  title: "Paramètres d'arrosage",
+                  subtitle: "Ajuster les cibles d'arrosage automatique",
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/group_plant_type',
+                      arguments: {
+                        'objectProfileId': plant.idObjectProfile,
+                        'plantId': plant.plantDetails.typeId,
+                      },
+                    );
+                  },
+                ),
+                const Divider(height: 1, indent: 56, endIndent: 16),
+                _buildMenuRow(
+                  icon: Icons.wifi_find,
+                  iconColor: Colors.blue,
+                  title: "Modification Wi-Fi",
+                  subtitle: "Reconnecter ou changer le réseau de l'objet",
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/modification_wifi_my_object',
+                      arguments: {
+                        'objectProfileId': plant.idObjectProfile,
+                        'title': plant.title,
+                      },
+                    );
+                  },
+                ),
+                const Divider(height: 1, indent: 56, endIndent: 16),
+                _buildMenuRow(
+                  icon: Icons.quiz_rounded,
+                  iconColor: Colors.purple,
+                  title: "Aide & FAQ",
+                  subtitle: "Questions fréquentes et guide de l'objet",
+                  onTap: () {
+                    Navigator.pushNamed(context, '/profile_faq');
+                  },
+                ),
+                const Divider(height: 1, indent: 56, endIndent: 16),
+                _buildMenuRow(
+                  icon: Icons.delete_outline,
+                  iconColor: Colors.red,
+                  title: "Supprimer cet objet",
+                  subtitle: "Dissocier définitivement le pot connecté",
+                  isDestructive: true,
+                  onTap: () => _handleDelete(context, plant),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuRow({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isDestructive ? Colors.red[50] : iconColor.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: isDestructive ? Colors.red[700] : iconColor, size: 22),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: isDestructive ? Colors.red[700] : Colors.black87,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+      ),
+      trailing: Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+      onTap: onTap,
+    );
+  }
+
   // --- REPRODUCTION FIDÈLE DE TES MÉTHODES ---
 
   Widget _buildHeader(ObjectProfile plant, BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start, // Aligne le badge en haut
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. LE TYPE DE PLANTE (Titre principal)
               Text(
                 plant.plantDetails.typeTitle,
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 4), // Petit espace entre titre et groupe
-
-              // 2. LE GROUPE + ICÔNE INFO (Utilisation de Wrap pour éviter le bug)
+              const SizedBox(height: 4),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/plant_detail_known',
-                    arguments: plant.plantDetails.typeId,
-                  );
+                  Navigator.pushNamed(context, '/plant_detail_known', arguments: plant.plantDetails.typeId);
                 },
                 child: Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(
-                      "Groupe: ${plant.plantDetails.groupTitle}",
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
-                        height: 1.2, // Améliore la lisibilité si ça passe sur 2 lignes
-                      ),
-                    ),
+                    Text("Groupe: ${plant.plantDetails.groupTitle}", style: TextStyle(color: Colors.grey[600], fontSize: 14, height: 1.2)),
                     const SizedBox(width: 6),
-                    Icon(
-                      Icons.info_outline,
-                      size: 16,
-                      color: Colors.green.withOpacity(0.7),
-                    ),
+                    Icon(Icons.info_outline, size: 16, color: Colors.green.withOpacity(0.7)),
                   ],
                 ),
               ),
             ],
           ),
         ),
-
-        // 3. LE BADGE D'ÉTAT (Le carré "Je vais bien")
-        // On l'entoure d'un Padding pour qu'il ne colle pas au bord droit
         Padding(
           padding: const EdgeInsets.only(left: 12),
           child: Chip(
@@ -275,11 +432,7 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
             side: BorderSide(color: _getHealthColor(plant.state)),
             label: Text(
               getStateText(plant.state).toUpperCase(),
-              style: TextStyle(
-                color: _getHealthColor(plant.state),
-                fontWeight: FontWeight.bold,
-                fontSize: 10,
-              ),
+              style: TextStyle(color: _getHealthColor(plant.state), fontWeight: FontWeight.bold, fontSize: 10),
             ),
           ),
         ),
@@ -288,9 +441,7 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
   }
 
   Widget _buildConnectionStatus(ObjectProfile plant) {
-    final bool isStable = _isConnectionStable(plant.lastUpdate, maxDays: 1) ||
-        _isConnectionStable(plant.lastWatering, maxDays: 6);
-
+    final bool isStable = _isConnectionStable(plant.lastUpdate, maxDays: 1) || _isConnectionStable(plant.lastWatering, maxDays: 6);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -301,21 +452,12 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
       ),
       child: Row(
         children: [
-          Icon(
-            isStable ? Icons.wifi_tethering : Icons.wifi_tethering_off,
-            color: isStable ? Colors.green[700] : Colors.red[700],
-            size: 20,
-          ),
+          Icon(isStable ? Icons.wifi_tethering : Icons.wifi_tethering_off, color: isStable ? Colors.green[700] : Colors.red[700], size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               isStable ? "Objet bien connecté à l'application" : "Perte de contact avec la plante !",
-              style: TextStyle(
-                color: isStable ? Colors.green[800] : Colors.red[800],
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                height: 1.3,
-              ),
+              style: TextStyle(color: isStable ? Colors.green[800] : Colors.red[800], fontSize: 13, fontWeight: FontWeight.w500, height: 1.3),
             ),
           ),
         ],
@@ -341,12 +483,7 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
               const SizedBox(width: 12),
               Text(
                 isAuto ? "MODE AUTOMATIQUE ACTIVÉ" : "MODE MANUEL ACTIVÉ",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  letterSpacing: 1.1,
-                  color: isAuto ? Colors.green[800] : Colors.orange[800],
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, letterSpacing: 1.1, color: isAuto ? Colors.green[800] : Colors.orange[800]),
               ),
             ],
           ),
@@ -365,7 +502,6 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
   void _handleDelete(BuildContext context, ObjectProfile plant) {
     final authProvider = context.read<AuthProvider>();
     final userId = int.tryParse(authProvider.userId ?? '') ?? 0;
-    final token = authProvider.accessToken ?? '';
 
     DeleteConfirmDialog.show(
       context,
@@ -379,7 +515,6 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
 
         if (!context.mounted) return;
 
-        // VOICI TON SWITCH CODE
         switch (statusCode) {
           case 200:
             _showSnack(context, "Profil supprimé avec succès", Colors.green);
@@ -394,8 +529,6 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
       },
     );
   }
-
-  // --- AUTRES HELPERS TECHNIQUES ---
 
   Widget _buildLoadingShimmer(BuildContext context) {
     return Shimmer.fromColors(
@@ -430,14 +563,12 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
     final sensors = plant.sensors;
     final double? avgUv = sensors.averages['uv'];
     final bool isSunExposedToday = _hasSunExposureToday(plant.lastUvExposureDate);
-
     final uvDisplay = _getUvDisplay(avgUv);
 
     String format(double? val) => val != null ? val.toStringAsFixed(1) : '--';
 
     return Column(
       children: [
-        // La grille existante (à laquelle on redonne de l'ordre)
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -449,17 +580,10 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
             _buildSensorTile("Température", "${format(sensors.averages['temp'])}°C", sensors.targets['temp'], Icons.thermostat),
             _buildSensorTile("Fertilité", "${format(sensors.averages['fertility'])}%", sensors.targets['fertility'], Icons.science),
             _buildSensorTile("Humidité Air", "${format(sensors.averages['hum_air'])}%", sensors.targets['hum_air'], Icons.cloud),
-            _buildCustomUvTile(
-                "Luminosité",
-                uvDisplay["text"],
-                uvDisplay["color"],
-                Icons.wb_sunny_rounded
-            ),
+            _buildCustomUvTile("Luminosité", uvDisplay["text"], uvDisplay["color"], Icons.wb_sunny_rounded),
           ],
         ),
         const SizedBox(height: 16),
-
-        // LE COMPOSANT EXCLUSIF UV (UX/UI Premium)
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
@@ -473,31 +597,16 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
             children: [
               Row(
                 children: [
-                  Icon(
-                    isSunExposedToday ? Icons.brightness_high : Icons.cloud_queue,
-                    color: isSunExposedToday ? Colors.amber[800] : Colors.blueGrey[600],
-                    size: 20,
-                  ),
+                  Icon(isSunExposedToday ? Icons.brightness_high : Icons.cloud_queue, color: isSunExposedToday ? Colors.amber[800] : Colors.blueGrey[600], size: 20),
                   const SizedBox(width: 8),
                   Text(
                     "EXPOSITION SOLEIL AUJOURD'HUI : ${isSunExposedToday ? 'OUI' : 'NON'}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: isSunExposedToday ? Colors.amber[900] : Colors.blueGrey[800],
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isSunExposedToday ? Colors.amber[900] : Colors.blueGrey[800]),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                _getUvAdvice(avgUv),
-                style: TextStyle(
-                    fontSize: 13,
-                    height: 1.4,
-                    color: isSunExposedToday ? Colors.amber[900] : Colors.blueGrey[900]
-                ),
-              ),
+              Text(_getUvAdvice(avgUv), style: TextStyle(fontSize: 13, height: 1.4, color: isSunExposedToday ? Colors.amber[900] : Colors.blueGrey[900])),
             ],
           ),
         ),
@@ -524,24 +633,16 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
   Widget _buildCustomUvTile(String label, String value, Color color, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          color: Colors.grey[50],
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey[200]!)
-      ),
+      decoration: BoxDecoration(color: Colors.grey[50], borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.grey[200]!)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 20, color: color), // L'icône prend la couleur du niveau de soleil !
+          Icon(icon, size: 20, color: color),
           const SizedBox(height: 2),
           Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
           const SizedBox(height: 2),
-          // Le texte écrit gros et coloré (ex: "Élevé" en Orange)
-          Text(
-              value,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)
-          ),
+          Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
         ],
       ),
     );
@@ -586,49 +687,59 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: color, behavior: SnackBarBehavior.floating, duration: const Duration(milliseconds: 800)));
   }
 
-  // Moteur d'analyse de l'indice UV moyen d'aujourd'hui
   String _getUvAdvice(double? uvValue) {
     if (uvValue == null) return "Aucune donnée de luminosité reçue aujourd'hui.";
-    if (uvValue <= 2.0) {
-      return "Luminosité faible aujourd'hui. Votre plante manque un peu de clarté pour s'épanouir pleinement.";
-    } else if (uvValue <= 5.0) {
-      return "Ensoleillement doux. Un bain de lumière équilibré pour l'énergie de votre plante.";
-    } else if (uvValue <= 7.0) {
-      return "Exposition forte ! Surveillez l'état des feuilles tout de même, le soleil tape fort aujourd'hui.";
-    } else {
-      return "Rayonnement extrême ! Risque de brûlure. Protégez votre plante ou déplacez l'objet à l'ombre.";
-    }
+    if (uvValue <= 2.0) return "Luminosité faible aujourd'hui. Votre plante manque un peu de clarté pour s'épanouir pleinement.";
+    if (uvValue <= 5.0) return "Ensoleillement doux. Un bain de lumière équilibré pour l'énergie de votre plante.";
+    if (uvValue <= 7.0) return "Exposition forte ! Surveillez l'état des feuilles tout de même, le soleil tape fort aujourd'hui.";
+    return "Rayonnement extrême ! Risque de brûlure. Protégez votre plante ou déplacez l'objet à l'ombre.";
   }
 
-// Vérifie si l'exposition au soleil a eu lieu AUJOURD'HUI
   bool _hasSunExposureToday(String? lastUvDateString) {
     if (lastUvDateString == null) return false;
     try {
       final lastUvDate = DateTime.parse(lastUvDateString).toLocal();
       final now = DateTime.now();
-      return lastUvDate.year == now.year &&
-          lastUvDate.month == now.month &&
-          lastUvDate.day == now.day;
-    } catch (e) {
-      return false;
-    }
+      return lastUvDate.year == now.year && lastUvDate.month == now.month && lastUvDate.day == now.day;
+    } catch (e) { return false; }
   }
 
   Map<String, dynamic> _getUvDisplay(double? uvValue) {
-    if (uvValue == null) {
-      return {"text": "Aucune", "color": Colors.grey};
-    }
-    if (uvValue <= 2.0) {
-      return {"text": "Faible", "color": Colors.blueGrey};
-    } else if (uvValue <= 5.0) {
-      return {"text": "Modéré", "color": Colors.green};
-    } else if (uvValue <= 7.0) {
-      return {"text": "Élevé", "color": Colors.orange};
-    } else if (uvValue <= 10.0) {
-      return {"text": "Très Élevé", "color": Colors.red};
-    } else {
-      return {"text": "Critique !", "color": Colors.purple};
-    }
+    if (uvValue == null) return {"text": "Aucune", "color": Colors.grey};
+    if (uvValue <= 2.0) return {"text": "Faible", "color": Colors.blueGrey};
+    if (uvValue <= 5.0) return {"text": "Modéré", "color": Colors.green};
+    if (uvValue <= 7.0) return {"text": "Élevé", "color": Colors.orange};
+    if (uvValue <= 10.0) return {"text": "Très Élevé", "color": Colors.red};
+    return {"text": "Critique !", "color": Colors.purple};
   }
 
+  Widget _buildBottomSheetItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: iconColor.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: iconColor, size: 22),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+      ),
+      trailing: Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+      onTap: onTap,
+    );
+  }
 }
