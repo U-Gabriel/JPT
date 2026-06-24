@@ -31,6 +31,7 @@ class ObjectProfile {
   final String? adviceRealtime;
   final bool isWater;
   final bool isFavorite;
+  final String? lastUvExposureDate;
   final String? lastWatering;
   final String? lastUpdate;
   final SensorData sensors;
@@ -62,6 +63,7 @@ class ObjectProfile {
     this.adviceRealtime,
     required this.isWater,
     required this.isFavorite,
+    this.lastUvExposureDate,
     this.lastWatering,
     this.lastUpdate,
     required this.sensors,
@@ -112,6 +114,7 @@ class ObjectProfile {
         adviceRealtime: json['advice_realtime'] ?? '',
         isWater: json['is_water'] ?? false,
         isFavorite: json['is_favorite'] ?? false,
+        lastUvExposureDate: json['last_uv_exposure_date'],
         lastWatering: json['last_watering'],
         lastUpdate: json['last_update'],
       );
@@ -146,6 +149,7 @@ class ObjectProfile {
     String? adviceRealtime,
     bool? isWater,
     bool? isFavorite,
+    String? lastUvExposureDate,
     DateTime? lastWatering,
     SensorData? sensors,
     PlantDetails? plantDetails,
@@ -174,6 +178,7 @@ class ObjectProfile {
       adviceRealtime: adviceRealtime ?? this.adviceRealtime,
       isWater: isWater ?? this.isWater,
       isFavorite: isFavorite ?? this.isFavorite,
+      lastUvExposureDate: lastUvExposureDate ?? this.lastUvExposureDate,
       sensors: sensors ?? this.sensors,
       plantDetails: plantDetails ?? this.plantDetails,
     );

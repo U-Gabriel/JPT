@@ -168,7 +168,7 @@ class _AddConnectMyObjectPageState extends State<AddConnectMyObjectPage> {
             const SizedBox(height: 12),
 
             Text(
-              AppLocalizations.of(context)!.addObjStepDesc as String,
+              AppLocalizations.of(context)!.addObjStepDesc(plantName),
               style: const TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
             ),
 

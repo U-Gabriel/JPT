@@ -184,8 +184,19 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                             const SizedBox(height: 16),
                             _buildSensorGrid(plant),
                             const SizedBox(height: 32),
-                            _buildInfoSection("À propos", plant.description ?? "Pas de description"),
-                            _buildInfoSection("Conseil d'entretien", plant.advise ?? "Aucun conseil"),
+                            _buildInfoSection(
+                                "À propos",
+                                (plant.description == null || plant.description.isEmpty)
+                                    ? "Pas de description"
+                                    : plant.description
+                            ),
+
+                            _buildInfoSection(
+                                "Conseil d'entretien",
+                                (plant.advise == null || plant.advise!.isEmpty)
+                                    ? "Aucun conseil d'entretien pour le moment."
+                                    : plant.advise!
+                            ),
                             const SizedBox(height: 60),
                           ],
                         ),
@@ -343,7 +354,7 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
           Text(
             isAuto
                 ? "Le mode automatique est activé : le pot se comportera selon les paramètres optimaux définis pour votre plante."
-                : "Attention ! Le pot ne prendra aucune décision d'arrosage. Ce mode permet la surveillance et l'arrosage à distance.",
+                : "Attention ! Le pot ne prendra aucune décision d'arrosage. Ce mode permet la surveillance et l'arrosage à distance. Notez que le maintien de cette connexion permanente est particulièrement énergivore. Afin de préserver l'autonomie de la batterie, nous vous conseillons d'utiliser cette fonctionnalité avec modération et de surveiller régulièrement le niveau d'énergie de votre objet.",
             style: TextStyle(color: isAuto ? Colors.green[900] : Colors.orange[900], fontSize: 13, height: 1.4),
           ),
         ],
@@ -417,14 +428,79 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
 
   Widget _buildSensorGrid(ObjectProfile plant) {
     final sensors = plant.sensors;
+    final double? avgUv = sensors.averages['uv'];
+    final bool isSunExposedToday = _hasSunExposureToday(plant.lastUvExposureDate);
+
+    final uvDisplay = _getUvDisplay(avgUv);
+
     String format(double? val) => val != null ? val.toStringAsFixed(1) : '--';
-    return GridView.count(
-      shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), crossAxisCount: 2, childAspectRatio: 1.4, mainAxisSpacing: 16, crossAxisSpacing: 16,
+
+    return Column(
       children: [
-        _buildSensorTile("Température", "${format(sensors.averages['temp'])}°C", sensors.targets['temp'], Icons.thermostat),
-        _buildSensorTile("Humidité Sol", "${format(sensors.averages['fertility'])}%", sensors.targets['fertility'], Icons.water_drop),
-        _buildSensorTile("Humidité Air", "${format(sensors.averages['hum_air'])}%", sensors.targets['hum_air'], Icons.cloud),
-        _buildSensorTile("Fertilité", format(sensors.averages['fertility']), sensors.targets['fertility'], Icons.science),
+        // La grille existante (à laquelle on redonne de l'ordre)
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          childAspectRatio: 1.4,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          children: [
+            _buildSensorTile("Température", "${format(sensors.averages['temp'])}°C", sensors.targets['temp'], Icons.thermostat),
+            _buildSensorTile("Fertilité", "${format(sensors.averages['fertility'])}%", sensors.targets['fertility'], Icons.science),
+            _buildSensorTile("Humidité Air", "${format(sensors.averages['hum_air'])}%", sensors.targets['hum_air'], Icons.cloud),
+            _buildCustomUvTile(
+                "Luminosité",
+                uvDisplay["text"],
+                uvDisplay["color"],
+                Icons.wb_sunny_rounded
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // LE COMPOSANT EXCLUSIF UV (UX/UI Premium)
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isSunExposedToday ? Colors.amber[50] : Colors.blueGrey[50],
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: isSunExposedToday ? Colors.amber[200]! : Colors.blueGrey[200]!),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    isSunExposedToday ? Icons.brightness_high : Icons.cloud_queue,
+                    color: isSunExposedToday ? Colors.amber[800] : Colors.blueGrey[600],
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "EXPOSITION SOLEIL AUJOURD'HUI : ${isSunExposedToday ? 'OUI' : 'NON'}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: isSunExposedToday ? Colors.amber[900] : Colors.blueGrey[800],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _getUvAdvice(avgUv),
+                style: TextStyle(
+                    fontSize: 13,
+                    height: 1.4,
+                    color: isSunExposedToday ? Colors.amber[900] : Colors.blueGrey[900]
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -445,15 +521,41 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
     );
   }
 
+  Widget _buildCustomUvTile(String label, String value, Color color, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.grey[200]!)
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 20, color: color), // L'icône prend la couleur du niveau de soleil !
+          const SizedBox(height: 2),
+          Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          const SizedBox(height: 2),
+          // Le texte écrit gros et coloré (ex: "Élevé" en Orange)
+          Text(
+              value,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAnalysisCard(ObjectProfile plant) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.green[50], borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.green[100]!)),
+      decoration: BoxDecoration(color: Colors.orange[50], borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.orange[100]!)),
       child: Column(
         children: [
-          const Row(children: [Icon(Icons.psychology, color: Colors.green), SizedBox(width: 12), Text("ANALYSE IA", style: TextStyle(fontWeight: FontWeight.bold))]),
+          const Row(children: [Icon(Icons.psychology, color: Colors.green), SizedBox(width: 12), Text("ANALYSE PRO", style: TextStyle(fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
-          Text(plant.adviceRealtime ?? "Analyse en cours...", style: TextStyle(color: Colors.green[900], fontSize: 15, height: 1.5)),
+          Text(plant.adviceRealtime ?? "Analyse en cours...", style: TextStyle(color: Colors.black, fontSize: 15, height: 1.5)),
         ],
       ),
     );
@@ -483,4 +585,50 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
   void _showSnack(BuildContext context, String msg, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: color, behavior: SnackBarBehavior.floating, duration: const Duration(milliseconds: 800)));
   }
+
+  // Moteur d'analyse de l'indice UV moyen d'aujourd'hui
+  String _getUvAdvice(double? uvValue) {
+    if (uvValue == null) return "Aucune donnée de luminosité reçue aujourd'hui.";
+    if (uvValue <= 2.0) {
+      return "Luminosité faible aujourd'hui. Votre plante manque un peu de clarté pour s'épanouir pleinement.";
+    } else if (uvValue <= 5.0) {
+      return "Ensoleillement doux. Un bain de lumière équilibré pour l'énergie de votre plante.";
+    } else if (uvValue <= 7.0) {
+      return "Exposition forte ! Surveillez l'état des feuilles tout de même, le soleil tape fort aujourd'hui.";
+    } else {
+      return "Rayonnement extrême ! Risque de brûlure. Protégez votre plante ou déplacez l'objet à l'ombre.";
+    }
+  }
+
+// Vérifie si l'exposition au soleil a eu lieu AUJOURD'HUI
+  bool _hasSunExposureToday(String? lastUvDateString) {
+    if (lastUvDateString == null) return false;
+    try {
+      final lastUvDate = DateTime.parse(lastUvDateString).toLocal();
+      final now = DateTime.now();
+      return lastUvDate.year == now.year &&
+          lastUvDate.month == now.month &&
+          lastUvDate.day == now.day;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Map<String, dynamic> _getUvDisplay(double? uvValue) {
+    if (uvValue == null) {
+      return {"text": "Aucune", "color": Colors.grey};
+    }
+    if (uvValue <= 2.0) {
+      return {"text": "Faible", "color": Colors.blueGrey};
+    } else if (uvValue <= 5.0) {
+      return {"text": "Modéré", "color": Colors.green};
+    } else if (uvValue <= 7.0) {
+      return {"text": "Élevé", "color": Colors.orange};
+    } else if (uvValue <= 10.0) {
+      return {"text": "Très Élevé", "color": Colors.red};
+    } else {
+      return {"text": "Critique !", "color": Colors.purple};
+    }
+  }
+
 }
