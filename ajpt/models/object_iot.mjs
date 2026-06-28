@@ -8,12 +8,14 @@ const updateObjectProfileObj = async (body) => {
         last_time_arrosage, 
         sensor_data, 
         last_watering_date,  
-        is_almost_empty_container
+        is_almost_empty_container,
+        battery_lvl
     } = body;
 
     // 2. VALIDATIONS DES DONNÉES
     if (!id_object_profile) throw new Error("id_object_profile is required");
     if (!sensor_data || !sensor_data.length) throw new Error("sensor_data is required");
+    const battery = (battery_lvl !== undefined && battery_lvl >= 0 && battery_lvl <= 100) ? battery_lvl : null;
 
     
     const [latestUV, latestTemp, latestHum, latestArid] = sensor_data[sensor_data.length - 1];
@@ -87,7 +89,8 @@ const updateObjectProfileObj = async (body) => {
                 modify_op = COALESCE($9, NOW()),
                 last_watering_date = COALESCE($11, last_watering_date),
                 is_water = false,
-                is_almost_empty_container = COALESCE($12, is_almost_empty_container)
+                is_almost_empty_container = COALESCE($12, is_almost_empty_container),
+                battery_lvl = COALESCE($13, battery_lvl)
             WHERE id_object_profile = $10
             RETURNING id_object_profile, id_plant_type, is_automatic, state_plant
         )
@@ -123,7 +126,8 @@ const updateObjectProfileObj = async (body) => {
             last_time_arrosage || null,                               // $9
             id_object_profile,                                        // $10
             last_watering_date || null,                               // $11
-            is_almost_empty_container ?? null                          // $12
+            is_almost_empty_container ?? null,                          // $12
+            battery ?? null
         ]
     };
 
