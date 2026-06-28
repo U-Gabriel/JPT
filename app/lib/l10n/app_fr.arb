@@ -451,32 +451,64 @@
   "faqFeedbackNoticeTitle": "Votre avis nous fait grandir",
   "faqFeedbackNoticeSubtitle": "Une suggestion ? Aidez-nous à améliorer GDOME.",
   "faqFeedbackNoticeButton": "Partager mon expérience",
-  "faqNoResultsFound": "Aucune réponse trouvée"
+  "faqNoResultsFound": "Aucune réponse trouvée",
 
+  "plantDetailPage": "=======================",
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  "sessionExpired": "Session expirée",
+  "errorPrefix": "Erreur :",
+  "addedToFavorites": "Ajout aux favoris...",
+  "removedFromFavorites": "Retrait des favoris...",
+  "deviceOptionsTitle": "Options de l'appareil",
+  "wateringSettingsTitle": "Réglages d'arrosage",
+  "wateringSettingsSubtitle": "Ajuster les cibles d'arrosage automatique",
+  "modifyWifiTitle": "Modifier le Wi-Fi",
+  "modifyWifiSubtitle": "Changer le réseau réseau de l'objet",
+  "helpFaqTitle": "Aide & FAQ",
+  "helpFaqSubtitle": "Questions fréquentes et guide d'utilisation",
+  "groupPrefix": "Groupe:",
+  "stateSensorsTitle": "État des capteurs",
+  "noDescription": "Pas de description",
+  "aboutTitle": "À propos",
+  "maintenanceAdviceTitle": "Conseil d'entretien",
+  "noMaintenanceAdvice": "Aucun conseil d'entretien pour le moment.",
+  "deviceOptionsSectionTitle": "Options de l'objet",
+  "wateringParamsTitle": "Paramètres d'arrosage",
+  "wifiModificationTitle": "Modification Wi-Fi",
+  "wifiModificationSubtitle": "Reconnecter ou changer le réseau de l'objet",
+  "helpFaqObjectSubtitle": "Questions fréquentes et guide de l'objet",
+  "deleteObjectTitle": "Supprimer cet objet",
+  "deleteObjectSubtitle": "Dissocier définitivement le pot connecté",
+  "connectedStable": "Objet bien connecté à l'application",
+  "connectedUnstable": "Perte de contact avec la plante !",
+  "autoModeActive": "MODE AUTOMATIQUE ACTIVÉ",
+  "manualModeActive": "MODE MANUEL ACTIVÉ",
+  "autoModeDesc": "Le mode automatique est activé : le pot se comportera selon les paramètres optimaux définis pour votre plante.",
+  "manualModeDesc": "Attention ! Le pot ne prendra aucune décision d'arrosage. Ce mode permet la surveillance et l'arrosage à distance. Notez que le maintien de cette connexion permanente est particulièrement énergivore. Afin de préserver l'autonomie de la batterie, nous vous conseillons d'utiliser cette fonctionnalité avec modération et de surveiller régulièrement le niveau d'énergie de votre objet.",
+  "deleteDialogTitle": "Supprimer les réglages",
+  "deleteDialogMessage": "Voulez-vous vraiment supprimer votre plante {plantTitle} ?",
+  "deleteSuccess": "Profil supprimé avec succès",
+  "deleteForbidden": "Impossible : l'objet est connecté et en mode AUTO.",
+  "deleteError": "Erreur lors de la suppression.",
+  "sensorTemp": "Température",
+  "sensorFertility": "Fertilité",
+  "sensorHumAir": "Humidité Air",
+  "sensorLight": "Luminosité",
+  "sensorTarget": "Cible: {target}",
+  "sunExposureToday": "EXPOSITION SOLEIL AUJOURD'HUI : {status}",
+  "analysisProTitle": "ANALYSE PRO",
+  "analysisLoading": "Analyse en cours...",
+  "uvNoData": "Aucune donnée de luminosité reçue aujourd'hui.",
+  "uvLowData": "Luminosité faible aujourd'hui. Votre plante manque un peu de clarté pour s'épanouir pleinement.",
+  "uvMediumData": "Ensoleillement doux. Un bain de lumière équilibré pour l'énergie de votre plante.",
+  "uvHighData": "Exposition forte ! Surveillez l'état des feuilles tout de même, le soleil tape fort aujourd'hui.",
+  "uvExtremeData": "Rayonnement extrême ! Risque de brûlure. Protégez votre plante ou déplacez l'objet à l'ombre.",
+  "uvDisplayNone": "Aucune",
+  "uvDisplayLow": "Faible",
+  "uvDisplayModerate": "Modéré",
+  "uvDisplayHigh": "Élevé",
+  "uvDisplayVeryHigh": "Très Élevé",
+  "uvDisplayCritical": "Critique !"
 
 
 

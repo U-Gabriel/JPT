@@ -2278,6 +2278,336 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune réponse trouvée'**
   String get faqNoResultsFound;
+
+  /// No description provided for @plantDetailPage.
+  ///
+  /// In fr, this message translates to:
+  /// **'======================='**
+  String get plantDetailPage;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Session expirée'**
+  String get sessionExpired;
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur :'**
+  String get errorPrefix;
+
+  /// No description provided for @addedToFavorites.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajout aux favoris...'**
+  String get addedToFavorites;
+
+  /// No description provided for @removedFromFavorites.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrait des favoris...'**
+  String get removedFromFavorites;
+
+  /// No description provided for @deviceOptionsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Options de l\'appareil'**
+  String get deviceOptionsTitle;
+
+  /// No description provided for @wateringSettingsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglages d\'arrosage'**
+  String get wateringSettingsTitle;
+
+  /// No description provided for @wateringSettingsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajuster les cibles d\'arrosage automatique'**
+  String get wateringSettingsSubtitle;
+
+  /// No description provided for @modifyWifiTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le Wi-Fi'**
+  String get modifyWifiTitle;
+
+  /// No description provided for @modifyWifiSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le réseau réseau de l\'objet'**
+  String get modifyWifiSubtitle;
+
+  /// No description provided for @helpFaqTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aide & FAQ'**
+  String get helpFaqTitle;
+
+  /// No description provided for @helpFaqSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes et guide d\'utilisation'**
+  String get helpFaqSubtitle;
+
+  /// No description provided for @groupPrefix.
+  ///
+  /// In fr, this message translates to:
+  /// **'Groupe:'**
+  String get groupPrefix;
+
+  /// No description provided for @stateSensorsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'État des capteurs'**
+  String get stateSensorsTitle;
+
+  /// No description provided for @noDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de description'**
+  String get noDescription;
+
+  /// No description provided for @aboutTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos'**
+  String get aboutTitle;
+
+  /// No description provided for @maintenanceAdviceTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conseil d\'entretien'**
+  String get maintenanceAdviceTitle;
+
+  /// No description provided for @noMaintenanceAdvice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun conseil d\'entretien pour le moment.'**
+  String get noMaintenanceAdvice;
+
+  /// No description provided for @deviceOptionsSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Options de l\'objet'**
+  String get deviceOptionsSectionTitle;
+
+  /// No description provided for @wateringParamsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres d\'arrosage'**
+  String get wateringParamsTitle;
+
+  /// No description provided for @wifiModificationTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modification Wi-Fi'**
+  String get wifiModificationTitle;
+
+  /// No description provided for @wifiModificationSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reconnecter ou changer le réseau de l\'objet'**
+  String get wifiModificationSubtitle;
+
+  /// No description provided for @helpFaqObjectSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes et guide de l\'objet'**
+  String get helpFaqObjectSubtitle;
+
+  /// No description provided for @deleteObjectTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cet objet'**
+  String get deleteObjectTitle;
+
+  /// No description provided for @deleteObjectSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dissocier définitivement le pot connecté'**
+  String get deleteObjectSubtitle;
+
+  /// No description provided for @connectedStable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Objet bien connecté à l\'application'**
+  String get connectedStable;
+
+  /// No description provided for @connectedUnstable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perte de contact avec la plante !'**
+  String get connectedUnstable;
+
+  /// No description provided for @autoModeActive.
+  ///
+  /// In fr, this message translates to:
+  /// **'MODE AUTOMATIQUE ACTIVÉ'**
+  String get autoModeActive;
+
+  /// No description provided for @manualModeActive.
+  ///
+  /// In fr, this message translates to:
+  /// **'MODE MANUEL ACTIVÉ'**
+  String get manualModeActive;
+
+  /// No description provided for @autoModeDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mode automatique est activé : le pot se comportera selon les paramètres optimaux définis pour votre plante.'**
+  String get autoModeDesc;
+
+  /// No description provided for @manualModeDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attention ! Le pot ne prendra aucune décision d\'arrosage. Ce mode permet la surveillance et l\'arrosage à distance. Notez que le maintien de cette connexion permanente est particulièrement énergivore. Afin de préserver l\'autonomie de la batterie, nous vous conseillons d\'utiliser cette fonctionnalité avec modération et de surveiller régulièrement le niveau d\'énergie de votre objet.'**
+  String get manualModeDesc;
+
+  /// No description provided for @deleteDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer les réglages'**
+  String get deleteDialogTitle;
+
+  /// No description provided for @deleteDialogMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voulez-vous vraiment supprimer votre plante {plantTitle} ?'**
+  String deleteDialogMessage(Object plantTitle);
+
+  /// No description provided for @deleteSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Profil supprimé avec succès'**
+  String get deleteSuccess;
+
+  /// No description provided for @deleteForbidden.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible : l\'objet est connecté et en mode AUTO.'**
+  String get deleteForbidden;
+
+  /// No description provided for @deleteError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur lors de la suppression.'**
+  String get deleteError;
+
+  /// No description provided for @sensorTemp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Température'**
+  String get sensorTemp;
+
+  /// No description provided for @sensorFertility.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fertilité'**
+  String get sensorFertility;
+
+  /// No description provided for @sensorHumAir.
+  ///
+  /// In fr, this message translates to:
+  /// **'Humidité Air'**
+  String get sensorHumAir;
+
+  /// No description provided for @sensorLight.
+  ///
+  /// In fr, this message translates to:
+  /// **'Luminosité'**
+  String get sensorLight;
+
+  /// No description provided for @sensorTarget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cible: {target}'**
+  String sensorTarget(Object target);
+
+  /// No description provided for @sunExposureToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'EXPOSITION SOLEIL AUJOURD\'HUI : {status}'**
+  String sunExposureToday(Object status);
+
+  /// No description provided for @analysisProTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'ANALYSE PRO'**
+  String get analysisProTitle;
+
+  /// No description provided for @analysisLoading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Analyse en cours...'**
+  String get analysisLoading;
+
+  /// No description provided for @uvNoData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune donnée de luminosité reçue aujourd\'hui.'**
+  String get uvNoData;
+
+  /// No description provided for @uvLowData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Luminosité faible aujourd\'hui. Votre plante manque un peu de clarté pour s\'épanouir pleinement.'**
+  String get uvLowData;
+
+  /// No description provided for @uvMediumData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ensoleillement doux. Un bain de lumière équilibré pour l\'énergie de votre plante.'**
+  String get uvMediumData;
+
+  /// No description provided for @uvHighData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exposition forte ! Surveillez l\'état des feuilles tout de même, le soleil tape fort aujourd\'hui.'**
+  String get uvHighData;
+
+  /// No description provided for @uvExtremeData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rayonnement extrême ! Risque de brûlure. Protégez votre plante ou déplacez l\'objet à l\'ombre.'**
+  String get uvExtremeData;
+
+  /// No description provided for @uvDisplayNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune'**
+  String get uvDisplayNone;
+
+  /// No description provided for @uvDisplayLow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faible'**
+  String get uvDisplayLow;
+
+  /// No description provided for @uvDisplayModerate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modéré'**
+  String get uvDisplayModerate;
+
+  /// No description provided for @uvDisplayHigh.
+  ///
+  /// In fr, this message translates to:
+  /// **'Élevé'**
+  String get uvDisplayHigh;
+
+  /// No description provided for @uvDisplayVeryHigh.
+  ///
+  /// In fr, this message translates to:
+  /// **'Très Élevé'**
+  String get uvDisplayVeryHigh;
+
+  /// No description provided for @uvDisplayCritical.
+  ///
+  /// In fr, this message translates to:
+  /// **'Critique !'**
+  String get uvDisplayCritical;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

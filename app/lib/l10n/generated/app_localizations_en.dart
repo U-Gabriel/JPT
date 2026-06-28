@@ -1131,4 +1131,175 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqNoResultsFound => 'No answers found';
+
+  @override
+  String get plantDetailPage => '=======================';
+
+  @override
+  String get sessionExpired => 'Session expired';
+
+  @override
+  String get errorPrefix => 'Error:';
+
+  @override
+  String get addedToFavorites => 'Added to favorites...';
+
+  @override
+  String get removedFromFavorites => 'Removed from favorites...';
+
+  @override
+  String get deviceOptionsTitle => 'Device options';
+
+  @override
+  String get wateringSettingsTitle => 'Watering settings';
+
+  @override
+  String get wateringSettingsSubtitle => 'Adjust automatic watering targets';
+
+  @override
+  String get modifyWifiTitle => 'Modify Wi-Fi';
+
+  @override
+  String get modifyWifiSubtitle => 'Change the device\'s network';
+
+  @override
+  String get helpFaqTitle => 'Help & FAQ';
+
+  @override
+  String get helpFaqSubtitle => 'Frequently asked questions and user guide';
+
+  @override
+  String get groupPrefix => 'Group:';
+
+  @override
+  String get stateSensorsTitle => 'Sensor status';
+
+  @override
+  String get noDescription => 'No description';
+
+  @override
+  String get aboutTitle => 'About';
+
+  @override
+  String get maintenanceAdviceTitle => 'Maintenance advice';
+
+  @override
+  String get noMaintenanceAdvice => 'No maintenance advice for now.';
+
+  @override
+  String get deviceOptionsSectionTitle => 'Device options';
+
+  @override
+  String get wateringParamsTitle => 'Watering parameters';
+
+  @override
+  String get wifiModificationTitle => 'Wi-Fi modification';
+
+  @override
+  String get wifiModificationSubtitle => 'Reconnect or change the device\'s network';
+
+  @override
+  String get helpFaqObjectSubtitle => 'Frequently asked questions and device guide';
+
+  @override
+  String get deleteObjectTitle => 'Delete this device';
+
+  @override
+  String get deleteObjectSubtitle => 'Permanently unlink the connected pot';
+
+  @override
+  String get connectedStable => 'Device properly connected to the application';
+
+  @override
+  String get connectedUnstable => 'Lost contact with the plant!';
+
+  @override
+  String get autoModeActive => 'AUTOMATIC MODE ACTIVE';
+
+  @override
+  String get manualModeActive => 'MANUAL MODE ACTIVE';
+
+  @override
+  String get autoModeDesc => 'Automatic mode is active: the pot will behave according to the optimal parameters defined for your plant.';
+
+  @override
+  String get manualModeDesc => 'Warning! The pot will not make any watering decisions. This mode allows for remote monitoring and watering. Note that maintaining this permanent connection is particularly energy-consuming. To preserve battery autonomy, we advise you to use this feature with moderation and to regularly monitor your device\'s energy level.';
+
+  @override
+  String get deleteDialogTitle => 'Delete settings';
+
+  @override
+  String deleteDialogMessage(Object plantTitle) {
+    return 'Do you really want to delete your plant $plantTitle ?';
+  }
+
+  @override
+  String get deleteSuccess => 'Profile successfully deleted';
+
+  @override
+  String get deleteForbidden => 'Impossible: the device is connected and in AUTO mode.';
+
+  @override
+  String get deleteError => 'Error during deletion.';
+
+  @override
+  String get sensorTemp => 'Temperature';
+
+  @override
+  String get sensorFertility => 'Fertility';
+
+  @override
+  String get sensorHumAir => 'Air Humidity';
+
+  @override
+  String get sensorLight => 'Brightness';
+
+  @override
+  String sensorTarget(Object target) {
+    return 'Target: $target';
+  }
+
+  @override
+  String sunExposureToday(Object status) {
+    return 'SUN EXPOSURE TODAY: $status';
+  }
+
+  @override
+  String get analysisProTitle => 'PRO ANALYSIS';
+
+  @override
+  String get analysisLoading => 'Analysis in progress...';
+
+  @override
+  String get uvNoData => 'No brightness data received today.';
+
+  @override
+  String get uvLowData => 'Low brightness today. Your plant lacks a bit of clarity to fully flourish.';
+
+  @override
+  String get uvMediumData => 'Gentle sunlight. A balanced light bath for your plant\'s energy.';
+
+  @override
+  String get uvHighData => 'High exposure! Monitor the status of the leaves anyway, the sun is hitting hard today.';
+
+  @override
+  String get uvExtremeData => 'Extreme radiation! Risk of burning. Protect your plant or move the object to the shade.';
+
+  @override
+  String get uvDisplayNone => 'None';
+
+  @override
+  String get uvDisplayLow => 'Low';
+
+  @override
+  String get uvDisplayModerate => 'Moderate';
+
+  @override
+  String get uvDisplayHigh => 'High';
+
+  @override
+  String get uvDisplayVeryHigh => 'Very High';
+
+  @override
+  String get uvDisplayCritical => 'Critical!';
 }
