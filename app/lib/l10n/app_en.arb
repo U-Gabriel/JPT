@@ -484,7 +484,7 @@
   "autoModeActive": "AUTOMATIC MODE ACTIVE",
   "manualModeActive": "MANUAL MODE ACTIVE",
   "autoModeDesc": "Automatic mode is active: the pot will behave according to the optimal parameters defined for your plant.",
-  "manualModeDesc": "Warning! The pot will not make any watering decisions. This mode allows for remote monitoring and watering. Note that maintaining this permanent connection is particularly energy-consuming. To preserve battery autonomy, we advise you to use this feature with moderation and to regularly monitor your device's energy level.",
+  "manualModeDesc": "Warning! The pot will not make any watering decisions. This mode allows for remote monitoring and watering. Note that maintaining this permanent connection is particularly energy-consuming. To preserve battery autonomy, we advise you to use this feature with moderation and to regularly monitor your device's battery level.",
   "deleteDialogTitle": "Delete settings",
   "deleteDialogMessage": "Do you really want to delete your plant {plantTitle} ?",
   "deleteSuccess": "Profile successfully deleted",
@@ -496,7 +496,7 @@
   "sensorLight": "Brightness",
   "sensorTarget": "Target: {target}",
   "sunExposureToday": "SUN EXPOSURE TODAY: {status}",
-  "analysisProTitle": "PRO ANALYSIS",
+  "analysisProTitle": "PRO ANALYSIS AUTO",
   "analysisLoading": "Analysis in progress...",
   "uvNoData": "No brightness data received today.",
   "uvLowData": "Low brightness today. Your plant lacks a bit of clarity to fully flourish.",
@@ -509,26 +509,5 @@
   "uvDisplayHigh": "High",
   "uvDisplayVeryHigh": "Very High",
   "uvDisplayCritical": "Critical!"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

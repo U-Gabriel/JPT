@@ -484,7 +484,7 @@
   "autoModeActive": "MODE AUTOMATIQUE ACTIVÉ",
   "manualModeActive": "MODE MANUEL ACTIVÉ",
   "autoModeDesc": "Le mode automatique est activé : le pot se comportera selon les paramètres optimaux définis pour votre plante.",
-  "manualModeDesc": "Attention ! Le pot ne prendra aucune décision d'arrosage. Ce mode permet la surveillance et l'arrosage à distance. Notez que le maintien de cette connexion permanente est particulièrement énergivore. Afin de préserver l'autonomie de la batterie, nous vous conseillons d'utiliser cette fonctionnalité avec modération et de surveiller régulièrement le niveau d'énergie de votre objet.",
+  "manualModeDesc": "Attention ! Le pot ne prendra aucune décision d'arrosage. Ce mode permet la surveillance et l'arrosage à distance. Notez que le maintien de cette connexion permanente est particulièrement énergivore. Afin de préserver l'autonomie de la batterie, nous vous conseillons d'utiliser cette fonctionnalité avec modération et de surveiller régulièrement le niveau de batterie de votre objet.",
   "deleteDialogTitle": "Supprimer les réglages",
   "deleteDialogMessage": "Voulez-vous vraiment supprimer votre plante {plantTitle} ?",
   "deleteSuccess": "Profil supprimé avec succès",
@@ -496,7 +496,7 @@
   "sensorLight": "Luminosité",
   "sensorTarget": "Cible: {target}",
   "sunExposureToday": "EXPOSITION SOLEIL AUJOURD'HUI : {status}",
-  "analysisProTitle": "ANALYSE PRO",
+  "analysisProTitle": "ANALYSE PRO AUTO",
   "analysisLoading": "Analyse en cours...",
   "uvNoData": "Aucune donnée de luminosité reçue aujourd'hui.",
   "uvLowData": "Luminosité faible aujourd'hui. Votre plante manque un peu de clarté pour s'épanouir pleinement.",
@@ -509,20 +509,5 @@
   "uvDisplayHigh": "Élevé",
   "uvDisplayVeryHigh": "Très Élevé",
   "uvDisplayCritical": "Critique !"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

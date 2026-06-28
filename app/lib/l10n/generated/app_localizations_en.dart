@@ -1223,7 +1223,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoModeDesc => 'Automatic mode is active: the pot will behave according to the optimal parameters defined for your plant.';
 
   @override
-  String get manualModeDesc => 'Warning! The pot will not make any watering decisions. This mode allows for remote monitoring and watering. Note that maintaining this permanent connection is particularly energy-consuming. To preserve battery autonomy, we advise you to use this feature with moderation and to regularly monitor your device\'s energy level.';
+  String get manualModeDesc => 'Warning! The pot will not make any watering decisions. This mode allows for remote monitoring and watering. Note that maintaining this permanent connection is particularly energy-consuming. To preserve battery autonomy, we advise you to use this feature with moderation and to regularly monitor your device\'s battery level.';
 
   @override
   String get deleteDialogTitle => 'Delete settings';
@@ -1265,7 +1265,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get analysisProTitle => 'PRO ANALYSIS';
+  String get analysisProTitle => 'PRO ANALYSIS AUTO';
 
   @override
   String get analysisLoading => 'Analysis in progress...';

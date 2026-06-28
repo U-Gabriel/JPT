@@ -608,7 +608,7 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
           Icon(icon, size: 20, color: Colors.green),
           Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
           FittedBox(child: Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-          if (target != null) Text(localL10n.sensorTarget(target.toString()), style: TextStyle(fontSize: 9, color: Colors.grey[400])),
+          if (target != null) Text(localL10n.sensorTarget(target.toString()), style: TextStyle(fontSize: 12, color: Colors.black)),
         ],
       ),
     );

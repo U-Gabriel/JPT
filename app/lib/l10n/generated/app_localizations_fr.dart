@@ -1223,7 +1223,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get autoModeDesc => 'Le mode automatique est activé : le pot se comportera selon les paramètres optimaux définis pour votre plante.';
 
   @override
-  String get manualModeDesc => 'Attention ! Le pot ne prendra aucune décision d\'arrosage. Ce mode permet la surveillance et l\'arrosage à distance. Notez que le maintien de cette connexion permanente est particulièrement énergivore. Afin de préserver l\'autonomie de la batterie, nous vous conseillons d\'utiliser cette fonctionnalité avec modération et de surveiller régulièrement le niveau d\'énergie de votre objet.';
+  String get manualModeDesc => 'Attention ! Le pot ne prendra aucune décision d\'arrosage. Ce mode permet la surveillance et l\'arrosage à distance. Notez que le maintien de cette connexion permanente est particulièrement énergivore. Afin de préserver l\'autonomie de la batterie, nous vous conseillons d\'utiliser cette fonctionnalité avec modération et de surveiller régulièrement le niveau de batterie de votre objet.';
 
   @override
   String get deleteDialogTitle => 'Supprimer les réglages';
@@ -1265,7 +1265,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get analysisProTitle => 'ANALYSE PRO';
+  String get analysisProTitle => 'ANALYSE PRO AUTO';
 
   @override
   String get analysisLoading => 'Analyse en cours...';
