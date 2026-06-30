@@ -65,7 +65,7 @@ const updateObjectProfileObj = async (body) => {
                 (
                   CASE WHEN ABS($6 - t.target_temp::numeric) > 5 THEN 1 ELSE 0 END +  
                   CASE WHEN ABS($7 - t.target_hum::numeric) > 15 THEN 1 ELSE 0 END + 
-                  CASE WHEN $5 < 0.5 AND t.target_uv::numeric > 0 THEN 1 ELSE 0 END +   
+                  CASE WHEN $5 < 0.5 THEN 1 ELSE 0 END +   
                   CASE WHEN ABS($8 - t.target_cond::numeric) > 100 THEN 1 ELSE 0 END 
                 ) as deviation_score
             FROM target_values t
