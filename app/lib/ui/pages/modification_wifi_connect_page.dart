@@ -26,10 +26,10 @@ class ModificationWifiConnectPage extends StatefulWidget {
 }
 
 class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPage> {
-  int _counter = 45; // Augmenté à 45s car le test WiFi peut être long
+  int _counter = 45;
   Timer? _timer;
   bool _isSuccess = false;
-  bool _isProcessing = false; // L'objet a reçu les données et teste le WiFi
+  bool _isProcessing = false;
   String _errorMessage = "";
   bool _canRetry = false;
 
@@ -55,22 +55,40 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
     });
   }
 
-  // --- Logique de connexion (inchangée mais avec logs améliorés) ---
-
   void _startProcess() async {
     _resetState();
-    if (await FlutterBluePlus.adapterState.first != BluetoothAdapterState.on) {
+
+    // 1. Vérification stricte du Bluetooth
+    try {
+      if (!await FlutterBluePlus.isSupported) {
+        _handleError("Le Bluetooth n'est pas supporté sur cet appareil.");
+        return;
+      }
+
+      final state = await FlutterBluePlus.adapterState.first;
+      if (state != BluetoothAdapterState.on) {
+        _handleError(AppLocalizations.of(context)!.wifiErrorBluetoothOff);
+        return;
+      }
+    } catch (e) {
       _handleError(AppLocalizations.of(context)!.wifiErrorBluetoothOff);
       return;
     }
+
     _startTimeoutTimer();
+
+    // 2. Lancement du Scan
     try {
-      await FlutterBluePlus.stopScan();
+      try {
+        await FlutterBluePlus.stopScan();
+      } catch (_) {}
+
       await FlutterBluePlus.startScan(timeout: const Duration(seconds: 15));
+
       FlutterBluePlus.scanResults.listen((results) {
         for (ScanResult r in results) {
           if (r.device.platformName.toUpperCase().contains("JACKPOT")) {
-            FlutterBluePlus.stopScan();
+            try { FlutterBluePlus.stopScan(); } catch (_) {}
             _connectToDevice(r.device);
             break;
           }
@@ -105,7 +123,6 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
   void _sendData() {
     if (_targetCharacteristic == null) return;
 
-    // 1. On prépare le JSON UNE SEULE FOIS ici
     final Map<String, dynamic> payload = {
       "id_object_profile": widget.objectProfileId,
       "ssid_wifi": widget.ssid,
@@ -116,28 +133,23 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
     final String jsonString = jsonEncode(payload);
     final bytes = utf8.encode(jsonString);
 
-    // 2. On annule tout timer existant pour éviter les doublons
     _retrySendTimer?.cancel();
 
-    // 3. On définit le timer de répétition
     _retrySendTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (_isSuccess || _isProcessing || _errorMessage.isNotEmpty || !mounted) {
         timer.cancel();
         return;
       }
-
       _targetCharacteristic!.write(bytes, withoutResponse: false)
           .catchError((e) => debugPrint("Erreur write: $e"));
     });
 
-    // 4. Premier envoi immédiat
     _targetCharacteristic!.write(bytes, withoutResponse: false)
         .catchError((e) => debugPrint("Erreur initial write: $e"));
   }
 
   void _onDataReceived(List<int> data) {
     if (data.isEmpty) return;
-    debugPrint("Données reçues de l'ESP32 : $data");
     String raw = utf8.decode(data);
     try {
       if (raw.contains('{')) {
@@ -155,15 +167,12 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
 
   void _processResponseCode(int code) {
     if (!mounted) return;
-
-    // SÉCURITÉ : Si on a déjà affiché l'erreur de Profil, on ignore TOUT le reste
     if (_errorMessage.contains("Profil")) return;
 
     setState(() {
       if (code == 2) {
-        setState(() => _isProcessing = true);
+        _isProcessing = true;
         _retrySendTimer?.cancel();
-
       } else if (code == 0) {
         _finalize(success: true);
       } else if (code == 3) {
@@ -173,13 +182,11 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
         _errorMessage = AppLocalizations.of(context)!.wifiErrorWrongProfile;
         _canRetry = false;
 
-        // On envoie l'ACK 10 un peu plus tard
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_targetCharacteristic != null) {
             _targetCharacteristic!.write([10]);
           }
         });
-
       } else {
         if (code <= 5) {
           _finalize(success: false);
@@ -205,14 +212,9 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
   void _handleError(String msg) {
     _timer?.cancel();
     _retrySendTimer?.cancel();
-
     if (!mounted) return;
 
-    // SÉCURITÉ : Si on a déjà affiché l'erreur de Profil, on ne touche à rien !
-    if (_errorMessage.contains("Profil")) {
-      debugPrint("Erreur de profil déjà affichée, on ignore l'erreur : $msg");
-      return;
-    }
+    if (_errorMessage.contains("Profil")) return;
 
     setState(() {
       _errorMessage = msg;
@@ -239,8 +241,6 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
     _targetDevice?.disconnect();
     super.dispose();
   }
-
-  // --- Interface Utilisateur "Pro" ---
 
   @override
   Widget build(BuildContext context) {
@@ -322,7 +322,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
           mainAxisSize: MainAxisSize.min,
           children: [
             Text("$_counter", style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-            Text(AppLocalizations.of(context)!.wifiConnectSeconds, style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(AppLocalizations.of(context)!.wifiConnectSeconds, style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
       ],
@@ -331,6 +331,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
 
   Widget _buildInstructions() {
     final l10n = AppLocalizations.of(context)!;
+
     String title = l10n.wifiStatusSearchTitle;
     String subtitle = l10n.wifiStatusSearchSubtitle;
     Color ledColor = Colors.blue;
@@ -346,16 +347,22 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
       ledColor = Colors.green;
     }
 
+    // CORRECTION ICI : On contrôle quel type de message est stocké dans _errorMessage
     if (_errorMessage.isNotEmpty) {
-      title = l10n.wifiStatusErrorTitle;
-      // Si le message d'erreur contient "Profil", c'est notre erreur de sécurité 3
-      if (_errorMessage.contains(l10n.wifiErrorWrongProfile)) {
-        subtitle = _errorMessage; // Affiche "Ce pot appartient à un autre Profil..."
+      ledColor = Colors.red;
+
+      if (_errorMessage == l10n.wifiErrorBluetoothOff) {
+        title = l10n.wifiStatusBluetoothErrorTitle;
+        subtitle = l10n.wifiStatusBluetoothErrorSubtitle;
+      } else if (_errorMessage.contains(l10n.wifiErrorWrongProfile)) {
+        title = l10n.wifiStatusErrorTitle;
+        subtitle = _errorMessage;
       } else {
+        title = l10n.wifiStatusErrorTitle;
         subtitle = l10n.wifiStatusErrorSubtitleFallback;
       }
-      ledColor = Colors.red;
     }
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -393,7 +400,7 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: Colors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.wifiConnectBtnFinish, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          child: Text(AppLocalizations.of(context)!.wifiConnectBtnFinish, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
         ),
       );
     }
@@ -406,11 +413,11 @@ class _ModificationWifiConnectPageState extends State<ModificationWifiConnectPag
           style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
           onPressed: _startProcess,
           icon: const Icon(Icons.refresh, color: Colors.white),
-          label: Text(AppLocalizations.of(context)!.wifiConnectBtnRetry, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          label: Text(AppLocalizations.of(context)!.wifiConnectBtnRetry, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
         ),
       );
     }
 
-    return Text(AppLocalizations.of(context)!.wifiConnectWait, style: TextStyle(color: Colors.grey));
+    return Text(AppLocalizations.of(context)!.wifiConnectWait, style: const TextStyle(color: Colors.grey));
   }
 }

@@ -1526,8 +1526,20 @@ abstract class AppLocalizations {
   /// No description provided for @wifiErrorBluetoothOff.
   ///
   /// In fr, this message translates to:
-  /// **'Bluetooth désactivé. Veuillez l\'activer.'**
+  /// **'Le Bluetooth est désactivé. Veuillez l\'activer pour configurer votre objet.'**
   String get wifiErrorBluetoothOff;
+
+  /// No description provided for @wifiStatusBluetoothErrorTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bluetooth requis'**
+  String get wifiStatusBluetoothErrorTitle;
+
+  /// No description provided for @wifiStatusBluetoothErrorSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre Bluetooth est éteint. Activez-le dans les paramètres de votre téléphone pour permettre la détection de votre objet GDOME.'**
+  String get wifiStatusBluetoothErrorSubtitle;
 
   /// No description provided for @wifiErrorScanFailed.
   ///

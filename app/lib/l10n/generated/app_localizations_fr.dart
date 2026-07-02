@@ -741,7 +741,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wifiStatusErrorSubtitleFallback => 'Vérifiez que votre SSID et mot de passe WiFi sont corrects.';
 
   @override
-  String get wifiErrorBluetoothOff => 'Bluetooth désactivé. Veuillez l\'activer.';
+  String get wifiErrorBluetoothOff => 'Le Bluetooth est désactivé. Veuillez l\'activer pour configurer votre objet.';
+
+  @override
+  String get wifiStatusBluetoothErrorTitle => 'Bluetooth requis';
+
+  @override
+  String get wifiStatusBluetoothErrorSubtitle => 'Votre Bluetooth est éteint. Activez-le dans les paramètres de votre téléphone pour permettre la détection de votre objet GDOME.';
 
   @override
   String get wifiErrorScanFailed => 'Impossible de scanner les environs.';
