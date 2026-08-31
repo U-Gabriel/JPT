@@ -19,3 +19,4 @@ jobs:
             npm install --omit=dev
             pm2 restart api-jpt || pm2 start index.mjs --name "api-jpt"
             pm2 save
+            pm2 restart ajpt
