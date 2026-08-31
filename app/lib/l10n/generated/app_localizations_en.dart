@@ -726,7 +726,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wifiStatusProcessingTitle => 'Attempting to connect...';
 
   @override
-  String get wifiStatusProcessingSubtitle => 'The device is trying to join your WiFi. The LED should blink.';
+  String get wifiStatusProcessingSubtitle => 'The device is trying to join your WiFi. The blue LED should blink.';
 
   @override
   String get wifiStatusSuccessTitle => 'All set!';
@@ -1308,4 +1308,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uvDisplayCritical => 'Critical!';
+
+  @override
+  String get batteryLowWarning => 'Warning: Battery is low, please recharge your device.';
 }

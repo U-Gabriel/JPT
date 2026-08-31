@@ -57,6 +57,37 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                       expandedHeight: MediaQuery.of(context).size.height * 0.30,
                       pinned: true,
                       actions: [
+                        // --- BADGE BATTERIE (PLOUCÉ À DROITE, AVANT L'ÉTOILE DE FAVORI) ---
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.4),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  (plant.batteryLvl ?? 0) <= 20
+                                      ? Icons.battery_alert_rounded
+                                      : Icons.battery_std_rounded,
+                                  size: 16,
+                                  color: _getBatteryColor(plant.batteryLvl),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  plant.batteryLvl != null ? "${plant.batteryLvl}%" : "--%",
+                                  style: TextStyle(
+                                    color: _getBatteryColor(plant.batteryLvl),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         IconButton(
                           icon: Icon(
                             plant.isFavorite ? Icons.star : Icons.star_border,
@@ -224,6 +255,11 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if (plant.batteryLvl != null && plant.batteryLvl! <= 15) ...[
+                              const SizedBox(height: 12),
+                              _buildLowBatteryWarning(localL10n),
+                              const SizedBox(height: 16),
+                            ],
                             _buildHeader(plant, context, localL10n),
                             const SizedBox(height: 16),
                             _buildConnectionStatus(plant, localL10n),
@@ -726,4 +762,42 @@ class _PlantDetailPageState extends State<PlantDetailPage> {
       onTap: onTap,
     );
   }
+}
+
+// Détermine la couleur en fonction du pourcentage (Vert > 30, Orange > 20, Rouge <= 20)
+Color _getBatteryColor(int? batteryLvl) {
+  if (batteryLvl == null) return Colors.white;
+  if (batteryLvl > 30) return Colors.greenAccent;
+  if (batteryLvl > 20) return Colors.orangeAccent;
+  return Colors.redAccent;
+}
+
+// Widget pour la bannière d'alerte en rouge
+Widget _buildLowBatteryWarning(AppLocalizations localL10n) {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    decoration: BoxDecoration(
+      color: Colors.red[50],
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: Colors.red[200]!, width: 1),
+    ),
+    child: Row(
+      children: [
+        Icon(Icons.battery_alert_rounded, color: Colors.red[700], size: 22),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            localL10n.batteryLowWarning,
+            style: TextStyle(
+              color: Colors.red[800],
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              height: 1.3,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

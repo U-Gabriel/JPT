@@ -726,7 +726,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wifiStatusProcessingTitle => 'Tentative de connexion...';
 
   @override
-  String get wifiStatusProcessingSubtitle => 'L\'objet essaie de rejoindre votre WiFi. La LED doit clignoter.';
+  String get wifiStatusProcessingSubtitle => 'L\'objet essaie de rejoindre votre WiFi. La LED bleue doit clignoter.';
 
   @override
   String get wifiStatusSuccessTitle => 'Tout est prêt !';
@@ -1308,4 +1308,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get uvDisplayCritical => 'Critique !';
+
+  @override
+  String get batteryLowWarning => 'Attention votre batterie est faible, veuillez recharger l\'objet.';
 }

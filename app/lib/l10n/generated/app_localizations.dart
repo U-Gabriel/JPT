@@ -1496,7 +1496,7 @@ abstract class AppLocalizations {
   /// No description provided for @wifiStatusProcessingSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'L\'objet essaie de rejoindre votre WiFi. La LED doit clignoter.'**
+  /// **'L\'objet essaie de rejoindre votre WiFi. La LED bleue doit clignoter.'**
   String get wifiStatusProcessingSubtitle;
 
   /// No description provided for @wifiStatusSuccessTitle.
@@ -2620,6 +2620,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Critique !'**
   String get uvDisplayCritical;
+
+  /// No description provided for @batteryLowWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attention votre batterie est faible, veuillez recharger l\'objet.'**
+  String get batteryLowWarning;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

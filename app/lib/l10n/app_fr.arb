@@ -510,6 +510,7 @@
   "uvDisplayModerate": "Modéré",
   "uvDisplayHigh": "Élevé",
   "uvDisplayVeryHigh": "Très Élevé",
-  "uvDisplayCritical": "Critique !"
+  "uvDisplayCritical": "Critique !",
+  "batteryLowWarning": "Attention votre batterie est faible, veuillez recharger l'objet."
 
 }

@@ -510,6 +510,7 @@
   "uvDisplayModerate": "Moderate",
   "uvDisplayHigh": "High",
   "uvDisplayVeryHigh": "Very High",
-  "uvDisplayCritical": "Critical!"
+  "uvDisplayCritical": "Critical!",
+  "batteryLowWarning": "Warning: Battery is low, please recharge your device."
 
 }

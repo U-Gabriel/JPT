@@ -36,6 +36,7 @@ class ObjectProfile {
   final String? lastUpdate;
   final SensorData sensors;
   final PlantDetails plantDetails;
+  final int? batteryLvl;
 
   ObjectProfile({
     required this.idObjectProfile,
@@ -68,6 +69,7 @@ class ObjectProfile {
     this.lastUpdate,
     required this.sensors,
     required this.plantDetails,
+    this.batteryLvl,
 
   });
 
@@ -117,6 +119,7 @@ class ObjectProfile {
         lastUvExposureDate: json['last_uv_exposure_date'],
         lastWatering: json['last_watering'],
         lastUpdate: json['last_update'],
+        batteryLvl: json['battery_lvl'],
       );
     } catch (e, stack) {
       print("Erreur de parsing ObjectProfile: $e");
@@ -153,6 +156,7 @@ class ObjectProfile {
     DateTime? lastWatering,
     SensorData? sensors,
     PlantDetails? plantDetails,
+    int? batteryLvl,
   }) {
     return ObjectProfile(
       idObjectProfile: idObjectProfile ?? this.idObjectProfile,
@@ -181,6 +185,7 @@ class ObjectProfile {
       lastUvExposureDate: lastUvExposureDate ?? this.lastUvExposureDate,
       sensors: sensors ?? this.sensors,
       plantDetails: plantDetails ?? this.plantDetails,
+      batteryLvl: batteryLvl ?? this.batteryLvl,
     );
   }
 }
