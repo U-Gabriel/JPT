@@ -130,26 +130,33 @@ const UpdateObjectProfileController = async (req, res) => {
  * @returns {Promise<unknown>}
  * @constructor
  */
-const GetRequestObjectProfiledetailsByOPController = (op) => {
-    return new Promise((resolve) => {
-        if (!op) {
-            resolve(new ResponseApi().InitMissingParameters());
-        } else {
-            GetRequestObjectProfiledetailsByOP(op)
-                .then((data) => {
-                    resolve(new ResponseApi().InitOK(data));
-                    
-                })
-                .catch((e) => {
-                    if (e.code === '23503') {
-                        resolve(new ResponseApi().InitBadRequest(e.message));
-                        return;
-                    }
-                    console.error(e);
-                    resolve(new ResponseApi().InitInternalServer(e.message));
-                });
+const GetRequestObjectProfiledetailsByOPController = async (req, res) => {
+    try {
+        const id_person = req.data?.id_person;
+        const id_object_profile = req.body?.id_object_profile;
+
+        if (id_person == null) {
+            return res.status(401).send(new ResponseApi().InitUnauthorized("Non autorisé"));
         }
-    });
+        if (!id_object_profile) {
+            return res.status(400).send(new ResponseApi().InitMissingParameters("id_object_profile est requis"));
+        }
+
+        const data = await GetRequestObjectProfiledetailsByOP({ id_object_profile, id_person });
+        
+        if (!data) {
+            return res.status(404).send(new ResponseApi().InitBadRequest("Profil introuvable ou accès refusé"));
+        }
+
+        return res.status(200).send(new ResponseApi().InitOK(data));
+        
+    } catch (e) {
+        if (e.code === '23503') {
+            return res.status(400).send(new ResponseApi().InitBadRequest(e.message));
+        }
+        console.error(e);
+        return res.status(500).send(new ResponseApi().InitInternalServer(e.message));
+    }
 };
 
 const DeleteObjectProfileController = (req) => {

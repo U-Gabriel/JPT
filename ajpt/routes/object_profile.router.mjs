@@ -17,8 +17,7 @@ routerObjectProfile.patch("/object_profile/update/byobjectprofile", UpdateObject
 
 
 routerObjectProfile.post("/object_profile/detail/byop", async (req, res) => {
-    const response = await GetRequestObjectProfiledetailsByOPController(req.body)
-    res.status(response.code).send(response)
+    await GetRequestObjectProfiledetailsByOPController(req, res);
 });
 
 routerObjectProfile.post("/object_profile/delete/byobjectprofile", async (req, res) => {

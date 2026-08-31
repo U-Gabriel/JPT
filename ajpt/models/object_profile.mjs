@@ -24,6 +24,7 @@ class ObjectProfile {
     state_plant;
     is_water;
     activate;
+    battery_lvl;
 }
 
 /**
@@ -214,8 +215,8 @@ const updateObjectProfile = async (id_object_profile, id_person, fields) => {
 
 
 
-const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
-    if (!id_object_profile) throw new Error("id_object_profile is required");
+const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile, id_person }) => {
+    if (!id_object_profile || !id_person || !id_object_profile || id_person == null) throw new Error("data is required");
 
     const query = `
         SELECT 
@@ -237,6 +238,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
             op.humidity_air_sensor,
             op.humidity_ground_sensor,
             op.conductivity_elec_sensor,
+            op.battery_lvl,
             -- Moyennes
             op.uv_sensor_average,
             op.temperature_air_sensor_average,
@@ -276,7 +278,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         LEFT JOIN avatar a 
             ON a.id_plant_type = pt.id_plant_type
             AND (a.evolution_number = op.state_plant OR a.evolution_number = 0)
-        WHERE op.id_object_profile = $1
+        WHERE op.id_object_profile = $1 AND op.id_person = $2
         ORDER BY 
             -- Priorité 1 : Le groupe qui n'est pas standard (donc personnalisé par l'user)
             gpt.is_standard ASC, 
@@ -285,7 +287,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         LIMIT 1;
     `;
 
-    const { rows } = await pool.query(query, [id_object_profile]);
+    const { rows } = await pool.query(query, [id_object_profile, id_person]);
     if (rows.length === 0) return null;
 
     const row = rows[0];
@@ -335,6 +337,7 @@ const GetRequestObjectProfiledetailsByOP = async ({ id_object_profile }) => {
         last_uv_exposure_date: row.last_uv_exposure_date,
         last_watering: row.last_watering_date,
         last_update: row.modify_op,
+        battery_lvl: row.battery_lvl,
         
         // Données capteurs groupées
         sensors: {
