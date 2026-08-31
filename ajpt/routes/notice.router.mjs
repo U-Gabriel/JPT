@@ -1,4 +1,4 @@
-import { CreateNotice, GetAllNotices, UpdateNoticeStatus } from "../controllers/notice.controller.mjs";
+import { CreateNotice, GetAllNotices, GetNoticesByPerson, UpdateNoticeStatus, DeleteNoticeByPerson } from "../controllers/notice.controller.mjs";
 import { checkRoles } from "../middlewares/auth_role.mjs";
 import express from "express";
 
@@ -16,10 +16,18 @@ routerNotice.get("/notice/all", checkRoles([2, 3, 4, 7]), async (req, res) => {
     res.status(response.code).send(response);
 });
 
+routerNotice.get("/notice/byidperson", async (req, res) => {
+    await GetNoticesByPerson(req, res);
+});
+
 // Route POST : mise à jour du status
 routerNotice.post("/notice/update_status", checkRoles([2, 3, 4, 7]), async (req, res) => {
     const response = await UpdateNoticeStatus(req.body);
     res.status(response.code).send(response);
+});
+
+routerNotice.post("/notice/delete", async (req, res) => {
+    await DeleteNoticeByPerson(req, res);
 });
 
 export { routerNotice };

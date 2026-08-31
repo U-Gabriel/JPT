@@ -70,6 +70,25 @@ const GetAllNoticesRequest = async () => {
     return rows;
 };
 
+const GetNoticesByPersonRequest = async (id_person) => {
+    const query = {
+        text: `
+            SELECT 
+                n.id_notice, n.title, n.content, n.status, n.created_at, n.is_public,
+                op.title AS object_profile_title,
+                t.title AS tag_name
+            FROM notice n
+            LEFT JOIN object_profile op ON n.id_object_profile = op.id_object_profile
+            LEFT JOIN tag t ON n.id_tag = t.id_tag
+            WHERE n.id_person = $1
+            ORDER BY n.created_at DESC;
+        `,
+        values: [id_person]
+    };
+    const { rows } = await pool.query(query);
+    return rows;
+};
+
 /**
  * Met à jour le status ou supprime si status === 'CLOSED'
  */
@@ -91,4 +110,17 @@ const UpdateNoticeStatusRequest = async (id_notice, status) => {
     }
 };
 
-export { CreateNoticeRequest, CountUserNotices, GetAllNoticesRequest, UpdateNoticeStatusRequest };
+const DeleteNoticeByPersonRequest = async (id_notice, id_person) => {
+    const query = {
+        text: `
+            DELETE FROM notice 
+            WHERE id_notice = $1 AND id_person = $2 
+            RETURNING id_notice;
+        `,
+        values: [id_notice, id_person]
+    };
+    const { rows } = await pool.query(query);
+    return rows[0]; // Renvoie l'objet supprimé ou undefined si non trouvé/non autorisé
+};
+
+export { CreateNoticeRequest, CountUserNotices, GetAllNoticesRequest, GetNoticesByPersonRequest, UpdateNoticeStatusRequest, DeleteNoticeByPersonRequest };

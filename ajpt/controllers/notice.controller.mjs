@@ -1,4 +1,4 @@
-import { CreateNoticeRequest, CountUserNotices, GetAllNoticesRequest, UpdateNoticeStatusRequest } from "../models/notice.mjs";
+import { CreateNoticeRequest, CountUserNotices, GetAllNoticesRequest, GetNoticesByPersonRequest,  UpdateNoticeStatusRequest, DeleteNoticeByPersonRequest } from "../models/notice.mjs";
 import { ResponseApi } from "../models/response-api.mjs";
 
 /**
@@ -51,6 +51,25 @@ const GetAllNotices = async () => {
     }
 };
 
+/**
+ * Récupération des remarques d'un utilisateur spécifique
+ */
+const GetNoticesByPerson = async (req, res) => {
+    try {
+        const id_person = req.data?.id_person;
+
+        if (!id_person) {
+            return res.status(401).send(new ResponseApi().InitUnauthorized("data is required"));
+        }
+
+        const data = await GetNoticesByPersonRequest(id_person);
+        return res.status(200).send(new ResponseApi().InitOKResponse("Liste des remarques de l'utilisateur récupérée.", data));
+    } catch (e) {
+        console.error("Error in GetNoticesByPerson:", e);
+        return res.status(500).send(new ResponseApi().InitInternalServer("Erreur lors de la récupération des remarques."));
+    }
+};
+
 const UpdateNoticeStatus = async (body) => {
     try {
         const { id_notice, status } = body;
@@ -72,4 +91,33 @@ const UpdateNoticeStatus = async (body) => {
     }
 };
 
-export { CreateNotice, GetAllNotices, UpdateNoticeStatus };
+/**
+ * Suppression d'une remarque par son propriétaire
+ */
+const DeleteNoticeByPerson = async (req, res) => {
+    try {
+        const id_person = req.data?.id_person;
+        const { id_notice } = req.body;
+
+        if (!id_person || id_person == null) {
+            return res.status(401).send(new ResponseApi().InitUnauthorized("Data error"));
+        }
+
+        if (!id_notice || id_notice == null) {
+            return res.status(400).send(new ResponseApi().InitMissingParameters("Data error"));
+        }
+
+        const deletedNotice = await DeleteNoticeByPersonRequest(id_notice, id_person);
+
+        if (!deletedNotice) {
+            return res.status(404).send(new ResponseApi().InitBadRequest("Data error"));
+        }
+
+        return res.status(200).send(new ResponseApi().InitOK("La remarque a bien été supprimée.", null));
+    } catch (e) {
+        console.error("Error in DeleteNoticeByPerson:", e);
+        return res.status(500).send(new ResponseApi().InitInternalServer("Erreur lors de la suppression de la remarque."));
+    }
+};
+
+export { CreateNotice, GetAllNotices, GetNoticesByPerson, UpdateNoticeStatus, DeleteNoticeByPerson };
