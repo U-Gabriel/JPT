@@ -894,6 +894,99 @@
           ]
         }
       },
+      "/notice/byidperson": {
+        "get": {
+          "tags": [
+            "Notice"
+          ],
+          "summary": "Récupère les remarques de l'utilisateur connecté.",
+          "description": "Permet à l'utilisateur authentifié de lister toutes ses propres remarques ou feedbacks grâce à son token.",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des remarques récupérée avec succès.",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "example": "OK" },
+                  "message": { "type": "string", "example": "Liste des remarques de l'utilisateur récupérée." },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Non autorisé (Token manquant ou invalide)"
+            },
+            "500": {
+              "description": "Erreur interne du serveur"
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/notice/delete": {
+        "post": {
+          "tags": [
+            "Notice"
+          ],
+          "summary": "Supprime une remarque de l'utilisateur.",
+          "description": "Permet à l'utilisateur authentifié de supprimer l'une de ses propres remarques en fournissant son id_notice dans le body.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "description": "ID de la notice à supprimer",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_notice": {
+                    "type": "integer",
+                    "example": 12
+                  }
+                },
+                "required": ["id_notice"]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Remarque supprimée avec succès."
+            },
+            "400": {
+              "description": "Paramètre manquant ou notice introuvable / non autorisée."
+            },
+            "401": {
+              "description": "Non autorisé (Token manquant ou invalide)"
+            },
+            "500": {
+              "description": "Erreur interne du serveur"
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
       "/tags": {
         "get": {
           "tags": [
