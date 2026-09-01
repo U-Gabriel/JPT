@@ -4,11 +4,11 @@ import { getLowBatteryObjectsWithTokens, cleanInvalidFcmToken } from '../models/
 const getLowBatteryMessage = (title, batteryLvl) => {
   const messages = [
     {
-      title: `🪫 ${title} a faim !`,
+      title: `🪫 ${title} est épuisé`,
       body: `Bzzzt... Plus que ${batteryLvl}% d'énergie. Branche-moi vite avant que je m'endorme !`
     },
     {
-      title: `⚠️ ${title} est épuisé`,
+      title: `⚠️ ${title} a faim !`,
       body: `Il ne me reste que ${batteryLvl}% de batterie... Je vais bientôt m'éteindre !`
     },
     {
