@@ -38,6 +38,7 @@ app.use(cors());
 app.use('/dataset', express.static('/var/www/html/dataset'));
 
 app.use(routerPaymentPublic)
+app.use(routerNotification)
 
 // Body parser
 app.use(bodyParser.urlencoded({extended: true}))
@@ -54,8 +55,6 @@ app.use(routerObject)
 app.use(routerFaq)
 app.use(routerTag)
 app.use(routerShoppingPublic)
-
-app.use(routerNotification)
 
 // Token JWT
 app.use(authToken)
@@ -78,5 +77,5 @@ app.listen(port, () => {
 
     // Lancement du scheduler récurrent
     startNotificationScheduler();
-    
+
 });
