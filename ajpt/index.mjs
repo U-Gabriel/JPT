@@ -75,7 +75,4 @@ app.use(routerCategoryObject)
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)
 
-    // Lancement du scheduler récurrent
-    startNotificationScheduler();
-
 });
