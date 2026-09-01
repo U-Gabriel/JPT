@@ -22,6 +22,9 @@ import { routerPaymentPublic } from './routes/payment_public.router.mjs'
 import { routerAvatar } from './routes/avatar.router.mjs'
 import { routerCategoryObject } from './routes/category_type_object.router.mjs'
 
+import { routerNotification } from './notifications/notification.router.mjs'
+import { startNotificationScheduler } from './notifications/notificationScheduler.mjs'
+
 const app = express()
 
 config()
@@ -52,6 +55,8 @@ app.use(routerFaq)
 app.use(routerTag)
 app.use(routerShoppingPublic)
 
+app.use(routerNotification)
+
 // Token JWT
 app.use(authToken)
 
@@ -70,4 +75,8 @@ app.use(routerCategoryObject)
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port}`)
+
+    // Lancement du scheduler récurrent
+    startNotificationScheduler();
+    
 });
