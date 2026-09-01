@@ -1,5 +1,6 @@
 import 'package:app/l10n/generated/app_localizations.dart';
 import 'package:app/services/tag_service.dart';
+import 'package:app/ui/pages/widget/notice/user_notice_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,6 +21,7 @@ class _NoticePageState extends State<NoticePage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
+  final GlobalKey<UserNoticeListWidgetState> _noticeListKey = GlobalKey();
 
   int? selectedObjectId;
   int? selectedTagId;
@@ -53,7 +55,6 @@ class _NoticePageState extends State<NoticePage> {
   }
 
   Future<void> _submit() async {
-    // Le selectedObjectId n'est plus requis dans la validation
     if (!_formKey.currentState!.validate() || selectedTagId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.completeAllField)),
@@ -76,15 +77,32 @@ class _NoticePageState extends State<NoticePage> {
 
     if (res['status'] == "OK") {
       if (mounted) {
-        Navigator.pop(context);
+        // 1. Réinitialiser les champs de texte
+        _titleController.clear();
+        _contentController.clear();
+        setState(() {
+          selectedObjectId = null;
+          selectedTagId = null;
+        });
+
+        // 2. Afficher le SnackBar
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(res['message'] ?? AppLocalizations.of(context)!.thanksForFeedback), backgroundColor: Colors.green),
+          SnackBar(
+            content: Text(res['message'] ?? AppLocalizations.of(context)!.thanksForFeedback),
+            backgroundColor: Colors.green,
+          ),
         );
+
+        // 3. Rafraîchir la liste en bas sans fermer la page !
+        _noticeListKey.currentState?.refresh();
       }
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(res['message'] ?? AppLocalizations.of(context)!.occurredError), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(res['message'] ?? AppLocalizations.of(context)!.occurredError),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -230,9 +248,15 @@ class _NoticePageState extends State<NoticePage> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
                   ),
                 ),
+
+
               ),
               const SizedBox(height: 20),
+              // --- AJOUT DE LA LISTE DES REMARQUES EN BAS ---
+              UserNoticeListWidget(key: _noticeListKey),
+              const SizedBox(height: 50),
             ],
+
           ),
         ),
       ),

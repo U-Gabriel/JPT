@@ -905,6 +905,78 @@ abstract class AppLocalizations {
   /// **'ENVOYER MON RETOUR'**
   String get sendBackMaj;
 
+  /// No description provided for @userNoticeListWidgetState.
+  ///
+  /// In fr, this message translates to:
+  /// **'======================='**
+  String get userNoticeListWidgetState;
+
+  /// No description provided for @myFeedbackTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes retours & remarques'**
+  String get myFeedbackTitle;
+
+  /// No description provided for @statusPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours de traitement'**
+  String get statusPending;
+
+  /// No description provided for @statusTakenIntoAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pris en compte'**
+  String get statusTakenIntoAccount;
+
+  /// No description provided for @emptyNoticeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune remarque envoyée'**
+  String get emptyNoticeTitle;
+
+  /// No description provided for @emptyNoticeDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos suggestions d\'amélioration apparaîtront ici.'**
+  String get emptyNoticeDesc;
+
+  /// No description provided for @deleteNoticeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la remarque'**
+  String get deleteNoticeTitle;
+
+  /// No description provided for @deleteNoticeConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voulez-vous vraiment supprimer cette remarque ?'**
+  String get deleteNoticeConfirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get delete;
+
+  /// No description provided for @noticeDeletedSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remarque supprimée avec succès.'**
+  String get noticeDeletedSuccess;
+
+  /// No description provided for @noticeDeleteError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur lors de la suppression.'**
+  String get noticeDeleteError;
+
   /// No description provided for @shoppingPage.
   ///
   /// In fr, this message translates to:

@@ -418,6 +418,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendBackMaj => 'SUBMIT MY FEEDBACK';
 
   @override
+  String get userNoticeListWidgetState => '=======================';
+
+  @override
+  String get myFeedbackTitle => 'My feedback & remarks';
+
+  @override
+  String get statusPending => 'In progress';
+
+  @override
+  String get statusTakenIntoAccount => 'Acknowledged';
+
+  @override
+  String get emptyNoticeTitle => 'No feedback submitted';
+
+  @override
+  String get emptyNoticeDesc => 'Your suggestions for improvement will appear here.';
+
+  @override
+  String get deleteNoticeTitle => 'Delete feedback';
+
+  @override
+  String get deleteNoticeConfirm => 'Are you sure you want to delete this feedback?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get noticeDeletedSuccess => 'Feedback successfully deleted.';
+
+  @override
+  String get noticeDeleteError => 'Error while deleting feedback.';
+
+  @override
   String get shoppingPage => '=======================';
 
   @override

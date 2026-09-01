@@ -162,6 +162,20 @@
   "noEmptyContent": "Content cannot be empty",
   "sendBackMaj" : "SUBMIT MY FEEDBACK",
 
+  "userNoticeListWidgetState": "=======================",
+
+  "myFeedbackTitle": "My feedback & remarks",
+  "statusPending": "In progress",
+  "statusTakenIntoAccount": "Acknowledged",
+  "emptyNoticeTitle": "No feedback submitted",
+  "emptyNoticeDesc": "Your suggestions for improvement will appear here.",
+  "deleteNoticeTitle": "Delete feedback",
+  "deleteNoticeConfirm": "Are you sure you want to delete this feedback?",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "noticeDeletedSuccess": "Feedback successfully deleted.",
+  "noticeDeleteError": "Error while deleting feedback.",
+
   "shoppingPage": "=======================",
 
   "modelSearch": "Search for a model...",

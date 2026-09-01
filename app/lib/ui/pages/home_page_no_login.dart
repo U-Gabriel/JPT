@@ -14,7 +14,7 @@ class HomePageNoLogin extends StatelessWidget {
   static const List<Widget> _pages = [
     AdvisePage(),        // Index 0
     MyPlantPageNoLogin(), // Index 1
-    ShoppingPage(),       // Index 2
+    //ShoppingPage(),       // Index 2
   ];
 
   /// Génère dynamiquement le titre de l'AppBar selon l'index
@@ -152,7 +152,7 @@ class HomePageNoLogin extends StatelessWidget {
               ),
               label: AppLocalizations.of(context)!.navTabMyObjects,
             ),
-            BottomNavigationBarItem(
+            /*BottomNavigationBarItem(
               icon: const Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Icon(Icons.shopping_bag_outlined, size: 22),
@@ -162,7 +162,7 @@ class HomePageNoLogin extends StatelessWidget {
                 child: Icon(Icons.shopping_bag_rounded, size: 22),
               ),
               label: AppLocalizations.of(context)!.navTabShop,
-            ),
+            ),*/
           ],
         ),
       ),

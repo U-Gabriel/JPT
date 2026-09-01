@@ -13,8 +13,8 @@ class HomePage extends StatelessWidget {
 
   static const List<Widget> _pages = [
     AdvisePage(),         // Index 0
-    MyPlantPage(),        // Index 1 (Ta page avec ses vraies plantes connectées)
-    ShoppingPage(),       // Index 2
+    MyPlantPage(),        // Index 1
+    //ShoppingPage(),       // Index 2
   ];
 
   /// Génère dynamiquement le titre de l'AppBar selon l'onglet
@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
         return l10n.homeTitleAdvise;      // ➔ "Conseils & Expertises"
       case 1:
         return l10n.homeTitleEquipment;   // ➔ "Mes Équipements"
-      case 2:
+      //case 2:
         return l10n.homeTitleShop;       // ➔ "Boutique GDOME"
       default:
         return "";
@@ -146,7 +146,7 @@ class HomePage extends StatelessWidget {
               ),
               label: AppLocalizations.of(context)!.navTabMyObjects,
             ),
-            BottomNavigationBarItem(
+            /*BottomNavigationBarItem(
               icon: const Padding(
                 padding: EdgeInsets.only(bottom: 4.0),
                 child: Icon(Icons.shopping_bag_outlined, size: 22),
@@ -156,7 +156,7 @@ class HomePage extends StatelessWidget {
                 child: Icon(Icons.shopping_bag_rounded, size: 22),
               ),
               label: AppLocalizations.of(context)!.navTabShop,
-            ),
+            ),*/
           ],
         ),
       ),

@@ -162,6 +162,20 @@
   "noEmptyContent" : "Le contenu ne peut pas être vide",
   "sendBackMaj" : "ENVOYER MON RETOUR",
 
+  "userNoticeListWidgetState": "=======================",
+
+  "myFeedbackTitle": "Mes retours & remarques",
+  "statusPending": "En cours de traitement",
+  "statusTakenIntoAccount": "Pris en compte",
+  "emptyNoticeTitle": "Aucune remarque envoyée",
+  "emptyNoticeDesc": "Vos suggestions d'amélioration apparaîtront ici.",
+  "deleteNoticeTitle": "Supprimer la remarque",
+  "deleteNoticeConfirm": "Voulez-vous vraiment supprimer cette remarque ?",
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "noticeDeletedSuccess": "Remarque supprimée avec succès.",
+  "noticeDeleteError": "Erreur lors de la suppression.",
+
   "shoppingPage": "=======================",
 
   "modelSearch" : "Rechercher un modèle...",

@@ -418,6 +418,42 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sendBackMaj => 'ENVOYER MON RETOUR';
 
   @override
+  String get userNoticeListWidgetState => '=======================';
+
+  @override
+  String get myFeedbackTitle => 'Mes retours & remarques';
+
+  @override
+  String get statusPending => 'En cours de traitement';
+
+  @override
+  String get statusTakenIntoAccount => 'Pris en compte';
+
+  @override
+  String get emptyNoticeTitle => 'Aucune remarque envoyée';
+
+  @override
+  String get emptyNoticeDesc => 'Vos suggestions d\'amélioration apparaîtront ici.';
+
+  @override
+  String get deleteNoticeTitle => 'Supprimer la remarque';
+
+  @override
+  String get deleteNoticeConfirm => 'Voulez-vous vraiment supprimer cette remarque ?';
+
+  @override
+  String get cancel => 'Annuler';
+
+  @override
+  String get delete => 'Supprimer';
+
+  @override
+  String get noticeDeletedSuccess => 'Remarque supprimée avec succès.';
+
+  @override
+  String get noticeDeleteError => 'Erreur lors de la suppression.';
+
+  @override
   String get shoppingPage => '=======================';
 
   @override

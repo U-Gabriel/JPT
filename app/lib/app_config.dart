@@ -51,6 +51,8 @@ class AppConfig {
   static String get tagsEndpoint => "$baseUrl/tags";
   static String get tagsLvlOneEndpoint => "$baseUrl/tags/lvl/1";
   static String get noticeCreateEndpoint => "$baseUrl/notice/create";
+  static String get noticeByUserEndpoint => "$baseUrl/notice/byidperson";
+  static String get noticeDeleteEndpoint => "$baseUrl/notice/delete";
   static String get faqByTagEndpoint => "$baseUrl/faqs/tag";
 
   //shopping
