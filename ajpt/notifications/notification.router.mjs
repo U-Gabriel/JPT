@@ -3,8 +3,7 @@ import { saveFcmToken } from './notificationService.mjs';
 
 const routerNotification = Router();
 
-// Express accepte un tableau pour capturer avec ou sans le préfixe /api
-routerNotification.post(['/users/fcm-token', '/api/users/fcm-token'], (req, res) => {
+routerNotification.post('/users/fcm-token', (req, res) => {
   const { fcmToken } = req.body;
 
   if (!fcmToken) {
