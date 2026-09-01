@@ -1,16 +1,17 @@
+// scheduler.mjs
 import cron from 'node-cron';
-import { sendPingNotificationToAll } from './notificationService.mjs';
+import { checkAndSendLowBatteryNotifications } from './notificationService.mjs';
 
 export function startNotificationScheduler() {
-  // Syntaxe cron : '*/5 * * * *' signifie "toutes les 5 minutes"
+  // Test actuel : '*/2 * * * *' (toutes les 2 min)
+  // Production : '0 10 * * *' (chaque jour à 10h00 du matin)
   cron.schedule('*/2 * * * *', () => {
-    console.log('[Scheduler] Déclenchement automatique de la notification (5 min)');
+    console.log('[Scheduler] Vérification de la batterie des objets...');
     
-    // Exécution en tâche de fond isolée (ne bloque pas le serveur)
     setImmediate(() => {
-      sendPingNotificationToAll();
+      checkAndSendLowBatteryNotifications();
     });
   });
 
-  console.log('[Scheduler] Tâche planifiée démarrée (Envoi toutes les 5 min)');
+  console.log('[Scheduler] Tâche de vérification batterie initialisée.');
 }

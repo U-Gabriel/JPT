@@ -22,7 +22,7 @@ import { routerPaymentPublic } from './routes/payment_public.router.mjs'
 import { routerAvatar } from './routes/avatar.router.mjs'
 import { routerCategoryObject } from './routes/category_type_object.router.mjs'
 
-import { routerNotification } from './notifications/notification.router.mjs'
+import { routerNotification } from './routes/notification.router.mjs'
 import { startNotificationScheduler } from './notifications/notificationScheduler.mjs'
 
 const app = express()

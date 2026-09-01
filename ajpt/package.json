@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.mjs",
-    "start": "node index.mjs"
+    "start": "node index.mjs",
+    "start:api": "node index.mjs",
+    "start:worker": "node worker.mjs"
   },
   "keywords": [],
   "author": "gabuz",
