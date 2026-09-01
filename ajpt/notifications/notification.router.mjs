@@ -3,13 +3,17 @@ import { saveFcmToken } from './notificationService.mjs';
 
 const routerNotification = Router();
 
-// Route pour recevoir le token FCM envoyé par l'app Flutter
-routerNotification.post('/api/users/fcm-token', (req, res) => {
+// Express accepte un tableau pour capturer avec ou sans le préfixe /api
+routerNotification.post(['/users/fcm-token', '/api/users/fcm-token'], (req, res) => {
   const { fcmToken } = req.body;
+
+  if (!fcmToken) {
+    return res.status(400).json({ success: false, message: 'fcmToken manquant' });
+  }
 
   saveFcmToken(fcmToken);
 
-  res.status(200).json({ success: true, message: 'Token FCM enregistré' });
+  return res.status(200).json({ success: true, message: 'Token FCM enregistré' });
 });
 
 export { routerNotification };
