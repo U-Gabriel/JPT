@@ -17,6 +17,7 @@ jobs:
             cd /var/www/ajpt/ajpt
             git pull origin main
             npm install --omit=dev
-            pm2 restart api-jpt || pm2 start index.mjs --name "api-jpt"
+            pm2 restart ajpt || pm2 start index.mjs --name "ajpt"
+            pm2 restart ajpt_worker || pm2 start notifications/worker.mjs --name "ajpt"
             pm2 save
             pm2 restart ajpt
