@@ -91,7 +91,7 @@ const getDisconnectedObjectsWithTokens = async () => {
         p.fcm_token
       FROM object_profile op
       INNER JOIN person p ON op.id_person = p.id_person
-      WHERE op.modify_op < NOW() - INTERVAL '1 day'
+      WHERE op.modify_op < NOW() - INTERVAL '2 day'
         AND op.activate = 1
         AND p.fcm_token IS NOT NULL;
     `
