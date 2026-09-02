@@ -1,17 +1,55 @@
-// scheduler.mjs
 import cron from 'node-cron';
-import { checkAndSendLowBatteryNotifications } from './notificationService.mjs';
+import { checkAndSendLowBatteryNotifications, checkAndSendDangerPlantNotifications } from './notificationService.mjs';
 
-export function startNotificationScheduler() {
-  // Test actuel : '*/2 * * * *' (toutes les 2 min)
-  // Production : '0 10 * * *' (chaque jour à 10h00 du matin)
-  cron.schedule('0 0 * * *', () => {
-    console.log('[Scheduler] Vérification de la batterie des objets...');
+
+// Utilisation d'expressions cron configurables (Fallback sur les valeurs de production)
+const LOW_BATTERY_CRON = process.env.CRON_LOW_BATTERY //|| '0 0 * * *'; // Minuit
+const DANGER_PLANT_CRON = process.env.CRON_DANGER_PLANT //|| '0 2 * * *'; // 02h00 du matin
+
+/**
+ * Planificateur pour les batteries faibles
+ */
+function startLowBatteryScheduler() {
+  cron.schedule(LOW_BATTERY_CRON, () => {
+    console.log('[Scheduler] Démarrage : Vérification de la batterie des objets...');
     
-    setImmediate(() => {
-      checkAndSendLowBatteryNotifications();
+    setImmediate(async () => {
+      try {
+        await checkAndSendLowBatteryNotifications();
+      } catch (err) {
+        console.error('[Scheduler] Erreur critique lors de la vérification des batteries :', err);
+      }
     });
   });
 
-  console.log('[Scheduler] Tâche de vérification batterie initialisée.');
+  console.log(`[Scheduler] Tâche batterie faible initialisée (${LOW_BATTERY_CRON}).`);
 }
+
+/**
+ * Planificateur pour les plantes en danger
+ */
+function startDangerPlantScheduler() {
+  cron.schedule(DANGER_PLANT_CRON, () => {
+    console.log('[Scheduler] Démarrage : Vérification des plantes en danger...');
+    
+    setImmediate(async () => {
+      try {
+        await checkAndSendDangerPlantNotifications();
+      } catch (err) {
+        console.error('[Scheduler] Erreur critique lors de la vérification des plantes :', err);
+      }
+    });
+  });
+
+  console.log(`[Scheduler] Tâche plantes en danger initialisée (${DANGER_PLANT_CRON}).`);
+}
+
+/**
+ * Lance l'ensemble des planificateurs de notifications
+ */
+function startNotificationScheduler() {
+  startLowBatteryScheduler();
+  startDangerPlantScheduler();
+}
+
+export { startNotificationScheduler };

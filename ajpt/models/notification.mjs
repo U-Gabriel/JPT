@@ -51,4 +51,29 @@ const cleanInvalidFcmToken = async (fcmToken) => {
   await pool.query(query);
 };
 
-export { getLowBatteryObjectsWithTokens, updatePersonFcmToken, cleanInvalidFcmToken };
+/**
+ * Récupère tous les objets dont la plante est en danger (state_plant = 5)
+ * et le token FCM de leur propriétaire.
+ */
+const getDangerPlantObjectsWithTokens = async () => {
+  const query = {
+    text: `
+      SELECT 
+        op.id_object_profile,
+        op.title AS object_title,
+        op.state_plant,
+        p.id_person,
+        p.fcm_token
+      FROM object_profile op
+      INNER JOIN person p ON op.id_person = p.id_person
+      WHERE op.state_plant = 5 
+        AND op.activate = 1
+        AND p.fcm_token IS NOT NULL;
+    `
+  };
+
+  const { rows } = await pool.query(query);
+  return rows;
+};
+
+export { getLowBatteryObjectsWithTokens, updatePersonFcmToken, cleanInvalidFcmToken, getDangerPlantObjectsWithTokens };
