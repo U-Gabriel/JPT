@@ -156,7 +156,7 @@ const getDisconnectedMessage = (title) => {
   const messages = [
     {
       title: `📡 ${title} ne répond plus`,
-      body: `Nous n'avons plus de nouvelles de ton objet depuis 24h. Vérifie sa connexion Wi-Fi !`
+      body: `Nous n'avons plus de nouvelles de ton objet depuis plus de 24h. Vérifie sa connexion Wi-Fi !`
     },
     {
       title: `🔌 Connexion perdue avec ${title}`,
