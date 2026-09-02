@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { checkAndSendLowBatteryNotifications, checkAndSendDangerPlantNotifications } from './notificationService.mjs';
+import { checkAndSendLowBatteryNotifications, checkAndSendDangerPlantNotifications, checkAndSendDisconnectedNotifications } from './notificationService.mjs';
 
 
 const getCronExpression = (envVar, defaultCron) => {
@@ -8,6 +8,8 @@ const getCronExpression = (envVar, defaultCron) => {
 
 const LOW_BATTERY_CRON = getCronExpression(process.env.CRON_LOW_BATTERY, '0 0 * * *');
 const DANGER_PLANT_CRON = getCronExpression(process.env.CRON_DANGER_PLANT, '0 2 * * *');
+const DISCONNECTED_CRON = getCronExpression(process.env.CRON_DISCONNECTED, '0 4 * * *'); 
+
 /**
  * Planificateur pour les batteries faibles
  */
@@ -47,11 +49,30 @@ function startDangerPlantScheduler() {
 }
 
 /**
+ * Planificateur pour la perte de connexion des objets
+ */
+function startDisconnectedScheduler() {
+  cron.schedule(DISCONNECTED_CRON, () => {
+    console.log('[Scheduler] Démarrage : Vérification des objets déconnectés...');
+    setImmediate(async () => {
+      try {
+        await checkAndSendDisconnectedNotifications();
+      } catch (err) {
+        console.error('[Scheduler] Erreur critique objets déconnectés :', err);
+      }
+    });
+  });
+
+  console.log(`[Scheduler] Tâche objets déconnectés initialisée (${DISCONNECTED_CRON}).`);
+}
+
+/**
  * Lance l'ensemble des planificateurs de notifications
  */
 function startNotificationScheduler() {
   startLowBatteryScheduler();
   startDangerPlantScheduler();
+  startDisconnectedScheduler();
 }
 
 export { startNotificationScheduler };

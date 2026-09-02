@@ -76,4 +76,29 @@ const getDangerPlantObjectsWithTokens = async () => {
   return rows;
 };
 
-export { getLowBatteryObjectsWithTokens, updatePersonFcmToken, cleanInvalidFcmToken, getDangerPlantObjectsWithTokens };
+/**
+ * Récupère les objets qui n'ont pas envoyé de données depuis plus de 24h
+ * et le token FCM de leur propriétaire.
+ */
+const getDisconnectedObjectsWithTokens = async () => {
+  const query = {
+    text: `
+      SELECT 
+        op.id_object_profile,
+        op.title AS object_title,
+        op.modify_op,
+        p.id_person,
+        p.fcm_token
+      FROM object_profile op
+      INNER JOIN person p ON op.id_person = p.id_person
+      WHERE op.modify_op < NOW() - INTERVAL '1 day'
+        AND op.activate = 1
+        AND p.fcm_token IS NOT NULL;
+    `
+  };
+
+  const { rows } = await pool.query(query);
+  return rows;
+};
+
+export { getLowBatteryObjectsWithTokens, updatePersonFcmToken, cleanInvalidFcmToken, getDangerPlantObjectsWithTokens, getDisconnectedObjectsWithTokens };

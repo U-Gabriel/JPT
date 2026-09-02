@@ -1,5 +1,5 @@
 import { messaging } from './firebaseAdmin.mjs';
-import { getLowBatteryObjectsWithTokens, getDangerPlantObjectsWithTokens, cleanInvalidFcmToken } from '../models/notification.mjs';
+import { getLowBatteryObjectsWithTokens, getDangerPlantObjectsWithTokens, getDisconnectedObjectsWithTokens, cleanInvalidFcmToken } from '../models/notification.mjs';
 
 const getLowBatteryMessage = (title, batteryLvl) => {
   const messages = [
@@ -86,7 +86,7 @@ const getDangerPlantMessage = (title) => {
     },
     {
       title: `⚠️ Au secours ! ${title} va très mal`,
-      body: `Son état est critique (Niveau 5). Viens vite vérifier ses paramètres !`
+      body: `Mon état est critique. Viens vite vérifier mes paramètres !`
     },
     {
       title: `🌱 SOS pour ${title}`,
@@ -149,4 +149,76 @@ async function checkAndSendDangerPlantNotifications() {
   }
 }
 
-export { checkAndSendLowBatteryNotifications, checkAndSendDangerPlantNotifications };
+/**
+ * Générateur de messages pour objet hors-ligne / déconnecté
+ */
+const getDisconnectedMessage = (title) => {
+  const messages = [
+    {
+      title: `📡 ${title} ne répond plus`,
+      body: `Nous n'avons plus de nouvelles de ton objet depuis 24h. Vérifie sa connexion Wi-Fi !`
+    },
+    {
+      title: `🔌 Connexion perdue avec ${title}`,
+      body: `Ton objet n'a pas transmis de données aujourd'hui. Est-il bien allumé ?`
+    },
+    {
+      title: `❓ Où est passé ${title} ?`,
+      body: `Aucun signe de vie depuis plus de 24 heures. Pense à jeter un œil.`
+    }
+  ];
+  return messages[Math.floor(Math.random() * messages.length)];
+};
+
+async function checkAndSendDisconnectedNotifications() {
+  try {
+    const disconnectedItems = await getDisconnectedObjectsWithTokens();
+
+    if (disconnectedItems.length === 0) {
+      console.log('[Notification] Aucun objet déconnecté détecté.');
+      return;
+    }
+
+    console.log(`[Notification] Traitement de ${disconnectedItems.length} objet(s) déconnecté(s)...`);
+
+    const messages = disconnectedItems.map(item => {
+      const payload = getDisconnectedMessage(item.object_title);
+      return {
+        notification: {
+          title: payload.title,
+          body: payload.body,
+        },
+        token: item.fcm_token,
+      };
+    });
+
+    const BATCH_SIZE = 500;
+    for (let i = 0; i < messages.length; i += BATCH_SIZE) {
+      const batch = messages.slice(i, i + BATCH_SIZE);
+      
+      const response = await messaging.sendEach(batch);
+
+      if (response.failureCount > 0) {
+        response.responses.forEach((resp, idx) => {
+          if (!resp.success) {
+            const error = resp.error;
+            if (
+              error.code === 'messaging/invalid-registration-token' ||
+              error.code === 'messaging/registration-token-not-registered'
+            ) {
+              const invalidToken = batch[idx].token;
+              console.log(`[Notification] Nettoyage du token obsolète : ${invalidToken}`);
+              cleanInvalidFcmToken(invalidToken);
+            }
+          }
+        });
+      }
+      console.log(`[Notification] Lot objets déconnectés envoyé : ${response.successCount} succès, ${response.failureCount} échecs.`);
+    }
+
+  } catch (error) {
+    console.error('[Notification] Erreur globale lors de la vérification des objets déconnectés :', error);
+  }
+}
+
+export { checkAndSendLowBatteryNotifications, checkAndSendDangerPlantNotifications, checkAndSendDisconnectedNotifications };
