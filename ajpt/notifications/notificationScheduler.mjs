@@ -2,10 +2,12 @@ import cron from 'node-cron';
 import { checkAndSendLowBatteryNotifications, checkAndSendDangerPlantNotifications } from './notificationService.mjs';
 
 
-// Utilisation d'expressions cron configurables (Fallback sur les valeurs de production)
-const LOW_BATTERY_CRON = process.env.CRON_LOW_BATTERY //|| '0 0 * * *'; // Minuit
-const DANGER_PLANT_CRON = process.env.CRON_DANGER_PLANT //|| '0 2 * * *'; // 02h00 du matin
+const getCronExpression = (envVar, defaultCron) => {
+  return String(envVar || defaultCron).trim();
+};
 
+const LOW_BATTERY_CRON = getCronExpression(process.env.CRON_LOW_BATTERY, '0 0 * * *');
+const DANGER_PLANT_CRON = getCronExpression(process.env.CRON_DANGER_PLANT, '0 2 * * *');
 /**
  * Planificateur pour les batteries faibles
  */
